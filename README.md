@@ -9,6 +9,21 @@ Aplicativo desktop escrito em Dart e Flutter para gerenciar despesas de eventos 
 - **Controle de Pagamento (Pago / Pendente)**: Alterne com um clique entre pago e pendente com recálculo imediato dos saldos.
 - **Persistência Local no Desktop**: Salva e carrega eventos e despesas em JSON no diretório de suporte do aplicativo.
 
+* **Linux**
+```
+~/.local/share/com.github.iltons.EventLedger/event_ledger_data.json
+```
+
+* **macOS**
+```
+~/Library/Application Support/ccom.github.iltons.EventLedger/event_ledger_data.json
+```
+
+* **Windows**
+```
+%APPDATA%\com.github.iltons.EventLedger\event_ledger_data.json
+```
+
 ## Como Executar no Desktop (Windows, macOS, Linux)
 
 1. Certifique-se de ter o Flutter (`>=3.22`) instalado com suporte desktop habilitado:
