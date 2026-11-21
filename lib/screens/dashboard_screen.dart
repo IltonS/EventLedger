@@ -65,19 +65,21 @@ class DashboardScreen extends StatelessWidget {
                       : 'Todas as despesas quitadas',
                 ),
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _KpiTile(
-                  label: 'Orçamentos Combinados',
-                  value: currency.format(totalBudget),
-                  detail: totalBudget >= totalSpent
-                      ? '${currency.format(totalBudget - totalSpent)} de margem disponível'
-                      : '${currency.format(totalSpent - totalBudget)} acima do orçamento',
-                  valueColor: totalSpent > totalBudget
-                      ? AppTheme.overBudgetCrimson
-                      : AppTheme.inkPrimary,
+              if (store.hasAnyEventWithBudget) ...[
+                const SizedBox(width: 16),
+                Expanded(
+                  child: _KpiTile(
+                    label: 'Orçamentos Combinados',
+                    value: currency.format(totalBudget),
+                    detail: totalBudget >= totalSpent
+                        ? '${currency.format(totalBudget - totalSpent)} de margem disponível'
+                        : '${currency.format(totalSpent - totalBudget)} acima do orçamento',
+                    valueColor: totalSpent > totalBudget
+                        ? AppTheme.overBudgetCrimson
+                        : AppTheme.inkPrimary,
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
           const SizedBox(height: 24),
@@ -139,13 +141,26 @@ class DashboardScreen extends StatelessWidget {
                               fontWeight: FontWeight.w600,
                               color: AppTheme.inkMuted,
                             ),
-                            columns: const [
-                              DataColumn(label: Text('Evento')),
-                              DataColumn(label: Text('Data')),
-                              DataColumn(label: Text('Orçamento'), numeric: true),
-                              DataColumn(label: Text('Total Gasto'), numeric: true),
-                              DataColumn(label: Text('Pago'), numeric: true),
-                              DataColumn(label: Text('Pendente'), numeric: true),
+                            columns: [
+                              const DataColumn(label: Text('Evento')),
+                              const DataColumn(label: Text('Data')),
+                              if (store.hasAnyEventWithBudget)
+                                const DataColumn(
+                                  label: Text('Orçamento'),
+                                  numeric: true,
+                                ),
+                              const DataColumn(
+                                label: Text('Total Gasto'),
+                                numeric: true,
+                              ),
+                              const DataColumn(
+                                label: Text('Pago'),
+                                numeric: true,
+                              ),
+                              const DataColumn(
+                                label: Text('Pendente'),
+                                numeric: true,
+                              ),
                             ],
                             rows: store.events.map((event) {
                               return DataRow(
@@ -178,12 +193,15 @@ class DashboardScreen extends StatelessWidget {
                                     ),
                                   ),
                                   DataCell(Text(dateFmt.format(event.eventDate))),
-                                  DataCell(
-                                    Text(
-                                      currency.format(event.budget),
-                                      style: AppTheme.tabularNumber,
+                                  if (store.hasAnyEventWithBudget)
+                                    DataCell(
+                                      Text(
+                                        event.hasBudget
+                                            ? currency.format(event.budget)
+                                            : '—',
+                                        style: AppTheme.tabularNumber,
+                                      ),
                                     ),
-                                  ),
                                   DataCell(
                                     Text(
                                       currency.format(event.totalSpent),

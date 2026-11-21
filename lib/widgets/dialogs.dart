@@ -229,7 +229,7 @@ class _EventFormDialogState extends State<_EventFormDialog> {
     _budgetController = TextEditingController(
       text: widget.existing != null
           ? widget.existing!.budget.toStringAsFixed(2).replaceAll('.', ',')
-          : '3000,00',
+          : '0,00',
     );
     _notesController =
         TextEditingController(text: widget.existing?.notes ?? '');
@@ -308,12 +308,15 @@ class _EventFormDialogState extends State<_EventFormDialog> {
                           const TextInputType.numberWithOptions(decimal: true),
                       decoration: const InputDecoration(
                         labelText: 'Orçamento Previsto (R\$)',
+                        hintText: '0,00',
+                        helperText: 'Deixe R\$ 0,00 para desativar metas de orçamento',
                         prefixText: 'R\$ ',
                       ),
                       validator: (value) {
-                        final parsed = _parseCurrencyInput(value ?? '');
-                        if (parsed == null || parsed <= 0) {
-                          return 'Informe um orçamento maior que 0';
+                        if (value == null || value.trim().isEmpty) return null;
+                        final parsed = _parseCurrencyInput(value);
+                        if (parsed == null || parsed < 0) {
+                          return 'Informe um orçamento válido (R\$ 0 ou maior)';
                         }
                         return null;
                       },
@@ -359,7 +362,7 @@ class _EventFormDialogState extends State<_EventFormDialog> {
                 name: _nameController.text.trim(),
                 eventDate: _selectedDate,
                 venue: _venueController.text.trim(),
-                budget: _parseCurrencyInput(_budgetController.text)!,
+                budget: _parseCurrencyInput(_budgetController.text) ?? 0.0,
                 notes: _notesController.text.trim(),
               ),
             );

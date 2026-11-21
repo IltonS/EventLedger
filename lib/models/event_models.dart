@@ -236,6 +236,8 @@ class PersonalEvent {
 
   double get budgetRemaining => budget - totalSpent;
 
+  bool get hasBudget => budget > 0;
+
   double get budgetUtilization =>
       budget <= 0 ? 0 : (totalSpent / budget).clamp(0.0, 1.5);
 

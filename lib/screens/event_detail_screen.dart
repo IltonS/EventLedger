@@ -170,15 +170,17 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                   const SizedBox(height: 18),
                   Row(
                     children: [
-                      _MetricPair(
-                        label: 'Orçamento',
-                        value: currency.format(event.budget),
-                      ),
-                      const SizedBox(width: 36),
+                      if (event.hasBudget) ...[
+                        _MetricPair(
+                          label: 'Orçamento',
+                          value: currency.format(event.budget),
+                        ),
+                        const SizedBox(width: 36),
+                      ],
                       _MetricPair(
                         label: 'Total Gasto',
                         value: currency.format(event.totalSpent),
-                        color: event.totalSpent > event.budget
+                        color: event.hasBudget && event.totalSpent > event.budget
                             ? AppTheme.overBudgetCrimson
                             : AppTheme.inkPrimary,
                       ),
@@ -196,41 +198,43 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                             ? AppTheme.unpaidAmber
                             : AppTheme.inkMuted,
                       ),
-                      const Spacer(),
-                      SizedBox(
-                        width: 240,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              event.budgetRemaining >= 0
-                                  ? '${currency.format(event.budgetRemaining)} dentro do orçamento'
-                                  : '${currency.format(event.budgetRemaining.abs())} acima do orçamento',
-                              style: AppTheme.tabularNumber.copyWith(
-                                fontSize: 12.5,
-                                fontWeight: FontWeight.w600,
-                                color: event.budgetRemaining >= 0
-                                    ? AppTheme.inkSecondary
-                                    : AppTheme.overBudgetCrimson,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(4),
-                              child: LinearProgressIndicator(
-                                value: event.budgetUtilization.clamp(0.0, 1.0),
-                                minHeight: 7,
-                                backgroundColor: AppTheme.canvas,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  event.totalSpent > event.budget
-                                      ? AppTheme.overBudgetCrimson
-                                      : AppTheme.accent,
+                      if (event.hasBudget) ...[
+                        const Spacer(),
+                        SizedBox(
+                          width: 240,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                event.budgetRemaining >= 0
+                                    ? '${currency.format(event.budgetRemaining)} dentro do orçamento'
+                                    : '${currency.format(event.budgetRemaining.abs())} acima do orçamento',
+                                style: AppTheme.tabularNumber.copyWith(
+                                  fontSize: 12.5,
+                                  fontWeight: FontWeight.w600,
+                                  color: event.budgetRemaining >= 0
+                                      ? AppTheme.inkSecondary
+                                      : AppTheme.overBudgetCrimson,
                                 ),
                               ),
-                            ),
-                          ],
+                              const SizedBox(height: 6),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(4),
+                                child: LinearProgressIndicator(
+                                  value: event.budgetUtilization.clamp(0.0, 1.0),
+                                  minHeight: 7,
+                                  backgroundColor: AppTheme.canvas,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    event.totalSpent > event.budget
+                                        ? AppTheme.overBudgetCrimson
+                                        : AppTheme.accent,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
+                      ],
                     ],
                   ),
                 ],

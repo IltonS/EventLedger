@@ -37,6 +37,8 @@ class LedgerStore extends ChangeNotifier {
   double get totalBudgetAllEvents =>
       _events.fold<double>(0, (sum, e) => sum + e.budget);
 
+  bool get hasAnyEventWithBudget => _events.any((e) => e.budget > 0);
+
   double get totalSpentAllEvents =>
       _events.fold<double>(0, (sum, e) => sum + e.totalSpent);
 
