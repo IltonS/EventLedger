@@ -16,14 +16,35 @@ Future<void> main() async {
   runApp(const EventLedgerDesktopApp());
 }
 
-class EventLedgerDesktopApp extends StatefulWidget {
+class EventLedgerDesktopApp extends StatelessWidget {
   const EventLedgerDesktopApp({super.key});
 
   @override
-  State<EventLedgerDesktopApp> createState() => _EventLedgerDesktopAppState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'EventLedger',
+      debugShowCheckedModeBanner: false,
+      locale: const Locale('pt', 'BR'),
+      supportedLocales: const [Locale('pt', 'BR')],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      theme: AppTheme.buildTheme(),
+      home: const EventLedgerHomeScreen(),
+    );
+  }
 }
 
-class _EventLedgerDesktopAppState extends State<EventLedgerDesktopApp> {
+class EventLedgerHomeScreen extends StatefulWidget {
+  const EventLedgerHomeScreen({super.key});
+
+  @override
+  State<EventLedgerHomeScreen> createState() => _EventLedgerHomeScreenState();
+}
+
+class _EventLedgerHomeScreenState extends State<EventLedgerHomeScreen> {
   final LedgerStore _store = LedgerStore();
 
   @override
@@ -52,50 +73,42 @@ class _EventLedgerDesktopAppState extends State<EventLedgerDesktopApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'EventLedger — Gestão de Despesas de Eventos',
-      debugShowCheckedModeBanner: false,
-      locale: const Locale('pt', 'BR'),
-      supportedLocales: const [Locale('pt', 'BR')],
-      localizationsDelegates: GlobalMaterialLocalizations.delegates,
-      theme: AppTheme.buildTheme(),
-      home: AnimatedBuilder(
-        animation: _store,
-        builder: (context, _) {
-          if (!_store.isLoaded) {
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
-          }
-
-          return Scaffold(
-            body: Row(
-              children: [
-                DesktopSidebar(
-                  store: _store,
-                  onCreateEvent: () => _handleCreateEvent(context),
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      _DesktopTopBar(
-                        store: _store,
-                        onCreateEvent: () => _handleCreateEvent(context),
-                      ),
-                      Expanded(child: _buildActiveScreen()),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+    return AnimatedBuilder(
+      animation: _store,
+      builder: (context, _) {
+        if (!_store.isLoaded) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
           );
-        },
-      ),
+        }
+
+        return Scaffold(
+          body: Row(
+            children: [
+              DesktopSidebar(
+                store: _store,
+                onCreateEvent: () => _handleCreateEvent(context),
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _DesktopTopBar(
+                      store: _store,
+                      onCreateEvent: () => _handleCreateEvent(context),
+                    ),
+                    Expanded(child: _buildActiveScreen(context)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildActiveScreen() {
+  Widget _buildActiveScreen(BuildContext context) {
     switch (_store.activeView) {
       case WorkspaceView.dashboard:
         return DashboardScreen(

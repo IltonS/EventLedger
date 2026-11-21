@@ -66,11 +66,11 @@ class LedgerStore extends ChangeNotifier {
             .map((e) => PersonalEvent.fromJson(e as Map<String, dynamic>))
             .toList();
       } else {
-        _events = _seedSampleEvents();
+        _events = [];
         await _persist();
       }
     } catch (_) {
-      _events = _seedSampleEvents();
+      _events = [];
     }
 
     if (_events.isNotEmpty) {
@@ -237,7 +237,7 @@ class LedgerStore extends ChangeNotifier {
       await dir.create(recursive: true);
     }
     return File(
-      '${dir.path}${Platform.pathSeparator}event_ledger_ptbr_data.json',
+      '${dir.path}${Platform.pathSeparator}event_ledger_data.json',
     );
   }
 
@@ -249,139 +249,5 @@ class LedgerStore extends ChangeNotifier {
     } catch (_) {
       // Ignora erros de gravação em plataformas sem suporte local.
     }
-  }
-
-  List<PersonalEvent> _seedSampleEvents() {
-    return [
-      PersonalEvent(
-        id: 'evt_aniversario_30',
-        name: 'Aniversário de 30 anos da Maya',
-        eventDate: DateTime(2026, 12, 12),
-        venue: 'Espaço Jardim Paulista',
-        budget: 7500.00,
-        notes: '45 convidados, coquetel e jantar à noite',
-        expenses: [
-          ExpenseItem(
-            id: 'exp_101',
-            title: 'Reserva e Locação do Salão',
-            vendor: 'Espaço Jardim Eventos',
-            amount: 2600.00,
-            category: ExpenseCategory.venue,
-            date: DateTime(2026, 11, 2),
-            isPaid: true,
-          ),
-          ExpenseItem(
-            id: 'exp_102',
-            title: 'Buffet Completo e Mesa de Doces',
-            vendor: 'Sabor da Casa Gastronomia',
-            amount: 2350.00,
-            category: ExpenseCategory.catering,
-            date: DateTime(2026, 11, 14),
-            isPaid: true,
-          ),
-          ExpenseItem(
-            id: 'exp_103',
-            title: 'Trio Acústico ao Vivo (3h)',
-            vendor: 'Som & Cordas SP',
-            amount: 1100.00,
-            category: ExpenseCategory.entertainment,
-            date: DateTime(2026, 11, 18),
-            isPaid: false,
-          ),
-          ExpenseItem(
-            id: 'exp_104',
-            title: 'Arranjos Florais e Velas',
-            vendor: 'Atelier Botânico Flor',
-            amount: 680.00,
-            category: ExpenseCategory.decorations,
-            date: DateTime(2026, 11, 19),
-            isPaid: false,
-          ),
-          ExpenseItem(
-            id: 'exp_105',
-            title: 'Convites e Cardápios Impressos',
-            vendor: 'Gráfica Papel Fino',
-            amount: 290.00,
-            category: ExpenseCategory.invitations,
-            date: DateTime(2026, 11, 10),
-            isPaid: true,
-          ),
-        ],
-      ),
-      PersonalEvent(
-        id: 'evt_bodas_prata',
-        name: 'Jantar de Bodas de Prata',
-        eventDate: DateTime(2026, 12, 28),
-        venue: 'Restaurante Porto Alegre',
-        budget: 4800.00,
-        notes: 'Jantar em família para 18 pessoas',
-        expenses: [
-          ExpenseItem(
-            id: 'exp_201',
-            title: 'Menu Degustação e Bebidas',
-            vendor: 'Restaurante Porto',
-            amount: 2950.00,
-            category: ExpenseCategory.catering,
-            date: DateTime(2026, 11, 15),
-            isPaid: false,
-          ),
-          ExpenseItem(
-            id: 'exp_202',
-            title: 'Cobertura Fotográfica',
-            vendor: 'Clara Sato Fotografia',
-            amount: 1200.00,
-            category: ExpenseCategory.photography,
-            date: DateTime(2026, 11, 17),
-            isPaid: true,
-          ),
-          ExpenseItem(
-            id: 'exp_203',
-            title: 'Taças Personalizadas',
-            vendor: 'Oficina Cristal',
-            amount: 420.00,
-            category: ExpenseCategory.gifts,
-            date: DateTime(2026, 11, 19),
-            isPaid: true,
-          ),
-        ],
-      ),
-      PersonalEvent(
-        id: 'evt_aniversario_leo',
-        name: 'Festa de 8 anos do Léo',
-        eventDate: DateTime(2027, 1, 16),
-        venue: 'Salão do Condomínio',
-        budget: 2200.00,
-        notes: 'Festa infantil à tarde com tema de ciências',
-        expenses: [
-          ExpenseItem(
-            id: 'exp_301',
-            title: 'Taxa de Reserva do Salão',
-            vendor: 'Administração do Condomínio',
-            amount: 450.00,
-            category: ExpenseCategory.venue,
-            date: DateTime(2026, 11, 12),
-            isPaid: true,
-          ),
-          ExpenseItem(
-            id: 'exp_302',
-            title: 'Salgados, Sucos e Bolo Temático',
-            vendor: 'Confeitaria Doce Lar',
-            amount: 820.00,
-            category: ExpenseCategory.catering,
-            date: DateTime(2026, 11, 20),
-            isPaid: false,
-          ),
-          ExpenseItem(
-            id: 'exp_303',
-            title: 'Kits de Experimentos (Lembrancinhas)',
-            vendor: 'Brincar & Descobrir',
-            amount: 510.00,
-            category: ExpenseCategory.gifts,
-            date: DateTime(2026, 11, 20),
-            isPaid: false,
-          ),
-        ],
-      ),
-    ];
   }
 }

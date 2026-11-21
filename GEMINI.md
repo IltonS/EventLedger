@@ -9,7 +9,7 @@
 - **Event Lifecycle Management**: Create, edit, and delete personal events with planned budgets, venues, dates, and notes.
 - **Expense Categorization & Tracking**: Log individual expenses by vendor, amount, date, and category (`Espaço / Local`, `Buffet e Bebidas`, `Decoração`, `Entretenimento`, `Lembrancinhas`, `Fotografia`, `Convites`, `Outros`).
 - **Payment Status Tracking**: One-click toggling between Paid (`Pago`) and Unpaid/Pending (`Pendente`), dynamically recalculating remaining balances.
-- **Local Persistence**: Automatically serializes events and expenses into JSON (`event_ledger_ptbr_data.json`) stored in the platform's application support directory.
+- **Local Persistence**: Automatically serializes events and expenses into JSON (`event_ledger_data.json`) stored in the platform's application support directory (`com.github.iltons.EventLedger`).
 - **Desktop-Optimized UI**: Responsive two-pane layout with a persistent sidebar, breadcrumb navigation header, and specialized desktop data tables.
 
 ---
@@ -47,7 +47,7 @@ EventLedger/
 
 - **State Management**: Uses a centralized `ChangeNotifier` store (`LedgerStore`). Top-level routing and view state transitions (`WorkspaceView.dashboard`, `WorkspaceView.allExpenses`, `WorkspaceView.eventDetail`) are driven through `AnimatedBuilder` in `EventLedgerDesktopApp`.
 - **Model Immutability**: Domain models (`PersonalEvent`, `ExpenseItem`) are immutable with copy constructors (`copyWith`) and JSON serialization (`toJson`, `fromJson`). Computed properties (such as `totalSpent`, `budgetRemaining`, and `budgetUtilization`) are calculated on-the-fly.
-- **Persistence Layer**: Asynchronous, local file-based persistence via `path_provider` (`getApplicationSupportDirectory()`). If no existing data is found or deserialization fails, the application automatically seeds sample events (`_seedSampleEvents`).
+- **Persistence Layer**: Asynchronous, local file-based persistence via `path_provider` (`getApplicationSupportDirectory()`). If no existing data is found or deserialization fails, the application initializes with an empty dataset (`[]`).
 - **Localization**: Localized for `pt_BR` via `flutter_localizations` and `intl`. Dates and currencies are formatted using standard Brazilian conventions (`R$ #.###,##` and `dd/MM/yyyy`).
 
 ---
