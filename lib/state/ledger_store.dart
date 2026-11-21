@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../models/event_models.dart';
 
-enum WorkspaceView { dashboard, allExpenses, eventDetail }
+enum WorkspaceView { dashboard, allExpenses, categories, eventDetail }
 
 enum PaymentFilter { all, paid, unpaid }
 
@@ -14,11 +14,14 @@ class LedgerStore extends ChangeNotifier {
   LedgerStore();
 
   List<PersonalEvent> _events = [];
+  List<ExpenseCategory> _categories =
+      List.from(ExpenseCategory.defaultCategories);
   WorkspaceView _activeView = WorkspaceView.dashboard;
   String? _selectedEventId;
   bool _isLoaded = false;
 
   List<PersonalEvent> get events => List.unmodifiable(_events);
+  List<ExpenseCategory> get categories => List.unmodifiable(_categories);
   WorkspaceView get activeView => _activeView;
   String? get selectedEventId => _selectedEventId;
   bool get isLoaded => _isLoaded;
@@ -61,15 +64,41 @@ class LedgerStore extends ChangeNotifier {
       final file = await _storageFile();
       if (await file.exists()) {
         final raw = await file.readAsString();
-        final decoded = jsonDecode(raw) as List<dynamic>;
-        _events = decoded
-            .map((e) => PersonalEvent.fromJson(e as Map<String, dynamic>))
-            .toList();
+        final decoded = jsonDecode(raw);
+        if (decoded is Map<String, dynamic>) {
+          if (decoded['categories'] is List) {
+            _categories = (decoded['categories'] as List<dynamic>)
+                .map((c) => ExpenseCategory.fromJson(c as Map<String, dynamic>))
+                .toList();
+          } else {
+            _categories = List.from(ExpenseCategory.defaultCategories);
+          }
+          if (decoded['events'] is List) {
+            _events = (decoded['events'] as List<dynamic>)
+                .map((e) => PersonalEvent.fromJson(
+                      e as Map<String, dynamic>,
+                      categories: _categories,
+                    ))
+                .toList();
+          } else {
+            _events = [];
+          }
+        } else if (decoded is List<dynamic>) {
+          _categories = List.from(ExpenseCategory.defaultCategories);
+          _events = decoded
+              .map((e) => PersonalEvent.fromJson(
+                    e as Map<String, dynamic>,
+                    categories: _categories,
+                  ))
+              .toList();
+        }
       } else {
+        _categories = List.from(ExpenseCategory.defaultCategories);
         _events = [];
         await _persist();
       }
     } catch (_) {
+      _categories = List.from(ExpenseCategory.defaultCategories);
       _events = [];
     }
 
@@ -90,10 +119,114 @@ class LedgerStore extends ChangeNotifier {
     notifyListeners();
   }
 
+  void selectCategories() {
+    _activeView = WorkspaceView.categories;
+    notifyListeners();
+  }
+
   void selectEvent(String eventId) {
     _selectedEventId = eventId;
     _activeView = WorkspaceView.eventDetail;
     notifyListeners();
+  }
+
+  ExpenseCategory getCategoryById(String id) {
+    for (final cat in _categories) {
+      if (cat.id == id) return cat;
+    }
+    return _categories.isNotEmpty
+        ? _categories.last
+        : ExpenseCategory.defaultCategories.last;
+  }
+
+  int getExpenseCountForCategory(String categoryId) {
+    var count = 0;
+    for (final event in _events) {
+      for (final exp in event.expenses) {
+        if (exp.category.id == categoryId) {
+          count++;
+        }
+      }
+    }
+    return count;
+  }
+
+  double getTotalSpentForCategory(String categoryId) {
+    var total = 0.0;
+    for (final event in _events) {
+      for (final exp in event.expenses) {
+        if (exp.category.id == categoryId) {
+          total += exp.amount;
+        }
+      }
+    }
+    return total;
+  }
+
+  Future<void> addCategory({
+    required String name,
+    required IconData icon,
+    required Color color,
+  }) async {
+    final newCat = ExpenseCategory(
+      id: 'cat_${DateTime.now().microsecondsSinceEpoch}',
+      name: name.trim(),
+      icon: icon,
+      color: color,
+    );
+    _categories = [..._categories, newCat];
+    notifyListeners();
+    await _persist();
+  }
+
+  Future<void> updateCategory(ExpenseCategory updated) async {
+    _categories = [
+      for (final cat in _categories)
+        if (cat.id == updated.id) updated else cat,
+    ];
+    _events = [
+      for (final event in _events)
+        event.copyWith(
+          expenses: [
+            for (final exp in event.expenses)
+              if (exp.category.id == updated.id)
+                exp.copyWith(category: updated)
+              else
+                exp,
+          ],
+        ),
+    ];
+    notifyListeners();
+    await _persist();
+  }
+
+  Future<void> deleteCategory(
+    String categoryId, {
+    ExpenseCategory? replacement,
+  }) async {
+    if (_categories.length <= 1) return;
+
+    final fallback = replacement ??
+        _categories.firstWhere(
+          (c) => c.id != categoryId,
+          orElse: () => _categories.first,
+        );
+
+    _categories = _categories.where((c) => c.id != categoryId).toList();
+    _events = [
+      for (final event in _events)
+        event.copyWith(
+          expenses: [
+            for (final exp in event.expenses)
+              if (exp.category.id == categoryId)
+                exp.copyWith(category: fallback)
+              else
+                exp,
+          ],
+        ),
+    ];
+    notifyListeners();
+    await _persist();
   }
 
   Future<void> addEvent({
@@ -244,8 +377,11 @@ class LedgerStore extends ChangeNotifier {
   Future<void> _persist() async {
     try {
       final file = await _storageFile();
-      final jsonList = _events.map((e) => e.toJson()).toList();
-      await file.writeAsString(jsonEncode(jsonList));
+      final data = {
+        'categories': _categories.map((c) => c.toJson()).toList(),
+        'events': _events.map((e) => e.toJson()).toList(),
+      };
+      await file.writeAsString(jsonEncode(data));
     } catch (_) {
       // Ignora erros de gravação em plataformas sem suporte local.
     }

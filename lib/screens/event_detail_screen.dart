@@ -43,7 +43,10 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
   }
 
   Future<void> _addExpense() async {
-    final result = await showExpenseFormDialog(context);
+    final result = await showExpenseFormDialog(
+      context,
+      categories: widget.store.categories,
+    );
     if (result == null) return;
     await widget.store.addExpense(
       eventId: widget.event.id,
@@ -58,7 +61,11 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
   }
 
   Future<void> _editExpense(ExpenseItem item) async {
-    final result = await showExpenseFormDialog(context, existing: item);
+    final result = await showExpenseFormDialog(
+      context,
+      existing: item,
+      categories: widget.store.categories,
+    );
     if (result == null) return;
     await widget.store.updateExpense(
       eventId: widget.event.id,
@@ -265,10 +272,10 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                               value: null,
                               child: Text('Todas as Categorias'),
                             ),
-                            ...ExpenseCategory.values.map(
+                            ...widget.store.categories.map(
                               (cat) => DropdownMenuItem<ExpenseCategory?>(
                                 value: cat,
-                                child: Text(cat.label),
+                                child: Text(cat.name),
                               ),
                             ),
                           ],

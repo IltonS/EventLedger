@@ -68,10 +68,10 @@ class _AllExpensesScreenState extends State<AllExpensesScreen> {
                           value: null,
                           child: Text('Todas as Categorias'),
                         ),
-                        ...ExpenseCategory.values.map(
+                        ...widget.store.categories.map(
                           (cat) => DropdownMenuItem<ExpenseCategory?>(
                             value: cat,
-                            child: Text(cat.label),
+                            child: Text(cat.name),
                           ),
                         ),
                       ],

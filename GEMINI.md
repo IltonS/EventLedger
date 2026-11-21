@@ -7,7 +7,7 @@
 ### Key Capabilities
 - **Consolidated Dashboard**: High-level KPIs (Total Spent, Total Paid, Pending Balance, Combined Budgets), category expense distributions, and an event summary overview.
 - **Event Lifecycle Management**: Create, edit, and delete personal events with planned budgets, venues, dates, and notes.
-- **Expense Categorization & Tracking**: Log individual expenses by vendor, amount, date, and category (`Espaço / Local`, `Buffet e Bebidas`, `Decoração`, `Entretenimento`, `Lembrancinhas`, `Fotografia`, `Convites`, `Outros`).
+- **Expense Categorization & Management (CRUD)**: Log individual expenses by vendor, amount, date, and category. Full CRUD for expense categories with customizable names, thematic colors, and Material icons. Deleting a category prompts for expense reassignment.
 - **Payment Status Tracking**: One-click toggling between Paid (`Pago`) and Unpaid/Pending (`Pendente`), dynamically recalculating remaining balances.
 - **Local Persistence**: Automatically serializes events and expenses into JSON (`event_ledger_data.json`) stored in the platform's application support directory (`com.github.iltons.EventLedger`).
 - **Desktop-Optimized UI**: Responsive two-pane layout with a persistent sidebar, breadcrumb navigation header, and specialized desktop data tables.
@@ -29,6 +29,7 @@ EventLedger/
 │   │   └── event_models.dart# PersonalEvent, ExpenseItem, ExpenseCategory
 │   ├── screens/             # Top-level workspace views
 │   │   ├── all_expenses_screen.dart # Cross-event filtered expense table
+│   │   ├── categories_screen.dart   # Category management (CRUD) screen
 │   │   ├── dashboard_screen.dart    # Aggregated KPI dashboard & charts
 │   │   └── event_detail_screen.dart # Per-event management & expense ledger
 │   ├── state/               # State management & persistence

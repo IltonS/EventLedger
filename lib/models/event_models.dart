@@ -1,27 +1,137 @@
 import 'package:flutter/material.dart';
 
-enum ExpenseCategory {
-  venue('Espaço / Local', Icons.location_city_outlined, Color(0xFF2563EB)),
-  catering('Buffet e Bebidas', Icons.restaurant_outlined, Color(0xFFD97706)),
-  decorations('Decoração', Icons.celebration_outlined, Color(0xFF7C3AED)),
-  entertainment('Entretenimento', Icons.music_note_outlined, Color(0xFF0D9488)),
-  gifts('Lembrancinhas', Icons.card_giftcard_outlined, Color(0xFFDB2777)),
-  photography('Fotografia', Icons.camera_alt_outlined, Color(0xFF4F46E5)),
-  invitations('Convites', Icons.mail_outline, Color(0xFF0284C7)),
-  other('Outros', Icons.receipt_long_outlined, Color(0xFF475569));
+class ExpenseCategory {
+  const ExpenseCategory({
+    required this.id,
+    required this.name,
+    required this.icon,
+    required this.color,
+  });
 
-  const ExpenseCategory(this.label, this.icon, this.color);
-
-  final String label;
+  final String id;
+  final String name;
   final IconData icon;
   final Color color;
 
-  static ExpenseCategory fromName(String? value) {
-    return ExpenseCategory.values.firstWhere(
-      (c) => c.name == value,
-      orElse: () => ExpenseCategory.other,
+  String get label => name;
+
+  ExpenseCategory copyWith({
+    String? id,
+    String? name,
+    IconData? icon,
+    Color? color,
+  }) {
+    return ExpenseCategory(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      icon: icon ?? this.icon,
+      color: color ?? this.color,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'iconCode': icon.codePoint,
+        'colorValue': color.value,
+      };
+
+  factory ExpenseCategory.fromJson(Map<String, dynamic> json) => ExpenseCategory(
+        id: json['id'] as String,
+        name: (json['name'] as String?) ?? 'Categoria',
+        icon: IconData(
+          (json['iconCode'] as num?)?.toInt() ??
+              Icons.receipt_long_outlined.codePoint,
+          fontFamily: 'MaterialIcons',
+        ),
+        color: Color((json['colorValue'] as num?)?.toInt() ?? 0xFF475569),
+      );
+
+  static ExpenseCategory resolve(
+    dynamic raw, [
+    List<ExpenseCategory>? categories,
+  ]) {
+    final pool = categories ?? defaultCategories;
+    if (raw == null) {
+      return pool.isNotEmpty ? pool.last : defaultCategories.last;
+    }
+    if (raw is Map<String, dynamic>) {
+      final id = raw['id'] as String?;
+      if (id != null) {
+        for (final c in pool) {
+          if (c.id == id) return c;
+        }
+      }
+      return ExpenseCategory.fromJson(raw);
+    }
+    if (raw is String) {
+      for (final c in pool) {
+        if (c.id == raw || c.name == raw) return c;
+      }
+    }
+    return pool.isNotEmpty ? pool.last : defaultCategories.last;
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ExpenseCategory &&
+          runtimeType == other.runtimeType &&
+          id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
+
+  static const List<ExpenseCategory> defaultCategories = [
+    ExpenseCategory(
+      id: 'venue',
+      name: 'Espaço / Local',
+      icon: Icons.location_city_outlined,
+      color: Color(0xFF2563EB),
+    ),
+    ExpenseCategory(
+      id: 'catering',
+      name: 'Buffet e Bebidas',
+      icon: Icons.restaurant_outlined,
+      color: Color(0xFFD97706),
+    ),
+    ExpenseCategory(
+      id: 'decorations',
+      name: 'Decoração',
+      icon: Icons.celebration_outlined,
+      color: Color(0xFF7C3AED),
+    ),
+    ExpenseCategory(
+      id: 'entertainment',
+      name: 'Entretenimento',
+      icon: Icons.music_note_outlined,
+      color: Color(0xFF0D9488),
+    ),
+    ExpenseCategory(
+      id: 'gifts',
+      name: 'Lembrancinhas',
+      icon: Icons.card_giftcard_outlined,
+      color: Color(0xFFDB2777),
+    ),
+    ExpenseCategory(
+      id: 'photography',
+      name: 'Fotografia',
+      icon: Icons.camera_alt_outlined,
+      color: Color(0xFF4F46E5),
+    ),
+    ExpenseCategory(
+      id: 'invitations',
+      name: 'Convites',
+      icon: Icons.mail_outline,
+      color: Color(0xFF0284C7),
+    ),
+    ExpenseCategory(
+      id: 'other',
+      name: 'Outros',
+      icon: Icons.receipt_long_outlined,
+      color: Color(0xFF475569),
+    ),
+  ];
 }
 
 class ExpenseItem {
@@ -72,18 +182,22 @@ class ExpenseItem {
         'title': title,
         'vendor': vendor,
         'amount': amount,
-        'category': category.name,
+        'category': category.toJson(),
         'date': date.toIso8601String(),
         'isPaid': isPaid,
         'notes': notes,
       };
 
-  factory ExpenseItem.fromJson(Map<String, dynamic> json) => ExpenseItem(
+  factory ExpenseItem.fromJson(
+    Map<String, dynamic> json, {
+    List<ExpenseCategory>? categories,
+  }) =>
+      ExpenseItem(
         id: json['id'] as String,
         title: json['title'] as String,
         vendor: (json['vendor'] as String?) ?? '',
         amount: (json['amount'] as num).toDouble(),
-        category: ExpenseCategory.fromName(json['category'] as String?),
+        category: ExpenseCategory.resolve(json['category'], categories),
         date: DateTime.parse(json['date'] as String),
         isPaid: (json['isPaid'] as bool?) ?? false,
         notes: (json['notes'] as String?) ?? '',
@@ -165,7 +279,11 @@ class PersonalEvent {
         'expenses': expenses.map((e) => e.toJson()).toList(),
       };
 
-  factory PersonalEvent.fromJson(Map<String, dynamic> json) => PersonalEvent(
+  factory PersonalEvent.fromJson(
+    Map<String, dynamic> json, {
+    List<ExpenseCategory>? categories,
+  }) =>
+      PersonalEvent(
         id: json['id'] as String,
         name: json['name'] as String,
         eventDate: DateTime.parse(json['eventDate'] as String),
@@ -173,7 +291,10 @@ class PersonalEvent {
         budget: (json['budget'] as num).toDouble(),
         notes: (json['notes'] as String?) ?? '',
         expenses: (json['expenses'] as List<dynamic>? ?? [])
-            .map((e) => ExpenseItem.fromJson(e as Map<String, dynamic>))
+            .map((e) => ExpenseItem.fromJson(
+                  e as Map<String, dynamic>,
+                  categories: categories,
+                ))
             .toList(),
       );
 }

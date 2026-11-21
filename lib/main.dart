@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import 'screens/all_expenses_screen.dart';
+import 'screens/categories_screen.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/event_detail_screen.dart';
 import 'state/ledger_store.dart';
@@ -117,6 +118,8 @@ class _EventLedgerHomeScreenState extends State<EventLedgerHomeScreen> {
         );
       case WorkspaceView.allExpenses:
         return AllExpensesScreen(store: _store);
+      case WorkspaceView.categories:
+        return CategoriesScreen(store: _store);
       case WorkspaceView.eventDetail:
         final event = _store.selectedEvent;
         if (event == null) {
@@ -145,6 +148,8 @@ class _DesktopTopBar extends StatelessWidget {
         return 'Espaço de Trabalho / Painel de Despesas';
       case WorkspaceView.allExpenses:
         return 'Espaço de Trabalho / Todas as Despesas';
+      case WorkspaceView.categories:
+        return 'Espaço de Trabalho / Gestão de Categorias';
       case WorkspaceView.eventDetail:
         return 'Eventos Pessoais / ${store.selectedEvent?.name ?? 'Evento'}';
     }

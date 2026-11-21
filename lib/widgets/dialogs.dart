@@ -40,6 +40,18 @@ class ExpenseFormResult {
   final String notes;
 }
 
+class CategoryFormResult {
+  const CategoryFormResult({
+    required this.name,
+    required this.icon,
+    required this.color,
+  });
+
+  final String name;
+  final IconData icon;
+  final Color color;
+}
+
 Future<EventFormResult?> showEventFormDialog(
   BuildContext context, {
   PersonalEvent? existing,
@@ -53,10 +65,130 @@ Future<EventFormResult?> showEventFormDialog(
 Future<ExpenseFormResult?> showExpenseFormDialog(
   BuildContext context, {
   ExpenseItem? existing,
+  required List<ExpenseCategory> categories,
 }) {
   return showDialog<ExpenseFormResult>(
     context: context,
-    builder: (context) => _ExpenseFormDialog(existing: existing),
+    builder: (context) => _ExpenseFormDialog(
+      existing: existing,
+      categories: categories,
+    ),
+  );
+}
+
+Future<CategoryFormResult?> showCategoryFormDialog(
+  BuildContext context, {
+  ExpenseCategory? existing,
+}) {
+  return showDialog<CategoryFormResult>(
+    context: context,
+    builder: (context) => _CategoryFormDialog(existing: existing),
+  );
+}
+
+Future<ExpenseCategory?> showDeleteCategoryDialog(
+  BuildContext context, {
+  required ExpenseCategory category,
+  required int expenseCount,
+  required List<ExpenseCategory> otherCategories,
+}) {
+  ExpenseCategory selectedReplacement = otherCategories.first;
+
+  return showDialog<ExpenseCategory>(
+    context: context,
+    builder: (context) => StatefulBuilder(
+      builder: (context, setDialogState) => AlertDialog(
+        title: const Text('Excluir Categoria'),
+        content: SizedBox(
+          width: 440,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Tem certeza de que deseja excluir a categoria "${category.name}"?',
+                style: const TextStyle(fontSize: 14),
+              ),
+              if (expenseCount > 0) ...[
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppTheme.unpaidAmber.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: AppTheme.unpaidAmber.withOpacity(0.3),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.warning_amber_rounded,
+                        color: AppTheme.unpaidAmber,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          'Esta categoria está associada a $expenseCount despesa(s). Selecione para qual categoria deseja movê-las:',
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: AppTheme.inkPrimary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 14),
+                DropdownButtonFormField<ExpenseCategory>(
+                  initialValue: selectedReplacement,
+                  decoration: const InputDecoration(
+                    labelText: 'Transferir despesas para',
+                  ),
+                  items: otherCategories.map((c) {
+                    return DropdownMenuItem(
+                      value: c,
+                      child: Row(
+                        children: [
+                          Icon(c.icon, size: 16, color: c.color),
+                          const SizedBox(width: 8),
+                          Text(c.name),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (val) {
+                    if (val != null) {
+                      setDialogState(() => selectedReplacement = val);
+                    }
+                  },
+                ),
+              ] else ...[
+                const SizedBox(height: 12),
+                const Text(
+                  'Nenhuma despesa está utilizando esta categoria no momento.',
+                  style: TextStyle(fontSize: 13, color: AppTheme.inkMuted),
+                ),
+              ],
+            ],
+          ),
+        ),
+        actions: [
+          OutlinedButton(
+            onPressed: () => Navigator.of(context).pop(null),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: AppTheme.overBudgetCrimson,
+            ),
+            onPressed: () => Navigator.of(context).pop(selectedReplacement),
+            child: const Text('Excluir Categoria'),
+          ),
+        ],
+      ),
+    ),
   );
 }
 
@@ -160,51 +292,54 @@ class _EventFormDialogState extends State<_EventFormDialog> {
                       controller: _venueController,
                       decoration: const InputDecoration(
                         labelText: 'Local / Espaço',
-                        hintText: 'ex.: Salão de Festas',
+                        hintText: 'ex.: Salão Buffet Paulista',
                       ),
+                      validator: (value) =>
+                          (value == null || value.trim().isEmpty)
+                              ? 'Informe o local'
+                              : null,
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: InkWell(
-                      onTap: _pickDate,
-                      borderRadius: BorderRadius.circular(8),
-                      child: InputDecorator(
-                        decoration: const InputDecoration(
-                          labelText: 'Data do Evento',
-                          suffixIcon:
-                              Icon(Icons.calendar_today_outlined, size: 16),
-                        ),
-                        child: Text(dateText),
+                    child: TextFormField(
+                      controller: _budgetController,
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                      decoration: const InputDecoration(
+                        labelText: 'Orçamento Previsto (R\$)',
+                        prefixText: 'R\$ ',
                       ),
+                      validator: (value) {
+                        final parsed = _parseCurrencyInput(value ?? '');
+                        if (parsed == null || parsed <= 0) {
+                          return 'Informe um orçamento maior que 0';
+                        }
+                        return null;
+                      },
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 14),
-              TextFormField(
-                controller: _budgetController,
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(
-                  labelText: 'Orçamento Previsto (R\$)',
-                  prefixText: 'R\$ ',
+              InkWell(
+                onTap: _pickDate,
+                borderRadius: BorderRadius.circular(8),
+                child: InputDecorator(
+                  decoration: const InputDecoration(
+                    labelText: 'Data do Evento',
+                    suffixIcon: Icon(Icons.calendar_today_outlined, size: 16),
+                  ),
+                  child: Text(dateText),
                 ),
-                validator: (value) {
-                  final parsed = _parseCurrencyInput(value ?? '');
-                  if (parsed == null || parsed < 0) {
-                    return 'Informe um orçamento válido';
-                  }
-                  return null;
-                },
               ),
               const SizedBox(height: 14),
               TextFormField(
                 controller: _notesController,
                 maxLines: 2,
                 decoration: const InputDecoration(
-                  labelText: 'Observações (Opcional)',
-                  hintText: 'Quantidade de convidados, tema ou lembretes',
+                  labelText: 'Observações do Evento',
+                  hintText: 'ex.: Quantidade estimada de convidados, horários...',
                 ),
               ),
             ],
@@ -237,9 +372,13 @@ class _EventFormDialogState extends State<_EventFormDialog> {
 }
 
 class _ExpenseFormDialog extends StatefulWidget {
-  const _ExpenseFormDialog({this.existing});
+  const _ExpenseFormDialog({
+    this.existing,
+    required this.categories,
+  });
 
   final ExpenseItem? existing;
+  final List<ExpenseCategory> categories;
 
   @override
   State<_ExpenseFormDialog> createState() => _ExpenseFormDialogState();
@@ -269,7 +408,20 @@ class _ExpenseFormDialogState extends State<_ExpenseFormDialog> {
     );
     _notesController =
         TextEditingController(text: widget.existing?.notes ?? '');
-    _category = widget.existing?.category ?? ExpenseCategory.catering;
+
+    if (widget.existing != null) {
+      _category = widget.categories.firstWhere(
+        (c) => c.id == widget.existing!.category.id,
+        orElse: () => widget.categories.isNotEmpty
+            ? widget.categories.first
+            : widget.existing!.category,
+      );
+    } else {
+      _category = widget.categories.isNotEmpty
+          ? widget.categories.first
+          : ExpenseCategory.defaultCategories.first;
+    }
+
     _date = widget.existing?.date ?? DateTime.now();
     _isPaid = widget.existing?.isPaid ?? false;
   }
@@ -326,10 +478,9 @@ class _ExpenseFormDialogState extends State<_ExpenseFormDialog> {
                 children: [
                   Expanded(
                     child: DropdownButtonFormField<ExpenseCategory>(
-                      initialValue: _category,
-                      decoration:
-                          const InputDecoration(labelText: 'Categoria'),
-                      items: ExpenseCategory.values
+                      value: _category,
+                      decoration: const InputDecoration(labelText: 'Categoria'),
+                      items: widget.categories
                           .map(
                             (cat) => DropdownMenuItem(
                               value: cat,
@@ -337,7 +488,7 @@ class _ExpenseFormDialogState extends State<_ExpenseFormDialog> {
                                 children: [
                                   Icon(cat.icon, size: 16, color: cat.color),
                                   const SizedBox(width: 8),
-                                  Text(cat.label),
+                                  Text(cat.name),
                                 ],
                               ),
                             ),
@@ -451,6 +602,278 @@ class _ExpenseFormDialogState extends State<_ExpenseFormDialog> {
             );
           },
           child: Text(isEditing ? 'Salvar Despesa' : 'Adicionar Despesa'),
+        ),
+      ],
+    );
+  }
+}
+
+class _CategoryFormDialog extends StatefulWidget {
+  const _CategoryFormDialog({this.existing});
+
+  final ExpenseCategory? existing;
+
+  @override
+  State<_CategoryFormDialog> createState() => _CategoryFormDialogState();
+}
+
+class _CategoryFormDialogState extends State<_CategoryFormDialog> {
+  final _formKey = GlobalKey<FormState>();
+  late final TextEditingController _nameController;
+  late IconData _selectedIcon;
+  late Color _selectedColor;
+
+  static const List<Color> _paletteColors = [
+    Color(0xFF2563EB), // Blue
+    Color(0xFFD97706), // Amber
+    Color(0xFF7C3AED), // Purple
+    Color(0xFF0D9488), // Teal
+    Color(0xFFDB2777), // Pink
+    Color(0xFF4F46E5), // Indigo
+    Color(0xFF0284C7), // Sky
+    Color(0xFF475569), // Slate
+    Color(0xFF16A34A), // Green
+    Color(0xFFEA580C), // Orange
+    Color(0xFFE11D48), // Rose
+    Color(0xFF0891B2), // Cyan
+  ];
+
+  static const List<IconData> _paletteIcons = [
+    Icons.location_city_outlined,
+    Icons.restaurant_outlined,
+    Icons.celebration_outlined,
+    Icons.music_note_outlined,
+    Icons.card_giftcard_outlined,
+    Icons.camera_alt_outlined,
+    Icons.mail_outline,
+    Icons.receipt_long_outlined,
+    Icons.shopping_bag_outlined,
+    Icons.sports_bar_outlined,
+    Icons.cake_outlined,
+    Icons.flight_outlined,
+    Icons.hotel_outlined,
+    Icons.local_shipping_outlined,
+    Icons.palette_outlined,
+    Icons.diamond_outlined,
+    Icons.brush_outlined,
+    Icons.coffee_outlined,
+    Icons.pets_outlined,
+    Icons.directions_car_outlined,
+    Icons.videocam_outlined,
+    Icons.local_florist_outlined,
+    Icons.movie_outlined,
+    Icons.star_outline,
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.existing?.name ?? '');
+    _selectedIcon = widget.existing?.icon ?? Icons.receipt_long_outlined;
+    _selectedColor = widget.existing?.color ?? const Color(0xFF2563EB);
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isEditing = widget.existing != null;
+
+    return AlertDialog(
+      title: Text(isEditing ? 'Editar Categoria' : 'Nova Categoria de Despesa'),
+      content: SizedBox(
+        width: 500,
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Live preview badge
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: AppTheme.canvas,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: AppTheme.border),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: _selectedColor.withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(
+                          _selectedIcon,
+                          color: _selectedColor,
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Pré-visualização da Categoria',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: AppTheme.inkMuted,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              _nameController.text.trim().isEmpty
+                                  ? 'Nome da Categoria'
+                                  : _nameController.text.trim(),
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: AppTheme.inkPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _nameController,
+                  onChanged: (_) => setState(() {}),
+                  decoration: const InputDecoration(
+                    labelText: 'Nome da Categoria',
+                    hintText: 'ex.: Transporte, Som & Iluminação, Lembrancinhas',
+                  ),
+                  validator: (value) => (value == null || value.trim().isEmpty)
+                      ? 'Informe o nome da categoria'
+                      : null,
+                ),
+                const SizedBox(height: 18),
+                const Text(
+                  'Cor Temática',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.inkSecondary,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: _paletteColors.map((color) {
+                    final isSelected = _selectedColor.value == color.value;
+                    return InkWell(
+                      onTap: () => setState(() => _selectedColor = color),
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          color: color,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: isSelected
+                                ? AppTheme.inkPrimary
+                                : Colors.transparent,
+                            width: 2.5,
+                          ),
+                          boxShadow: isSelected
+                              ? [
+                                  BoxShadow(
+                                    color: color.withOpacity(0.4),
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 2),
+                                  )
+                                ]
+                              : null,
+                        ),
+                        child: isSelected
+                            ? const Icon(
+                                Icons.check,
+                                color: Colors.white,
+                                size: 16,
+                              )
+                            : null,
+                      ),
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 18),
+                const Text(
+                  'Ícone Representativo',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.inkSecondary,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: _paletteIcons.map((icon) {
+                    final isSelected = _selectedIcon.codePoint == icon.codePoint;
+                    return InkWell(
+                      onTap: () => setState(() => _selectedIcon = icon),
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? _selectedColor.withOpacity(0.15)
+                              : AppTheme.canvas,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: isSelected
+                                ? _selectedColor
+                                : AppTheme.border,
+                            width: isSelected ? 2 : 1,
+                          ),
+                        ),
+                        child: Icon(
+                          icon,
+                          size: 20,
+                          color: isSelected
+                              ? _selectedColor
+                              : AppTheme.inkSecondary,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      actions: [
+        OutlinedButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancelar'),
+        ),
+        FilledButton(
+          onPressed: () {
+            if (_formKey.currentState?.validate() != true) return;
+            Navigator.of(context).pop(
+              CategoryFormResult(
+                name: _nameController.text.trim(),
+                icon: _selectedIcon,
+                color: _selectedColor,
+              ),
+            );
+          },
+          child: Text(isEditing ? 'Salvar Categoria' : 'Criar Categoria'),
         ),
       ],
     );
