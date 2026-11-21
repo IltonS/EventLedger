@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../models/event_models.dart';
 import '../state/ledger_store.dart';
 import '../theme/app_theme.dart';
+import '../widgets/category_chart_card.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({
@@ -23,8 +24,6 @@ class DashboardScreen extends StatelessWidget {
     final totalSpent = store.totalSpentAllEvents;
     final totalPaid = store.totalPaidAllEvents;
     final totalUnpaid = store.totalUnpaidAllEvents;
-    final categoryEntries = store.aggregatedCategoryTotals.entries.toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(28),
@@ -240,89 +239,9 @@ class DashboardScreen extends StatelessWidget {
               const SizedBox(width: 20),
               Expanded(
                 flex: 2,
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const Text(
-                          'Gastos por Categoria',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppTheme.inkPrimary,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        if (categoryEntries.isEmpty)
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 24),
-                            child: Text(
-                              'Adicione despesas para visualizar os totais por categoria.',
-                              style: TextStyle(color: AppTheme.inkMuted),
-                            ),
-                          )
-                        else
-                          ...categoryEntries.map((entry) {
-                            final share = totalSpent > 0
-                                ? (entry.value / totalSpent).clamp(0.0, 1.0)
-                                : 0.0;
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 14),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            entry.key.icon,
-                                            size: 16,
-                                            color: entry.key.color,
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Text(
-                                            entry.key.label,
-                                            style: const TextStyle(
-                                              fontSize: 13.5,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Text(
-                                        '${currency.format(entry.value)} · ${(share * 100).toStringAsFixed(0)}%',
-                                        style: AppTheme.tabularNumber.copyWith(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w500,
-                                          color: AppTheme.inkSecondary,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 6),
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(4),
-                                    child: LinearProgressIndicator(
-                                      value: share,
-                                      minHeight: 7,
-                                      backgroundColor: AppTheme.canvas,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        entry.key.color,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }),
-                      ],
-                    ),
-                  ),
+                child: CategoryExpenseChartCard(
+                  categoryTotals: store.aggregatedCategoryTotals,
+                  totalSpent: totalSpent,
                 ),
               ),
             ],

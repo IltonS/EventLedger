@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../models/event_models.dart';
 import '../state/ledger_store.dart';
 import '../theme/app_theme.dart';
+import '../widgets/category_chart_card.dart';
 import '../widgets/dialogs.dart';
 
 class EventDetailScreen extends StatefulWidget {
@@ -242,51 +243,67 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
             ),
           ),
           const SizedBox(height: 20),
-          Card(
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 3,
+                child: Card(
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Row(
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    alignment: WrapAlignment.spaceBetween,
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
-                      SizedBox(
-                        width: 260,
-                        child: TextField(
-                          onChanged: (v) => setState(() => _searchQuery = v),
-                          decoration: const InputDecoration(
-                            hintText: 'Buscar despesa ou fornecedor...',
-                            prefixIcon: Icon(Icons.search, size: 18),
-                            isDense: true,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      SizedBox(
-                        width: 220,
-                        child: DropdownButtonFormField<ExpenseCategory?>(
-                          initialValue: _categoryFilter,
-                          isDense: true,
-                          decoration: const InputDecoration(
-                            labelText: 'Categoria',
-                            isDense: true,
-                          ),
-                          items: [
-                            const DropdownMenuItem<ExpenseCategory?>(
-                              value: null,
-                              child: Text('Todas as Categorias'),
-                            ),
-                            ...widget.store.categories.map(
-                              (cat) => DropdownMenuItem<ExpenseCategory?>(
-                                value: cat,
-                                child: Text(cat.name),
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 220,
+                            child: TextField(
+                              onChanged: (v) =>
+                                  setState(() => _searchQuery = v),
+                              decoration: const InputDecoration(
+                                hintText: 'Buscar despesa ou fornecedor...',
+                                prefixIcon: Icon(Icons.search, size: 18),
+                                isDense: true,
                               ),
                             ),
-                          ],
-                          onChanged: (v) => setState(() => _categoryFilter = v),
-                        ),
+                          ),
+                          SizedBox(
+                            width: 200,
+                            child: DropdownButtonFormField<ExpenseCategory?>(
+                              initialValue: _categoryFilter,
+                              isDense: true,
+                              decoration: const InputDecoration(
+                                labelText: 'Categoria',
+                                isDense: true,
+                              ),
+                              items: [
+                                const DropdownMenuItem<ExpenseCategory?>(
+                                  value: null,
+                                  child: Text('Todas as Categorias'),
+                                ),
+                                ...widget.store.categories.map(
+                                  (cat) => DropdownMenuItem<ExpenseCategory?>(
+                                    value: cat,
+                                    child: Text(cat.name),
+                                  ),
+                                ),
+                              ],
+                              onChanged: (v) =>
+                                  setState(() => _categoryFilter = v),
+                            ),
+                          ),
+                        ],
                       ),
-                      const Spacer(),
                       SegmentedButton<PaymentFilter>(
                         segments: const [
                           ButtonSegment(
@@ -331,7 +348,9 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                       ),
                     )
                   else
-                    DataTable(
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: DataTable(
                       horizontalMargin: 0,
                       columnSpacing: 20,
                       headingTextStyle: const TextStyle(
@@ -456,11 +475,23 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                         );
                       }).toList(),
                     ),
+                  ),
                 ],
               ),
             ),
           ),
-        ],
+        ),
+        const SizedBox(width: 20),
+        Expanded(
+          flex: 2,
+          child: CategoryExpenseChartCard(
+            categoryTotals: event.categoryTotals,
+            totalSpent: event.totalSpent,
+          ),
+        ),
+      ],
+    ),
+  ],
       ),
     );
   }
