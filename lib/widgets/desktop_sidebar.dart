@@ -71,6 +71,16 @@ class DesktopSidebar extends StatelessWidget {
                   selected: store.activeView == WorkspaceView.categories,
                   onTap: store.selectCategories,
                 ),
+                const SizedBox(height: 4),
+                _NavTile(
+                  icon: Icons.archive_outlined,
+                  label: 'Eventos Arquivados',
+                  trailingText: store.archivedEvents.isNotEmpty
+                      ? '${store.archivedEvents.length}'
+                      : null,
+                  selected: store.activeView == WorkspaceView.archivedEvents,
+                  onTap: store.selectArchivedEvents,
+                ),
               ],
             ),
           ),

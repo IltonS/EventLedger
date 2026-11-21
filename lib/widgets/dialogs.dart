@@ -52,6 +52,42 @@ class CategoryFormResult {
   final Color color;
 }
 
+void showAppSnackBar(
+  BuildContext context, {
+  required String message,
+  String? actionLabel,
+  VoidCallback? onAction,
+  Duration duration = const Duration(seconds: 4),
+}) {
+  final messenger = ScaffoldMessenger.of(context);
+  messenger.hideCurrentSnackBar();
+
+  messenger.showSnackBar(
+    SnackBar(
+      content: Text(message),
+      behavior: SnackBarBehavior.floating,
+      width: 480,
+      duration: duration,
+      showCloseIcon: true,
+      action: actionLabel != null && onAction != null
+          ? SnackBarAction(
+              label: actionLabel,
+              onPressed: () {
+                messenger.hideCurrentSnackBar();
+                onAction();
+              },
+            )
+          : null,
+    ),
+  );
+
+  Future.delayed(duration + const Duration(milliseconds: 300), () {
+    if (context.mounted) {
+      messenger.hideCurrentSnackBar();
+    }
+  });
+}
+
 Future<EventFormResult?> showEventFormDialog(
   BuildContext context, {
   PersonalEvent? existing,
@@ -309,7 +345,8 @@ class _EventFormDialogState extends State<_EventFormDialog> {
                       decoration: const InputDecoration(
                         labelText: 'Orçamento Previsto (R\$)',
                         hintText: '0,00',
-                        helperText: 'Deixe R\$ 0,00 para desativar metas de orçamento',
+                        helperText:
+                            'Deixe R\$ 0,00 para desativar metas de orçamento',
                         prefixText: 'R\$ ',
                       ),
                       validator: (value) {
@@ -342,7 +379,8 @@ class _EventFormDialogState extends State<_EventFormDialog> {
                 maxLines: 2,
                 decoration: const InputDecoration(
                   labelText: 'Observações do Evento',
-                  hintText: 'ex.: Quantidade estimada de convidados, horários...',
+                  hintText:
+                      'ex.: Quantidade estimada de convidados, horários...',
                 ),
               ),
             ],
@@ -754,7 +792,8 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
                   onChanged: (_) => setState(() {}),
                   decoration: const InputDecoration(
                     labelText: 'Nome da Categoria',
-                    hintText: 'ex.: Transporte, Som & Iluminação, Lembrancinhas',
+                    hintText:
+                        'ex.: Transporte, Som & Iluminação, Lembrancinhas',
                   ),
                   validator: (value) => (value == null || value.trim().isEmpty)
                       ? 'Informe o nome da categoria'
@@ -825,7 +864,8 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
                   spacing: 8,
                   runSpacing: 8,
                   children: _paletteIcons.map((icon) {
-                    final isSelected = _selectedIcon.codePoint == icon.codePoint;
+                    final isSelected =
+                        _selectedIcon.codePoint == icon.codePoint;
                     return InkWell(
                       onTap: () => setState(() => _selectedIcon = icon),
                       borderRadius: BorderRadius.circular(8),
@@ -838,9 +878,8 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
                               : AppTheme.canvas,
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: isSelected
-                                ? _selectedColor
-                                : AppTheme.border,
+                            color:
+                                isSelected ? _selectedColor : AppTheme.border,
                             width: isSelected ? 2 : 1,
                           ),
                         ),

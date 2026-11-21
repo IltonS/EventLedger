@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../models/event_models.dart';
 import '../state/ledger_store.dart';
 import '../theme/app_theme.dart';
 import '../widgets/category_chart_card.dart';
+import '../widgets/dialogs.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({
@@ -15,6 +15,44 @@ class DashboardScreen extends StatelessWidget {
 
   final LedgerStore store;
   final VoidCallback onCreateEvent;
+
+  Future<void> _handleArchive(
+    BuildContext context,
+    String eventId,
+    String eventName,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Arquivar Evento'),
+        content: Text(
+          'Deseja arquivar o evento "$eventName"? Ele deixará de ser exibido no painel de despesas e nos cálculos do dashboard.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Arquivar'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      await store.archiveEvent(eventId);
+      if (context.mounted) {
+        showAppSnackBar(
+          context,
+          message: 'Evento "$eventName" arquivado com sucesso.',
+          actionLabel: 'Desfazer',
+          onAction: () => store.unarchiveEvent(eventId),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -160,6 +198,7 @@ class DashboardScreen extends StatelessWidget {
                                 label: Text('Pendente'),
                                 numeric: true,
                               ),
+                              const DataColumn(label: Text('Ações')),
                             ],
                             rows: store.events.map((event) {
                               return DataRow(
@@ -191,7 +230,8 @@ class DashboardScreen extends StatelessWidget {
                                       ],
                                     ),
                                   ),
-                                  DataCell(Text(dateFmt.format(event.eventDate))),
+                                  DataCell(
+                                      Text(dateFmt.format(event.eventDate))),
                                   if (store.hasAnyEventWithBudget)
                                     DataCell(
                                       Text(
@@ -224,6 +264,20 @@ class DashboardScreen extends StatelessWidget {
                                         color: event.unpaidAmount > 0
                                             ? AppTheme.unpaidAmber
                                             : AppTheme.inkMuted,
+                                      ),
+                                    ),
+                                  ),
+                                  DataCell(
+                                    IconButton(
+                                      tooltip: 'Arquivar evento',
+                                      icon: const Icon(
+                                        Icons.archive_outlined,
+                                        size: 18,
+                                      ),
+                                      onPressed: () => _handleArchive(
+                                        context,
+                                        event.id,
+                                        event.name,
                                       ),
                                     ),
                                   ),

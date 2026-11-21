@@ -6,12 +6,28 @@ import 'package:path_provider/path_provider.dart';
 
 import '../models/event_models.dart';
 
-enum WorkspaceView { dashboard, allExpenses, categories, eventDetail }
+enum WorkspaceView {
+  dashboard,
+  allExpenses,
+  categories,
+  eventDetail,
+  archivedEvents,
+}
 
 enum PaymentFilter { all, paid, unpaid }
 
 class LedgerStore extends ChangeNotifier {
-  LedgerStore();
+  LedgerStore({
+    List<PersonalEvent>? initialEvents,
+    List<ExpenseCategory>? initialCategories,
+  }) {
+    if (initialEvents != null) {
+      _events = List.from(initialEvents);
+    }
+    if (initialCategories != null) {
+      _categories = List.from(initialCategories);
+    }
+  }
 
   List<PersonalEvent> _events = [];
   List<ExpenseCategory> _categories =
@@ -20,7 +36,11 @@ class LedgerStore extends ChangeNotifier {
   String? _selectedEventId;
   bool _isLoaded = false;
 
-  List<PersonalEvent> get events => List.unmodifiable(_events);
+  List<PersonalEvent> get events =>
+      List.unmodifiable(_events.where((e) => !e.isArchived));
+  List<PersonalEvent> get archivedEvents =>
+      List.unmodifiable(_events.where((e) => e.isArchived));
+  List<PersonalEvent> get allEvents => List.unmodifiable(_events);
   List<ExpenseCategory> get categories => List.unmodifiable(_categories);
   WorkspaceView get activeView => _activeView;
   String? get selectedEventId => _selectedEventId;
@@ -35,25 +55,25 @@ class LedgerStore extends ChangeNotifier {
   }
 
   double get totalBudgetAllEvents =>
-      _events.fold<double>(0, (sum, e) => sum + e.budget);
+      events.fold<double>(0, (sum, e) => sum + e.budget);
 
-  bool get hasAnyEventWithBudget => _events.any((e) => e.budget > 0);
+  bool get hasAnyEventWithBudget => events.any((e) => e.budget > 0);
 
   double get totalSpentAllEvents =>
-      _events.fold<double>(0, (sum, e) => sum + e.totalSpent);
+      events.fold<double>(0, (sum, e) => sum + e.totalSpent);
 
   double get totalPaidAllEvents =>
-      _events.fold<double>(0, (sum, e) => sum + e.paidAmount);
+      events.fold<double>(0, (sum, e) => sum + e.paidAmount);
 
   double get totalUnpaidAllEvents =>
-      _events.fold<double>(0, (sum, e) => sum + e.unpaidAmount);
+      events.fold<double>(0, (sum, e) => sum + e.unpaidAmount);
 
   int get totalExpenseCount =>
-      _events.fold<int>(0, (sum, e) => sum + e.expenses.length);
+      events.fold<int>(0, (sum, e) => sum + e.expenses.length);
 
   Map<ExpenseCategory, double> get aggregatedCategoryTotals {
     final map = <ExpenseCategory, double>{};
-    for (final event in _events) {
+    for (final event in events) {
       for (final entry in event.categoryTotals.entries) {
         map[entry.key] = (map[entry.key] ?? 0) + entry.value;
       }
@@ -105,7 +125,8 @@ class LedgerStore extends ChangeNotifier {
     }
 
     if (_events.isNotEmpty) {
-      _selectedEventId = _events.first.id;
+      final active = _events.where((e) => !e.isArchived).toList();
+      _selectedEventId = active.isNotEmpty ? active.first.id : null;
     }
     _isLoaded = true;
     notifyListeners();
@@ -126,6 +147,11 @@ class LedgerStore extends ChangeNotifier {
     notifyListeners();
   }
 
+  void selectArchivedEvents() {
+    _activeView = WorkspaceView.archivedEvents;
+    notifyListeners();
+  }
+
   void selectEvent(String eventId) {
     _selectedEventId = eventId;
     _activeView = WorkspaceView.eventDetail;
@@ -143,7 +169,7 @@ class LedgerStore extends ChangeNotifier {
 
   int getExpenseCountForCategory(String categoryId) {
     var count = 0;
-    for (final event in _events) {
+    for (final event in events) {
       for (final exp in event.expenses) {
         if (exp.category.id == categoryId) {
           count++;
@@ -155,7 +181,7 @@ class LedgerStore extends ChangeNotifier {
 
   double getTotalSpentForCategory(String categoryId) {
     var total = 0.0;
-    for (final event in _events) {
+    for (final event in events) {
       for (final exp in event.expenses) {
         if (exp.category.id == categoryId) {
           total += exp.amount;
@@ -263,11 +289,40 @@ class LedgerStore extends ChangeNotifier {
     await _persist();
   }
 
+  Future<void> archiveEvent(String eventId) async {
+    _events = [
+      for (final event in _events)
+        if (event.id == eventId) event.copyWith(isArchived: true) else event,
+    ];
+    if (_selectedEventId == eventId) {
+      final active = events;
+      _selectedEventId = active.isNotEmpty ? active.first.id : null;
+      if (_activeView == WorkspaceView.eventDetail) {
+        _activeView = WorkspaceView.dashboard;
+      }
+    }
+    notifyListeners();
+    await _persist();
+  }
+
+  Future<void> unarchiveEvent(String eventId) async {
+    _events = [
+      for (final event in _events)
+        if (event.id == eventId) event.copyWith(isArchived: false) else event,
+    ];
+    _selectedEventId = eventId;
+    notifyListeners();
+    await _persist();
+  }
+
   Future<void> deleteEvent(String eventId) async {
     _events = _events.where((e) => e.id != eventId).toList();
     if (_selectedEventId == eventId) {
-      _selectedEventId = _events.isNotEmpty ? _events.first.id : null;
-      _activeView = WorkspaceView.dashboard;
+      final active = events;
+      _selectedEventId = active.isNotEmpty ? active.first.id : null;
+      if (_activeView == WorkspaceView.eventDetail) {
+        _activeView = WorkspaceView.dashboard;
+      }
     }
     notifyListeners();
     await _persist();

@@ -36,10 +36,12 @@ class ExpenseCategory {
         'colorValue': color.value,
       };
 
-  factory ExpenseCategory.fromJson(Map<String, dynamic> json) => ExpenseCategory(
+  factory ExpenseCategory.fromJson(Map<String, dynamic> json) =>
+      ExpenseCategory(
         id: json['id'] as String,
         name: (json['name'] as String?) ?? 'Categoria',
         icon: IconData(
+          // ignore: non_const_argument_for_const_parameter
           (json['iconCode'] as num?)?.toInt() ??
               Icons.receipt_long_outlined.codePoint,
           fontFamily: 'MaterialIcons',
@@ -213,6 +215,7 @@ class PersonalEvent {
     required this.budget,
     required this.expenses,
     this.notes = '',
+    this.isArchived = false,
   });
 
   final String id;
@@ -222,6 +225,7 @@ class PersonalEvent {
   final double budget;
   final List<ExpenseItem> expenses;
   final String notes;
+  final bool isArchived;
 
   double get totalSpent =>
       expenses.fold<double>(0, (sum, item) => sum + item.amount);
@@ -259,6 +263,7 @@ class PersonalEvent {
     double? budget,
     List<ExpenseItem>? expenses,
     String? notes,
+    bool? isArchived,
   }) {
     return PersonalEvent(
       id: id ?? this.id,
@@ -268,6 +273,7 @@ class PersonalEvent {
       budget: budget ?? this.budget,
       expenses: expenses ?? this.expenses,
       notes: notes ?? this.notes,
+      isArchived: isArchived ?? this.isArchived,
     );
   }
 
@@ -278,6 +284,7 @@ class PersonalEvent {
         'venue': venue,
         'budget': budget,
         'notes': notes,
+        'isArchived': isArchived,
         'expenses': expenses.map((e) => e.toJson()).toList(),
       };
 
@@ -292,6 +299,7 @@ class PersonalEvent {
         venue: (json['venue'] as String?) ?? '',
         budget: (json['budget'] as num).toDouble(),
         notes: (json['notes'] as String?) ?? '',
+        isArchived: (json['isArchived'] as bool?) ?? false,
         expenses: (json['expenses'] as List<dynamic>? ?? [])
             .map((e) => ExpenseItem.fromJson(
                   e as Map<String, dynamic>,

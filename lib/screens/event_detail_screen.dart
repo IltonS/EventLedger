@@ -96,6 +96,108 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
     );
   }
 
+  Future<void> _handleArchiveEvent() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Arquivar Evento'),
+        content: Text(
+          'Deseja arquivar o evento "${widget.event.name}"? '
+          'Ele não será mais exibido no painel de despesas, mas continuará salvo e poderá ser gerenciado na tela de Eventos Arquivados.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Arquivar'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && mounted) {
+      await widget.store.archiveEvent(widget.event.id);
+      if (mounted) {
+        showAppSnackBar(
+          context,
+          message: 'Evento "${widget.event.name}" arquivado com sucesso.',
+          actionLabel: 'Desfazer',
+          onAction: () => widget.store.unarchiveEvent(widget.event.id),
+        );
+      }
+    }
+  }
+
+  Future<void> _handleUnarchiveEvent() async {
+    await widget.store.unarchiveEvent(widget.event.id);
+    if (mounted) {
+      showAppSnackBar(
+        context,
+        message: 'Evento "${widget.event.name}" desarquivado com sucesso.',
+      );
+    }
+  }
+
+  Future<void> _handleDeleteEvent() async {
+    final isArchived = widget.event.isArchived;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(
+          isArchived ? 'Excluir evento definitivamente?' : 'Excluir evento?',
+        ),
+        content: SizedBox(
+          width: 420,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Tem certeza que deseja excluir o evento "${widget.event.name}"?',
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                'Esta ação é permanente e removerá todas as ${widget.event.expenses.length} despesas cadastradas neste evento.',
+                style: const TextStyle(color: AppTheme.inkSecondary),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: AppTheme.overBudgetCrimson,
+            ),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(
+              isArchived ? 'Excluir Definitivamente' : 'Excluir',
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && mounted) {
+      await widget.store.deleteEvent(widget.event.id);
+      if (mounted) {
+        showAppSnackBar(
+          context,
+          message: isArchived
+              ? 'Evento "${widget.event.name}" excluído definitivamente.'
+              : 'Evento "${widget.event.name}" excluído.',
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final currency = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$');
@@ -108,6 +210,44 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          if (event.isArchived)
+            Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: AppTheme.unpaidAmber.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: AppTheme.unpaidAmber.withValues(alpha: 0.35),
+                ),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.archive_outlined,
+                    color: AppTheme.unpaidAmber,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: Text(
+                      'Este evento está arquivado. Ele não aparece no painel de despesas e suas métricas não são contabilizadas nos totais gerais.',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: AppTheme.inkPrimary,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  FilledButton.tonalIcon(
+                    onPressed: _handleUnarchiveEvent,
+                    icon: const Icon(Icons.unarchive_outlined, size: 16),
+                    label: const Text('Desarquivar Evento'),
+                  ),
+                ],
+              ),
+            ),
           Card(
             child: Padding(
               padding: const EdgeInsets.all(20),
@@ -144,20 +284,47 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                           ],
                         ),
                       ),
-                      OutlinedButton.icon(
-                        onPressed: _editEvent,
-                        icon: const Icon(Icons.edit_outlined, size: 16),
-                        label: const Text('Editar Evento'),
-                      ),
-                      const SizedBox(width: 10),
-                      OutlinedButton.icon(
-                        onPressed: () => widget.store.deleteEvent(event.id),
-                        icon: const Icon(Icons.delete_outline, size: 16),
-                        label: const Text('Excluir'),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: AppTheme.overBudgetCrimson,
+                      if (event.isArchived) ...[
+                        OutlinedButton.icon(
+                          onPressed: _handleUnarchiveEvent,
+                          icon: const Icon(Icons.unarchive_outlined, size: 16),
+                          label: const Text('Desarquivar'),
                         ),
-                      ),
+                        const SizedBox(width: 10),
+                        OutlinedButton.icon(
+                          onPressed: _handleDeleteEvent,
+                          icon: const Icon(Icons.delete_forever_outlined,
+                              size: 16),
+                          label: const Text('Excluir Definitivamente'),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: AppTheme.overBudgetCrimson,
+                            side: const BorderSide(
+                              color: AppTheme.overBudgetCrimson,
+                            ),
+                          ),
+                        ),
+                      ] else ...[
+                        OutlinedButton.icon(
+                          onPressed: _editEvent,
+                          icon: const Icon(Icons.edit_outlined, size: 16),
+                          label: const Text('Editar Evento'),
+                        ),
+                        const SizedBox(width: 10),
+                        OutlinedButton.icon(
+                          onPressed: _handleArchiveEvent,
+                          icon: const Icon(Icons.archive_outlined, size: 16),
+                          label: const Text('Arquivar'),
+                        ),
+                        const SizedBox(width: 10),
+                        OutlinedButton.icon(
+                          onPressed: _handleDeleteEvent,
+                          icon: const Icon(Icons.delete_outline, size: 16),
+                          label: const Text('Excluir'),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: AppTheme.overBudgetCrimson,
+                          ),
+                        ),
+                      ],
                       const SizedBox(width: 10),
                       FilledButton.icon(
                         onPressed: _addExpense,
@@ -181,9 +348,10 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                       _MetricPair(
                         label: 'Total Gasto',
                         value: currency.format(event.totalSpent),
-                        color: event.hasBudget && event.totalSpent > event.budget
-                            ? AppTheme.overBudgetCrimson
-                            : AppTheme.inkPrimary,
+                        color:
+                            event.hasBudget && event.totalSpent > event.budget
+                                ? AppTheme.overBudgetCrimson
+                                : AppTheme.inkPrimary,
                       ),
                       const SizedBox(width: 36),
                       _MetricPair(
@@ -222,7 +390,8 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(4),
                                 child: LinearProgressIndicator(
-                                  value: event.budgetUtilization.clamp(0.0, 1.0),
+                                  value:
+                                      event.budgetUtilization.clamp(0.0, 1.0),
                                   minHeight: 7,
                                   backgroundColor: AppTheme.canvas,
                                   valueColor: AlwaysStoppedAnimation<Color>(
@@ -249,249 +418,256 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
               Expanded(
                 flex: 3,
                 child: Card(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
-                    alignment: WrapAlignment.spaceBetween,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      Wrap(
-                        spacing: 12,
-                        runSpacing: 12,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: 220,
-                            child: TextField(
-                              onChanged: (v) =>
-                                  setState(() => _searchQuery = v),
-                              decoration: const InputDecoration(
-                                hintText: 'Buscar despesa ou fornecedor...',
-                                prefixIcon: Icon(Icons.search, size: 18),
-                                isDense: true,
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 200,
-                            child: DropdownButtonFormField<ExpenseCategory?>(
-                              initialValue: _categoryFilter,
-                              isDense: true,
-                              decoration: const InputDecoration(
-                                labelText: 'Categoria',
-                                isDense: true,
-                              ),
-                              items: [
-                                const DropdownMenuItem<ExpenseCategory?>(
-                                  value: null,
-                                  child: Text('Todas as Categorias'),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Wrap(
+                          spacing: 12,
+                          runSpacing: 12,
+                          alignment: WrapAlignment.spaceBetween,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            Wrap(
+                              spacing: 12,
+                              runSpacing: 12,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: [
+                                SizedBox(
+                                  width: 220,
+                                  child: TextField(
+                                    onChanged: (v) =>
+                                        setState(() => _searchQuery = v),
+                                    decoration: const InputDecoration(
+                                      hintText:
+                                          'Buscar despesa ou fornecedor...',
+                                      prefixIcon: Icon(Icons.search, size: 18),
+                                      isDense: true,
+                                    ),
+                                  ),
                                 ),
-                                ...widget.store.categories.map(
-                                  (cat) => DropdownMenuItem<ExpenseCategory?>(
-                                    value: cat,
-                                    child: Text(cat.name),
+                                SizedBox(
+                                  width: 200,
+                                  child:
+                                      DropdownButtonFormField<ExpenseCategory?>(
+                                    initialValue: _categoryFilter,
+                                    isDense: true,
+                                    decoration: const InputDecoration(
+                                      labelText: 'Categoria',
+                                      isDense: true,
+                                    ),
+                                    items: [
+                                      const DropdownMenuItem<ExpenseCategory?>(
+                                        value: null,
+                                        child: Text('Todas as Categorias'),
+                                      ),
+                                      ...widget.store.categories.map(
+                                        (cat) =>
+                                            DropdownMenuItem<ExpenseCategory?>(
+                                          value: cat,
+                                          child: Text(cat.name),
+                                        ),
+                                      ),
+                                    ],
+                                    onChanged: (v) =>
+                                        setState(() => _categoryFilter = v),
                                   ),
                                 ),
                               ],
-                              onChanged: (v) =>
-                                  setState(() => _categoryFilter = v),
                             ),
-                          ),
-                        ],
-                      ),
-                      SegmentedButton<PaymentFilter>(
-                        segments: const [
-                          ButtonSegment(
-                            value: PaymentFilter.all,
-                            label: Text('Todas'),
-                          ),
-                          ButtonSegment(
-                            value: PaymentFilter.paid,
-                            label: Text('Pagas'),
-                          ),
-                          ButtonSegment(
-                            value: PaymentFilter.unpaid,
-                            label: Text('Pendentes'),
-                          ),
-                        ],
-                        selected: {_paymentFilter},
-                        onSelectionChanged: (values) {
-                          setState(() => _paymentFilter = values.first);
-                        },
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  if (filtered.isEmpty)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 36),
-                      child: Center(
-                        child: Column(
-                          children: [
-                            const Text(
-                              'Nenhuma despesa encontrada para este evento.',
-                              style: TextStyle(color: AppTheme.inkMuted),
-                            ),
-                            const SizedBox(height: 12),
-                            FilledButton.icon(
-                              onPressed: _addExpense,
-                              icon: const Icon(Icons.add, size: 18),
-                              label: const Text('Adicionar Primeira Despesa'),
+                            SegmentedButton<PaymentFilter>(
+                              segments: const [
+                                ButtonSegment(
+                                  value: PaymentFilter.all,
+                                  label: Text('Todas'),
+                                ),
+                                ButtonSegment(
+                                  value: PaymentFilter.paid,
+                                  label: Text('Pagas'),
+                                ),
+                                ButtonSegment(
+                                  value: PaymentFilter.unpaid,
+                                  label: Text('Pendentes'),
+                                ),
+                              ],
+                              selected: {_paymentFilter},
+                              onSelectionChanged: (values) {
+                                setState(() => _paymentFilter = values.first);
+                              },
                             ),
                           ],
                         ),
-                      ),
-                    )
-                  else
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: DataTable(
-                      horizontalMargin: 0,
-                      columnSpacing: 20,
-                      headingTextStyle: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: AppTheme.inkMuted,
-                      ),
-                      columns: const [
-                        DataColumn(label: Text('Situação')),
-                        DataColumn(label: Text('Despesa')),
-                        DataColumn(label: Text('Categoria')),
-                        DataColumn(label: Text('Data')),
-                        DataColumn(label: Text('Valor'), numeric: true),
-                        DataColumn(label: Text('Ações')),
-                      ],
-                      rows: filtered.map((item) {
-                        return DataRow(
-                          cells: [
-                            DataCell(
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
+                        const SizedBox(height: 16),
+                        if (filtered.isEmpty)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 36),
+                            child: Center(
+                              child: Column(
                                 children: [
-                                  Checkbox(
-                                    value: item.isPaid,
-                                    activeColor: AppTheme.paidGreen,
-                                    onChanged: (_) =>
-                                        widget.store.toggleExpensePaid(
-                                      eventId: event.id,
-                                      expenseId: item.id,
-                                    ),
+                                  const Text(
+                                    'Nenhuma despesa encontrada para este evento.',
+                                    style: TextStyle(color: AppTheme.inkMuted),
                                   ),
-                                  Text(
-                                    item.isPaid ? 'Pago' : 'Pendente',
-                                    style: TextStyle(
-                                      fontSize: 12.5,
-                                      fontWeight: FontWeight.w600,
-                                      color: item.isPaid
-                                          ? AppTheme.paidGreen
-                                          : AppTheme.unpaidAmber,
-                                    ),
+                                  const SizedBox(height: 12),
+                                  FilledButton.icon(
+                                    onPressed: _addExpense,
+                                    icon: const Icon(Icons.add, size: 18),
+                                    label: const Text(
+                                        'Adicionar Primeira Despesa'),
                                   ),
                                 ],
                               ),
                             ),
-                            DataCell(
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    item.title,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      color: AppTheme.inkPrimary,
-                                      decoration: item.isPaid
-                                          ? TextDecoration.lineThrough
-                                          : null,
-                                    ),
-                                  ),
-                                  if (item.vendor.isNotEmpty)
-                                    Text(
-                                      item.vendor,
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        color: AppTheme.inkMuted,
+                          )
+                        else
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: DataTable(
+                              horizontalMargin: 0,
+                              columnSpacing: 20,
+                              headingTextStyle: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: AppTheme.inkMuted,
+                              ),
+                              columns: const [
+                                DataColumn(label: Text('Situação')),
+                                DataColumn(label: Text('Despesa')),
+                                DataColumn(label: Text('Categoria')),
+                                DataColumn(label: Text('Data')),
+                                DataColumn(label: Text('Valor'), numeric: true),
+                                DataColumn(label: Text('Ações')),
+                              ],
+                              rows: filtered.map((item) {
+                                return DataRow(
+                                  cells: [
+                                    DataCell(
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Checkbox(
+                                            value: item.isPaid,
+                                            activeColor: AppTheme.paidGreen,
+                                            onChanged: (_) =>
+                                                widget.store.toggleExpensePaid(
+                                              eventId: event.id,
+                                              expenseId: item.id,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.isPaid ? 'Pago' : 'Pendente',
+                                            style: TextStyle(
+                                              fontSize: 12.5,
+                                              fontWeight: FontWeight.w600,
+                                              color: item.isPaid
+                                                  ? AppTheme.paidGreen
+                                                  : AppTheme.unpaidAmber,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                ],
-                              ),
-                            ),
-                            DataCell(
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    item.category.icon,
-                                    size: 16,
-                                    color: item.category.color,
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Text(item.category.label),
-                                ],
-                              ),
-                            ),
-                            DataCell(Text(dateFmt.format(item.date))),
-                            DataCell(
-                              Text(
-                                currency.format(item.amount),
-                                style: AppTheme.tabularNumber.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                            DataCell(
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    tooltip: 'Editar Despesa',
-                                    icon: const Icon(
-                                      Icons.edit_outlined,
-                                      size: 18,
+                                    DataCell(
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            item.title,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              color: AppTheme.inkPrimary,
+                                              decoration: item.isPaid
+                                                  ? TextDecoration.lineThrough
+                                                  : null,
+                                            ),
+                                          ),
+                                          if (item.vendor.isNotEmpty)
+                                            Text(
+                                              item.vendor,
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                                color: AppTheme.inkMuted,
+                                              ),
+                                            ),
+                                        ],
+                                      ),
                                     ),
-                                    onPressed: () => _editExpense(item),
-                                  ),
-                                  IconButton(
-                                    tooltip: 'Excluir Despesa',
-                                    icon: const Icon(
-                                      Icons.delete_outline,
-                                      size: 18,
+                                    DataCell(
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            item.category.icon,
+                                            size: 16,
+                                            color: item.category.color,
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Text(item.category.label),
+                                        ],
+                                      ),
                                     ),
-                                    color: AppTheme.overBudgetCrimson,
-                                    onPressed: () => widget.store.deleteExpense(
-                                      eventId: event.id,
-                                      expenseId: item.id,
+                                    DataCell(Text(dateFmt.format(item.date))),
+                                    DataCell(
+                                      Text(
+                                        currency.format(item.amount),
+                                        style: AppTheme.tabularNumber.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
+                                    DataCell(
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          IconButton(
+                                            tooltip: 'Editar Despesa',
+                                            icon: const Icon(
+                                              Icons.edit_outlined,
+                                              size: 18,
+                                            ),
+                                            onPressed: () => _editExpense(item),
+                                          ),
+                                          IconButton(
+                                            tooltip: 'Excluir Despesa',
+                                            icon: const Icon(
+                                              Icons.delete_outline,
+                                              size: 18,
+                                            ),
+                                            color: AppTheme.overBudgetCrimson,
+                                            onPressed: () =>
+                                                widget.store.deleteExpense(
+                                              eventId: event.id,
+                                              expenseId: item.id,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }).toList(),
                             ),
-                          ],
-                        );
-                      }).toList(),
+                          ),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ),
-            ),
+              const SizedBox(width: 20),
+              Expanded(
+                flex: 2,
+                child: CategoryExpenseChartCard(
+                  categoryTotals: event.categoryTotals,
+                  totalSpent: event.totalSpent,
+                ),
+              ),
+            ],
           ),
-        ),
-        const SizedBox(width: 20),
-        Expanded(
-          flex: 2,
-          child: CategoryExpenseChartCard(
-            categoryTotals: event.categoryTotals,
-            totalSpent: event.totalSpent,
-          ),
-        ),
-      ],
-    ),
-  ],
+        ],
       ),
     );
   }

@@ -48,6 +48,9 @@ migrate_working_dir/
 # Symbolication related
 app.*.symbols
 
+# Local data files
+event_ledger_data.json
+
 # Obfuscation related
 app.*.map.json
 

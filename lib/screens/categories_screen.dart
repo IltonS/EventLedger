@@ -41,11 +41,9 @@ class CategoriesScreen extends StatelessWidget {
     ExpenseCategory category,
   ) async {
     if (store.categories.length <= 1) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Não é possível excluir a única categoria restante.'),
-          behavior: SnackBarBehavior.floating,
-        ),
+      showAppSnackBar(
+        context,
+        message: 'Não é possível excluir a única categoria restante.',
       );
       return;
     }
