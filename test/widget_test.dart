@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -29,6 +31,7 @@ Widget _buildTestApp({required LedgerStore store, required Widget child}) {
 }
 
 void main() {
+  importMergeTests();
   setUpAll(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
     await initializeDateFormatting('pt_BR');
@@ -335,6 +338,45 @@ void main() {
 
       // SnackBar should be dismissed
       expect(find.text('Mensagem de teste'), findsNothing);
+    });
+  });
+}
+
+void importMergeTests() {
+  group('LedgerStore import', () {
+    PersonalEvent ev(String id, String name, double budget) => PersonalEvent(
+          id: id,
+          name: name,
+          eventDate: DateTime(2026, 1, 1),
+          venue: '',
+          budget: budget,
+          notes: '',
+          expenses: const [],
+        );
+
+    test('adds new events and replaces same-name ones', () async {
+      final store = LedgerStore(
+        initialEvents: [ev('a', 'Festa', 100), ev('b', 'Jantar', 50)],
+      );
+      final raw = jsonEncode({
+        'categories': <dynamic>[],
+        'events': [
+          ev('x', ' festa ', 999).toJson(),
+          ev('y', 'Churrasco', 10).toJson(),
+        ],
+      });
+      final result = await store.importFromJson(raw);
+      expect(result.added, 1);
+      expect(result.replaced, 1);
+      expect(store.allEvents.length, 3);
+      final festa = store.allEvents.firstWhere((e) => e.id == 'a');
+      expect(festa.budget, 999);
+    });
+
+    test('rejects invalid files', () async {
+      final store = LedgerStore();
+      expect(() => store.importFromJson('nope'), throwsFormatException);
+      expect(() => store.importFromJson('{"a":1}'), throwsFormatException);
     });
   });
 }

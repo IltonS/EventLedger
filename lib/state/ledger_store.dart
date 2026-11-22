@@ -16,6 +16,19 @@ enum WorkspaceView {
 
 enum PaymentFilter { all, paid, unpaid }
 
+/// Summary of a data import/merge operation.
+class ImportResult {
+  const ImportResult({
+    required this.added,
+    required this.replaced,
+    required this.categoriesAdded,
+  });
+
+  final int added;
+  final int replaced;
+  final int categoriesAdded;
+}
+
 class LedgerStore extends ChangeNotifier {
   LedgerStore({
     List<PersonalEvent>? initialEvents,
@@ -421,6 +434,108 @@ class LedgerStore extends ChangeNotifier {
     await _persist();
   }
 
+  /// Exports the current data as JSON to [path].
+  Future<void> exportToFile(String path) async {
+    await File(path).writeAsString(_encodeData());
+  }
+
+  /// Reads a JSON file from [path] and merges it into the current data.
+  Future<ImportResult> importFromFile(String path) async {
+    final raw = await File(path).readAsString();
+    return importFromJson(raw);
+  }
+
+  /// Merges exported JSON into the current data.
+  ///
+  /// Events whose name (trimmed, case-insensitive) already exists are replaced
+  /// by the imported ones (keeping the local event id); other events are added.
+  /// Categories missing locally (by id) are added. Throws [FormatException]
+  /// if [raw] is not a valid EventLedger file.
+  Future<ImportResult> importFromJson(String raw) async {
+    final dynamic decoded;
+    try {
+      decoded = jsonDecode(raw);
+    } on FormatException {
+      throw const FormatException('Arquivo JSON inválido.');
+    }
+
+    final List<dynamic> rawEvents;
+    List<dynamic> rawCategories = const [];
+    if (decoded is Map<String, dynamic> && decoded['events'] is List) {
+      rawEvents = decoded['events'] as List<dynamic>;
+      if (decoded['categories'] is List) {
+        rawCategories = decoded['categories'] as List<dynamic>;
+      }
+    } else if (decoded is List<dynamic>) {
+      rawEvents = decoded;
+    } else {
+      throw const FormatException('Formato de arquivo não reconhecido.');
+    }
+
+    final List<ExpenseCategory> importedCategories;
+    final List<PersonalEvent> importedEvents;
+    final mergedCategories = List<ExpenseCategory>.from(_categories);
+    var categoriesAdded = 0;
+    try {
+      importedCategories = rawCategories
+          .map((c) => ExpenseCategory.fromJson(c as Map<String, dynamic>))
+          .toList();
+      for (final cat in importedCategories) {
+        if (!mergedCategories.any((c) => c.id == cat.id)) {
+          mergedCategories.add(cat);
+          categoriesAdded++;
+        }
+      }
+      importedEvents = rawEvents
+          .map((e) => PersonalEvent.fromJson(
+                e as Map<String, dynamic>,
+                categories: mergedCategories,
+              ))
+          .toList();
+    } on Object {
+      throw const FormatException('Formato de arquivo não reconhecido.');
+    }
+
+    String key(String name) => name.trim().toLowerCase();
+    final events = List<PersonalEvent>.from(_events);
+    var added = 0;
+    var replaced = 0;
+    for (final incoming in importedEvents) {
+      final index = events.indexWhere((e) => key(e.name) == key(incoming.name));
+      if (index >= 0) {
+        events[index] = incoming.copyWith(id: events[index].id);
+        replaced++;
+      } else {
+        // Avoid id clashes with a differently named local event.
+        final clash = events.any((e) => e.id == incoming.id);
+        events.insert(
+          0,
+          clash
+              ? incoming.copyWith(
+                  id: 'evt_${DateTime.now().microsecondsSinceEpoch}_$added',
+                )
+              : incoming,
+        );
+        added++;
+      }
+    }
+
+    _categories = mergedCategories;
+    _events = events;
+    notifyListeners();
+    await _persist();
+    return ImportResult(
+      added: added,
+      replaced: replaced,
+      categoriesAdded: categoriesAdded,
+    );
+  }
+
+  String _encodeData() => jsonEncode({
+        'categories': _categories.map((c) => c.toJson()).toList(),
+        'events': _events.map((e) => e.toJson()).toList(),
+      });
+
   Future<File> _storageFile() async {
     final dir = await getApplicationSupportDirectory();
     if (!await dir.exists()) {
@@ -434,11 +549,7 @@ class LedgerStore extends ChangeNotifier {
   Future<void> _persist() async {
     try {
       final file = await _storageFile();
-      final data = {
-        'categories': _categories.map((c) => c.toJson()).toList(),
-        'events': _events.map((e) => e.toJson()).toList(),
-      };
-      await file.writeAsString(jsonEncode(data));
+      await file.writeAsString(_encodeData());
     } catch (_) {
       // Ignora erros de gravação em plataformas sem suporte local.
     }

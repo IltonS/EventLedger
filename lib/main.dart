@@ -1,3 +1,4 @@
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -73,6 +74,51 @@ class _EventLedgerHomeScreenState extends State<EventLedgerHomeScreen> {
     );
   }
 
+  void _showMessage(BuildContext context, String message) =>
+      showAppSnackBar(context, message: message);
+
+  Future<void> _handleExport(BuildContext context) async {
+    const jsonType = XTypeGroup(label: 'JSON', extensions: ['json']);
+    try {
+      final location = await getSaveLocation(
+        suggestedName: 'event_ledger_data.json',
+        acceptedTypeGroups: const [jsonType],
+        confirmButtonText: 'Exportar',
+      );
+      if (location == null) return;
+      await _store.exportToFile(location.path);
+      if (!context.mounted) return;
+      _showMessage(context, 'Dados exportados com sucesso.');
+    } catch (e) {
+      if (!context.mounted) return;
+      _showMessage(context, 'Não foi possível exportar os dados.');
+    }
+  }
+
+  Future<void> _handleImport(BuildContext context) async {
+    const jsonType = XTypeGroup(label: 'JSON', extensions: ['json']);
+    try {
+      final file = await openFile(
+        acceptedTypeGroups: const [jsonType],
+        confirmButtonText: 'Importar',
+      );
+      if (file == null) return;
+      final result = await _store.importFromJson(await file.readAsString());
+      if (!context.mounted) return;
+      _showMessage(
+        context,
+        'Importação concluída: ${result.added} adicionado(s), '
+        '${result.replaced} substituído(s).',
+      );
+    } on FormatException catch (e) {
+      if (!context.mounted) return;
+      _showMessage(context, e.message);
+    } catch (_) {
+      if (!context.mounted) return;
+      _showMessage(context, 'Não foi possível importar o arquivo.');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
@@ -98,6 +144,8 @@ class _EventLedgerHomeScreenState extends State<EventLedgerHomeScreen> {
                     _DesktopTopBar(
                       store: _store,
                       onCreateEvent: () => _handleCreateEvent(context),
+                      onImport: () => _handleImport(context),
+                      onExport: () => _handleExport(context),
                     ),
                     Expanded(child: _buildActiveScreen(context)),
                   ],
@@ -140,10 +188,14 @@ class _DesktopTopBar extends StatelessWidget {
   const _DesktopTopBar({
     required this.store,
     required this.onCreateEvent,
+    required this.onImport,
+    required this.onExport,
   });
 
   final LedgerStore store;
   final VoidCallback onCreateEvent;
+  final VoidCallback onImport;
+  final VoidCallback onExport;
 
   String get _breadcrumb {
     switch (store.activeView) {
@@ -180,6 +232,18 @@ class _DesktopTopBar extends StatelessWidget {
             ),
           ),
           const Spacer(),
+          OutlinedButton.icon(
+            onPressed: onImport,
+            icon: const Icon(Icons.file_upload_outlined, size: 18),
+            label: const Text('Importar'),
+          ),
+          const SizedBox(width: 8),
+          OutlinedButton.icon(
+            onPressed: onExport,
+            icon: const Icon(Icons.file_download_outlined, size: 18),
+            label: const Text('Exportar'),
+          ),
+          const SizedBox(width: 12),
           FilledButton.icon(
             onPressed: onCreateEvent,
             icon: const Icon(Icons.add, size: 18),
