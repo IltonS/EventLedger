@@ -114,7 +114,7 @@ class _ArchivedEventsScreenState extends State<ArchivedEventsScreen> {
     );
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(28),
+      padding: const EdgeInsets.all(32),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

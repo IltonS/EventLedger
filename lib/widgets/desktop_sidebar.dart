@@ -19,7 +19,7 @@ class DesktopSidebar extends StatelessWidget {
     final currency = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$');
 
     return Container(
-      width: 264,
+      width: 260,
       decoration: const BoxDecoration(
         color: AppTheme.surface,
         border: Border(right: BorderSide(color: AppTheme.border)),
@@ -27,15 +27,33 @@ class DesktopSidebar extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Padding(
-            padding: EdgeInsets.fromLTRB(20, 20, 20, 16),
+          Container(
+            height: 64,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            decoration: const BoxDecoration(
+              border: Border(bottom: BorderSide(color: AppTheme.border)),
+            ),
             child: Row(
               children: [
-                Text(
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: AppTheme.accent,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(
+                    Icons.account_balance_wallet_outlined,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                const Text(
                   'EventLedger',
                   style: TextStyle(
                     fontSize: 18,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w800,
                     color: AppTheme.inkPrimary,
                     letterSpacing: -0.3,
                   ),
@@ -43,7 +61,6 @@ class DesktopSidebar extends StatelessWidget {
               ],
             ),
           ),
-          const Divider(height: 1),
           Padding(
             padding: const EdgeInsets.fromLTRB(12, 16, 12, 8),
             child: Column(
@@ -90,10 +107,11 @@ class DesktopSidebar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  'Eventos Pessoais',
+                  'EVENTOS PESSOAIS',
                   style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.6,
                     color: AppTheme.inkMuted,
                   ),
                 ),
@@ -130,7 +148,7 @@ class DesktopSidebar extends StatelessWidget {
                               store.selectedEventId == event.id;
                       return Material(
                         color: isSelected
-                            ? AppTheme.accent.withValues(alpha: 0.08)
+                            ? AppTheme.paidBadgeBg.withValues(alpha: 0.6)
                             : Colors.transparent,
                         borderRadius: BorderRadius.circular(8),
                         child: InkWell(
@@ -149,12 +167,12 @@ class DesktopSidebar extends StatelessWidget {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                    fontSize: 13.5,
+                                    fontSize: 14,
                                     fontWeight: isSelected
-                                        ? FontWeight.w600
-                                        : FontWeight.w500,
+                                        ? FontWeight.w700
+                                        : FontWeight.w600,
                                     color: isSelected
-                                        ? AppTheme.accent
+                                        ? AppTheme.paidBadgeFg
                                         : AppTheme.inkPrimary,
                                   ),
                                 ),
@@ -162,7 +180,7 @@ class DesktopSidebar extends StatelessWidget {
                                 Text(
                                   '${currency.format(event.totalSpent)} · ${event.expenses.length} ${event.expenses.length == 1 ? 'item' : 'itens'}',
                                   style: AppTheme.tabularNumber.copyWith(
-                                    fontSize: 12,
+                                    fontSize: 11.5,
                                     color: AppTheme.inkMuted,
                                   ),
                                 ),
@@ -208,7 +226,7 @@ class _NavTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: selected
-          ? AppTheme.accent.withValues(alpha: 0.08)
+          ? AppTheme.paidBadgeBg.withValues(alpha: 0.6)
           : Colors.transparent,
       borderRadius: BorderRadius.circular(8),
       child: InkWell(
@@ -221,16 +239,17 @@ class _NavTile extends StatelessWidget {
               Icon(
                 icon,
                 size: 18,
-                color: selected ? AppTheme.accent : AppTheme.inkSecondary,
+                color: selected ? AppTheme.accent : AppTheme.iconNeutral,
               ),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
                   label,
                   style: TextStyle(
-                    fontSize: 13.5,
-                    fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-                    color: selected ? AppTheme.accent : AppTheme.inkPrimary,
+                    fontSize: 14,
+                    fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
+                    color:
+                        selected ? AppTheme.paidBadgeFg : AppTheme.inkSecondary,
                   ),
                 ),
               ),

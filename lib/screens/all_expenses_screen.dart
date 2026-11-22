@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../models/event_models.dart';
 import '../state/ledger_store.dart';
 import '../theme/app_theme.dart';
+import '../widgets/app_widgets.dart';
 
 class AllExpensesScreen extends StatefulWidget {
   const AllExpensesScreen({super.key, required this.store});
@@ -36,7 +37,7 @@ class _AllExpensesScreenState extends State<AllExpensesScreen> {
     }
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(28),
+      padding: const EdgeInsets.all(32),
       child: Card(
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -48,7 +49,7 @@ class _AllExpensesScreenState extends State<AllExpensesScreen> {
                   const Text(
                     'Todas as Despesas dos Eventos',
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 20,
                       fontWeight: FontWeight.w600,
                       color: AppTheme.inkPrimary,
                     ),
@@ -79,25 +80,14 @@ class _AllExpensesScreenState extends State<AllExpensesScreen> {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  SegmentedButton<PaymentFilter>(
-                    segments: const [
-                      ButtonSegment(
-                        value: PaymentFilter.all,
-                        label: Text('Todas'),
-                      ),
-                      ButtonSegment(
-                        value: PaymentFilter.paid,
-                        label: Text('Pagas'),
-                      ),
-                      ButtonSegment(
-                        value: PaymentFilter.unpaid,
-                        label: Text('Pendentes'),
-                      ),
-                    ],
-                    selected: {_paymentFilter},
-                    onSelectionChanged: (values) {
-                      setState(() => _paymentFilter = values.first);
+                  SegmentedFilterBar<PaymentFilter>(
+                    options: const {
+                      PaymentFilter.all: 'Todas',
+                      PaymentFilter.paid: 'Pagas',
+                      PaymentFilter.unpaid: 'Pendentes',
                     },
+                    selected: _paymentFilter,
+                    onChanged: (v) => setState(() => _paymentFilter = v),
                   ),
                 ],
               ),
@@ -116,30 +106,32 @@ class _AllExpensesScreenState extends State<AllExpensesScreen> {
                 DataTable(
                   horizontalMargin: 0,
                   columnSpacing: 20,
-                  headingTextStyle: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: AppTheme.inkMuted,
-                  ),
                   columns: const [
-                    DataColumn(label: Text('Pago')),
-                    DataColumn(label: Text('Despesa')),
-                    DataColumn(label: Text('Evento')),
-                    DataColumn(label: Text('Categoria')),
-                    DataColumn(label: Text('Data')),
-                    DataColumn(label: Text('Valor'), numeric: true),
+                    DataColumn(label: Text('SITUAÇÃO')),
+                    DataColumn(label: Text('DESPESA')),
+                    DataColumn(label: Text('EVENTO')),
+                    DataColumn(label: Text('CATEGORIA')),
+                    DataColumn(label: Text('DATA')),
+                    DataColumn(label: Text('VALOR'), numeric: true),
                   ],
                   rows: rows.map((entry) {
                     return DataRow(
                       cells: [
                         DataCell(
-                          Checkbox(
-                            value: entry.item.isPaid,
-                            activeColor: AppTheme.paidGreen,
-                            onChanged: (_) => widget.store.toggleExpensePaid(
-                              eventId: entry.event.id,
-                              expenseId: entry.item.id,
-                            ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Checkbox(
+                                value: entry.item.isPaid,
+                                onChanged: (_) =>
+                                    widget.store.toggleExpensePaid(
+                                  eventId: entry.event.id,
+                                  expenseId: entry.item.id,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              StatusBadge.forPaid(entry.item.isPaid),
+                            ],
                           ),
                         ),
                         DataCell(Text(entry.item.title)),

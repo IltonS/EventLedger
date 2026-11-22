@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 
 import '../state/ledger_store.dart';
 import '../theme/app_theme.dart';
+import '../widgets/app_widgets.dart';
 import '../widgets/category_chart_card.dart';
 import '../widgets/dialogs.dart';
 
@@ -64,7 +65,7 @@ class DashboardScreen extends StatelessWidget {
     final totalUnpaid = store.totalUnpaidAllEvents;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(28),
+      padding: const EdgeInsets.all(32),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -84,6 +85,7 @@ class DashboardScreen extends StatelessWidget {
                   label: 'Total Pago',
                   value: currency.format(totalPaid),
                   valueColor: AppTheme.paidGreen,
+                  progress: totalSpent > 0 ? totalPaid / totalSpent : 0,
                   detail: totalSpent > 0
                       ? '${((totalPaid / totalSpent) * 100).toStringAsFixed(0)}% do total quitado'
                       : 'Nenhuma despesa lançada',
@@ -97,6 +99,7 @@ class DashboardScreen extends StatelessWidget {
                   valueColor: totalUnpaid > 0
                       ? AppTheme.unpaidAmber
                       : AppTheme.inkPrimary,
+                  progress: totalSpent > 0 ? totalUnpaid / totalSpent : 0,
                   detail: totalUnpaid > 0
                       ? 'Pagamentos pendentes'
                       : 'Todas as despesas quitadas',
@@ -114,6 +117,7 @@ class DashboardScreen extends StatelessWidget {
                     valueColor: totalSpent > totalBudget
                         ? AppTheme.overBudgetCrimson
                         : AppTheme.inkPrimary,
+                    progress: totalBudget > 0 ? totalSpent / totalBudget : 0,
                   ),
                 ),
               ],
@@ -173,32 +177,27 @@ class DashboardScreen extends StatelessWidget {
                           DataTable(
                             horizontalMargin: 0,
                             columnSpacing: 20,
-                            headingTextStyle: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: AppTheme.inkMuted,
-                            ),
                             columns: [
-                              const DataColumn(label: Text('Evento')),
-                              const DataColumn(label: Text('Data')),
+                              const DataColumn(label: Text('EVENTO')),
+                              const DataColumn(label: Text('DATA')),
                               if (store.hasAnyEventWithBudget)
                                 const DataColumn(
-                                  label: Text('Orçamento'),
+                                  label: Text('ORÇAMENTO'),
                                   numeric: true,
                                 ),
                               const DataColumn(
-                                label: Text('Total Gasto'),
+                                label: Text('TOTAL GASTO'),
                                 numeric: true,
                               ),
                               const DataColumn(
-                                label: Text('Pago'),
+                                label: Text('PAGO'),
                                 numeric: true,
                               ),
                               const DataColumn(
-                                label: Text('Pendente'),
+                                label: Text('PENDENTE'),
                                 numeric: true,
                               ),
-                              const DataColumn(label: Text('Ações')),
+                              const DataColumn(label: Text('AÇÕES')),
                             ],
                             rows: store.events.map((event) {
                               return DataRow(
@@ -312,6 +311,7 @@ class _KpiTile extends StatelessWidget {
     required this.value,
     required this.detail,
     this.valueColor = AppTheme.inkPrimary,
+    this.progress,
   });
 
   final String label;
@@ -319,39 +319,48 @@ class _KpiTile extends StatelessWidget {
   final String detail;
   final Color valueColor;
 
+  /// Optional 0..1 progress shown as a slim bar (e.g. percentage settled).
+  final double? progress;
+
   @override
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(18),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              label,
+              label.toUpperCase(),
               style: const TextStyle(
-                fontSize: 12.5,
-                fontWeight: FontWeight.w500,
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.6,
                 color: AppTheme.inkMuted,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             Text(
               value,
               style: AppTheme.tabularNumber.copyWith(
                 fontSize: 24,
+                height: 32 / 24,
                 fontWeight: FontWeight.w700,
                 color: valueColor,
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 10),
+            if (progress != null) ...[
+              LedgerProgressBar(value: progress!, color: valueColor),
+              const SizedBox(height: 8),
+            ],
             Text(
               detail,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 fontSize: 12,
-                color: AppTheme.inkSecondary,
+                color: AppTheme.inkMuted,
               ),
             ),
           ],

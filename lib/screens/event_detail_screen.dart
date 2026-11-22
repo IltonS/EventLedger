@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../models/event_models.dart';
 import '../state/ledger_store.dart';
 import '../theme/app_theme.dart';
+import '../widgets/app_widgets.dart';
 import '../widgets/category_chart_card.dart';
 import '../widgets/dialogs.dart';
 
@@ -175,6 +176,12 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
           FilledButton(
             style: FilledButton.styleFrom(
               backgroundColor: AppTheme.overBudgetCrimson,
+            ).copyWith(
+              overlayColor: const WidgetStatePropertyAll(Colors.transparent),
+              backgroundColor: WidgetStateProperty.resolveWith((states) =>
+                  states.contains(WidgetState.hovered)
+                      ? AppTheme.alertBadgeFg
+                      : AppTheme.overBudgetCrimson),
             ),
             onPressed: () => Navigator.pop(ctx, true),
             child: Text(
@@ -206,7 +213,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
     final filtered = _filteredExpenses;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(28),
+      padding: const EdgeInsets.all(32),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -215,17 +222,15 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
               margin: const EdgeInsets.only(bottom: 16),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: AppTheme.unpaidAmber.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: AppTheme.unpaidAmber.withValues(alpha: 0.35),
-                ),
+                color: AppTheme.pendingBadgeBg,
+                borderRadius: BorderRadius.circular(AppTheme.radiusCard),
+                border: Border.all(color: const Color(0xFFFDE68A)),
               ),
               child: Row(
                 children: [
                   const Icon(
                     Icons.archive_outlined,
-                    color: AppTheme.unpaidAmber,
+                    color: AppTheme.pendingBadgeFg,
                     size: 20,
                   ),
                   const SizedBox(width: 12),
@@ -264,7 +269,8 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                             Text(
                               event.name,
                               style: const TextStyle(
-                                fontSize: 22,
+                                fontSize: 24,
+                                height: 32 / 24,
                                 fontWeight: FontWeight.w700,
                                 color: AppTheme.inkPrimary,
                               ),
@@ -296,12 +302,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                           icon: const Icon(Icons.delete_forever_outlined,
                               size: 16),
                           label: const Text('Excluir Definitivamente'),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: AppTheme.overBudgetCrimson,
-                            side: const BorderSide(
-                              color: AppTheme.overBudgetCrimson,
-                            ),
-                          ),
+                          style: destructiveButtonStyle(),
                         ),
                       ] else ...[
                         OutlinedButton.icon(
@@ -320,9 +321,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                           onPressed: _handleDeleteEvent,
                           icon: const Icon(Icons.delete_outline, size: 16),
                           label: const Text('Excluir'),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: AppTheme.overBudgetCrimson,
-                          ),
+                          style: destructiveButtonStyle(),
                         ),
                       ],
                       const SizedBox(width: 10),
@@ -387,19 +386,11 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                 ),
                               ),
                               const SizedBox(height: 6),
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(4),
-                                child: LinearProgressIndicator(
-                                  value:
-                                      event.budgetUtilization.clamp(0.0, 1.0),
-                                  minHeight: 7,
-                                  backgroundColor: AppTheme.canvas,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    event.totalSpent > event.budget
-                                        ? AppTheme.overBudgetCrimson
-                                        : AppTheme.accent,
-                                  ),
-                                ),
+                              LedgerProgressBar(
+                                value: event.budgetUtilization,
+                                color: event.totalSpent > event.budget
+                                    ? AppTheme.overBudgetCrimson
+                                    : AppTheme.accent,
                               ),
                             ],
                           ),
@@ -476,25 +467,15 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                 ),
                               ],
                             ),
-                            SegmentedButton<PaymentFilter>(
-                              segments: const [
-                                ButtonSegment(
-                                  value: PaymentFilter.all,
-                                  label: Text('Todas'),
-                                ),
-                                ButtonSegment(
-                                  value: PaymentFilter.paid,
-                                  label: Text('Pagas'),
-                                ),
-                                ButtonSegment(
-                                  value: PaymentFilter.unpaid,
-                                  label: Text('Pendentes'),
-                                ),
-                              ],
-                              selected: {_paymentFilter},
-                              onSelectionChanged: (values) {
-                                setState(() => _paymentFilter = values.first);
+                            SegmentedFilterBar<PaymentFilter>(
+                              options: const {
+                                PaymentFilter.all: 'Todas',
+                                PaymentFilter.paid: 'Pagas',
+                                PaymentFilter.unpaid: 'Pendentes',
                               },
+                              selected: _paymentFilter,
+                              onChanged: (v) =>
+                                  setState(() => _paymentFilter = v),
                             ),
                           ],
                         ),
@@ -526,18 +507,13 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                             child: DataTable(
                               horizontalMargin: 0,
                               columnSpacing: 20,
-                              headingTextStyle: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: AppTheme.inkMuted,
-                              ),
                               columns: const [
-                                DataColumn(label: Text('Situação')),
-                                DataColumn(label: Text('Despesa')),
-                                DataColumn(label: Text('Categoria')),
-                                DataColumn(label: Text('Data')),
-                                DataColumn(label: Text('Valor'), numeric: true),
-                                DataColumn(label: Text('Ações')),
+                                DataColumn(label: Text('SITUAÇÃO')),
+                                DataColumn(label: Text('DESPESA')),
+                                DataColumn(label: Text('CATEGORIA')),
+                                DataColumn(label: Text('DATA')),
+                                DataColumn(label: Text('VALOR'), numeric: true),
+                                DataColumn(label: Text('AÇÕES')),
                               ],
                               rows: filtered.map((item) {
                                 return DataRow(
@@ -548,23 +524,14 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                         children: [
                                           Checkbox(
                                             value: item.isPaid,
-                                            activeColor: AppTheme.paidGreen,
                                             onChanged: (_) =>
                                                 widget.store.toggleExpensePaid(
                                               eventId: event.id,
                                               expenseId: item.id,
                                             ),
                                           ),
-                                          Text(
-                                            item.isPaid ? 'Pago' : 'Pendente',
-                                            style: TextStyle(
-                                              fontSize: 12.5,
-                                              fontWeight: FontWeight.w600,
-                                              color: item.isPaid
-                                                  ? AppTheme.paidGreen
-                                                  : AppTheme.unpaidAmber,
-                                            ),
-                                          ),
+                                          const SizedBox(width: 4),
+                                          StatusBadge.forPaid(item.isPaid),
                                         ],
                                       ),
                                     ),
@@ -637,7 +604,6 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                               Icons.delete_outline,
                                               size: 18,
                                             ),
-                                            color: AppTheme.overBudgetCrimson,
                                             onPressed: () =>
                                                 widget.store.deleteExpense(
                                               eventId: event.id,

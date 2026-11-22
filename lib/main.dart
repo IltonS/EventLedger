@@ -215,8 +215,8 @@ class _DesktopTopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 60,
-      padding: const EdgeInsets.symmetric(horizontal: 28),
+      height: 64,
+      padding: const EdgeInsets.symmetric(horizontal: 32),
       decoration: const BoxDecoration(
         color: AppTheme.surface,
         border: Border(bottom: BorderSide(color: AppTheme.border)),
@@ -226,8 +226,8 @@ class _DesktopTopBar extends StatelessWidget {
           Text(
             _breadcrumb,
             style: const TextStyle(
-              fontSize: 13.5,
-              fontWeight: FontWeight.w500,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
               color: AppTheme.inkSecondary,
             ),
           ),

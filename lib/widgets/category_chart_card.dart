@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 
 import '../models/event_models.dart';
 import '../theme/app_theme.dart';
+import 'app_widgets.dart';
 
 class CategoryExpenseChartCard extends StatelessWidget {
   const CategoryExpenseChartCard({
@@ -91,17 +92,7 @@ class CategoryExpenseChartCard extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 6),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: LinearProgressIndicator(
-                          value: share,
-                          minHeight: 7,
-                          backgroundColor: AppTheme.canvas,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            entry.key.color,
-                          ),
-                        ),
-                      ),
+                      LedgerProgressBar(value: share, color: entry.key.color),
                     ],
                   ),
                 );
