@@ -32,13 +32,27 @@ class CategoryExpenseChartCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.inkPrimary,
-              ),
+            Row(
+              children: [
+                const Icon(Icons.pie_chart_outline,
+                    size: 20, color: AppTheme.accent),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: AppTheme.inkPrimary,
+                    ),
+                  ),
+                ),
+                Text(
+                  '${categoryEntries.length} ${categoryEntries.length == 1 ? 'categoria' : 'categorias'}',
+                  style:
+                      const TextStyle(fontSize: 12, color: AppTheme.inkMuted),
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             if (categoryEntries.isEmpty)
@@ -64,30 +78,67 @@ class CategoryExpenseChartCard extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          Flexible(
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 26,
+                                  height: 26,
+                                  decoration: BoxDecoration(
+                                    color:
+                                        entry.key.color.withValues(alpha: 0.12),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Icon(
+                                    entry.key.icon,
+                                    size: 15,
+                                    color: entry.key.color,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Flexible(
+                                  child: Text(
+                                    entry.key.label,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 13.5,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 8),
                           Row(
                             children: [
-                              Icon(
-                                entry.key.icon,
-                                size: 16,
-                                color: entry.key.color,
+                              Text(
+                                currency.format(entry.value),
+                                style: AppTheme.tabularNumber.copyWith(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                               const SizedBox(width: 8),
-                              Text(
-                                entry.key.label,
-                                style: const TextStyle(
-                                  fontSize: 13.5,
-                                  fontWeight: FontWeight.w500,
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.divider,
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  '${(share * 100).toStringAsFixed(0)}%',
+                                  style: AppTheme.tabularNumber.copyWith(
+                                    fontSize: 10.5,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppTheme.inkMuted,
+                                  ),
                                 ),
                               ),
                             ],
-                          ),
-                          Text(
-                            '${currency.format(entry.value)} · ${(share * 100).toStringAsFixed(0)}%',
-                            style: AppTheme.tabularNumber.copyWith(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                              color: AppTheme.inkSecondary,
-                            ),
                           ),
                         ],
                       ),

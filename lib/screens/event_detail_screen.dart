@@ -259,90 +259,111 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              event.name,
-                              style: const TextStyle(
-                                fontSize: 24,
-                                height: 32 / 24,
-                                fontWeight: FontWeight.w700,
-                                color: AppTheme.inkPrimary,
-                              ),
+                  LayoutBuilder(
+                    builder: (context, c) {
+                      final titleBlock = Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            event.name,
+                            style: const TextStyle(
+                              fontSize: 24,
+                              height: 32 / 24,
+                              fontWeight: FontWeight.w700,
+                              color: AppTheme.inkPrimary,
                             ),
-                            const SizedBox(height: 6),
-                            Text(
-                              [
-                                dateFmt.format(event.eventDate),
-                                if (event.venue.isNotEmpty) event.venue,
-                                '${event.paidCount} de ${event.expenses.length} despesas pagas',
-                              ].join(' · '),
-                              style: const TextStyle(
-                                fontSize: 13,
-                                color: AppTheme.inkMuted,
-                              ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            [
+                              dateFmt.format(event.eventDate),
+                              if (event.venue.isNotEmpty) event.venue,
+                              '${event.paidCount} de ${event.expenses.length} despesas pagas',
+                            ].join(' · '),
+                            style: const TextStyle(
+                              fontSize: 13,
+                              color: AppTheme.inkMuted,
+                            ),
+                          ),
+                        ],
+                      );
+                      final actions = Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        children: [
+                          if (event.isArchived) ...[
+                            OutlinedButton.icon(
+                              onPressed: _handleUnarchiveEvent,
+                              icon: const Icon(Icons.unarchive_outlined,
+                                  size: 16),
+                              label: const Text('Desarquivar'),
+                            ),
+                            OutlinedButton.icon(
+                              onPressed: _handleDeleteEvent,
+                              icon: const Icon(Icons.delete_forever_outlined,
+                                  size: 16),
+                              label: const Text('Excluir Definitivamente'),
+                              style: destructiveButtonStyle(),
+                            ),
+                          ] else ...[
+                            OutlinedButton.icon(
+                              onPressed: _editEvent,
+                              icon: const Icon(Icons.edit_outlined, size: 16),
+                              label: const Text('Editar Evento'),
+                            ),
+                            OutlinedButton.icon(
+                              onPressed: _handleArchiveEvent,
+                              icon:
+                                  const Icon(Icons.archive_outlined, size: 16),
+                              label: const Text('Arquivar'),
+                            ),
+                            OutlinedButton.icon(
+                              onPressed: _handleDeleteEvent,
+                              icon: const Icon(Icons.delete_outline, size: 16),
+                              label: const Text('Excluir'),
+                              style: destructiveButtonStyle(),
                             ),
                           ],
-                        ),
-                      ),
-                      if (event.isArchived) ...[
-                        OutlinedButton.icon(
-                          onPressed: _handleUnarchiveEvent,
-                          icon: const Icon(Icons.unarchive_outlined, size: 16),
-                          label: const Text('Desarquivar'),
-                        ),
-                        const SizedBox(width: 10),
-                        OutlinedButton.icon(
-                          onPressed: _handleDeleteEvent,
-                          icon: const Icon(Icons.delete_forever_outlined,
-                              size: 16),
-                          label: const Text('Excluir Definitivamente'),
-                          style: destructiveButtonStyle(),
-                        ),
-                      ] else ...[
-                        OutlinedButton.icon(
-                          onPressed: _editEvent,
-                          icon: const Icon(Icons.edit_outlined, size: 16),
-                          label: const Text('Editar Evento'),
-                        ),
-                        const SizedBox(width: 10),
-                        OutlinedButton.icon(
-                          onPressed: _handleArchiveEvent,
-                          icon: const Icon(Icons.archive_outlined, size: 16),
-                          label: const Text('Arquivar'),
-                        ),
-                        const SizedBox(width: 10),
-                        OutlinedButton.icon(
-                          onPressed: _handleDeleteEvent,
-                          icon: const Icon(Icons.delete_outline, size: 16),
-                          label: const Text('Excluir'),
-                          style: destructiveButtonStyle(),
-                        ),
-                      ],
-                      const SizedBox(width: 10),
-                      FilledButton.icon(
-                        onPressed: _addExpense,
-                        icon: const Icon(Icons.add, size: 18),
-                        label: const Text('Adicionar Despesa'),
-                      ),
-                    ],
+                          FilledButton.icon(
+                            onPressed: _addExpense,
+                            icon: const Icon(Icons.add, size: 18),
+                            label: const Text('Adicionar Despesa'),
+                          ),
+                        ],
+                      );
+                      if (c.maxWidth < 900) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            titleBlock,
+                            const SizedBox(height: 14),
+                            actions,
+                          ],
+                        );
+                      }
+                      return Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(child: titleBlock),
+                          const SizedBox(width: 16),
+                          Flexible(child: actions),
+                        ],
+                      );
+                    },
                   ),
                   const SizedBox(height: 20),
                   const Divider(height: 1),
                   const SizedBox(height: 18),
-                  Row(
+                  Wrap(
+                    spacing: 36,
+                    runSpacing: 16,
+                    crossAxisAlignment: WrapCrossAlignment.end,
                     children: [
                       if (event.hasBudget) ...[
                         _MetricPair(
                           label: 'Orçamento',
                           value: currency.format(event.budget),
                         ),
-                        const SizedBox(width: 36),
                       ],
                       _MetricPair(
                         label: 'Total Gasto',
@@ -352,13 +373,11 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                 ? AppTheme.overBudgetCrimson
                                 : AppTheme.inkPrimary,
                       ),
-                      const SizedBox(width: 36),
                       _MetricPair(
                         label: 'Pago',
                         value: currency.format(event.paidAmount),
                         color: AppTheme.paidGreen,
                       ),
-                      const SizedBox(width: 36),
                       _MetricPair(
                         label: 'Pendente',
                         value: currency.format(event.unpaidAmount),
@@ -367,7 +386,6 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                             : AppTheme.inkMuted,
                       ),
                       if (event.hasBudget) ...[
-                        const Spacer(),
                         SizedBox(
                           width: 240,
                           child: Column(
@@ -403,236 +421,234 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
             ),
           ),
           const SizedBox(height: 20),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: 3,
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
+          LayoutBuilder(builder: (context, c) {
+            final stacked = c.maxWidth < 1000;
+            Widget side(Widget w) => stacked ? w : Expanded(flex: 2, child: w);
+            Widget main(Widget w) => stacked ? w : Expanded(flex: 3, child: w);
+            final chart = CategoryExpenseChartCard(
+              categoryTotals: event.categoryTotals,
+              totalSpent: event.totalSpent,
+            );
+            final gap =
+                SizedBox(width: stacked ? 0 : 20, height: stacked ? 20 : 0);
+            final mainCard = Card(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      alignment: WrapAlignment.spaceBetween,
+                      crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
                         Wrap(
                           spacing: 12,
                           runSpacing: 12,
-                          alignment: WrapAlignment.spaceBetween,
                           crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
-                            Wrap(
-                              spacing: 12,
-                              runSpacing: 12,
-                              crossAxisAlignment: WrapCrossAlignment.center,
-                              children: [
-                                SizedBox(
-                                  width: 220,
-                                  child: TextField(
-                                    onChanged: (v) =>
-                                        setState(() => _searchQuery = v),
-                                    decoration: const InputDecoration(
-                                      hintText:
-                                          'Buscar despesa ou fornecedor...',
-                                      prefixIcon: Icon(Icons.search, size: 18),
-                                      isDense: true,
-                                    ),
-                                  ),
+                            SizedBox(
+                              width: 220,
+                              child: TextField(
+                                onChanged: (v) =>
+                                    setState(() => _searchQuery = v),
+                                decoration: const InputDecoration(
+                                  hintText: 'Buscar despesa ou fornecedor...',
+                                  prefixIcon: Icon(Icons.search, size: 18),
+                                  isDense: true,
                                 ),
-                                SizedBox(
-                                  width: 200,
-                                  child:
-                                      DropdownButtonFormField<ExpenseCategory?>(
-                                    initialValue: _categoryFilter,
-                                    isDense: true,
-                                    decoration: const InputDecoration(
-                                      labelText: 'Categoria',
-                                      isDense: true,
-                                    ),
-                                    items: [
-                                      const DropdownMenuItem<ExpenseCategory?>(
-                                        value: null,
-                                        child: Text('Todas as Categorias'),
-                                      ),
-                                      ...widget.store.categories.map(
-                                        (cat) =>
-                                            DropdownMenuItem<ExpenseCategory?>(
-                                          value: cat,
-                                          child: Text(cat.name),
-                                        ),
-                                      ),
-                                    ],
-                                    onChanged: (v) =>
-                                        setState(() => _categoryFilter = v),
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
-                            SegmentedFilterBar<PaymentFilter>(
-                              options: const {
-                                PaymentFilter.all: 'Todas',
-                                PaymentFilter.paid: 'Pagas',
-                                PaymentFilter.unpaid: 'Pendentes',
-                              },
-                              selected: _paymentFilter,
-                              onChanged: (v) =>
-                                  setState(() => _paymentFilter = v),
+                            SizedBox(
+                              width: 200,
+                              child: DropdownButtonFormField<ExpenseCategory?>(
+                                isExpanded: true,
+                                initialValue: _categoryFilter,
+                                isDense: true,
+                                decoration: const InputDecoration(
+                                  labelText: 'Categoria',
+                                  isDense: true,
+                                ),
+                                items: [
+                                  const DropdownMenuItem<ExpenseCategory?>(
+                                    value: null,
+                                    child: Text('Todas as Categorias'),
+                                  ),
+                                  ...widget.store.categories.map(
+                                    (cat) => DropdownMenuItem<ExpenseCategory?>(
+                                      value: cat,
+                                      child: Text(cat.name),
+                                    ),
+                                  ),
+                                ],
+                                onChanged: (v) =>
+                                    setState(() => _categoryFilter = v),
+                              ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 16),
-                        if (filtered.isEmpty)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 36),
-                            child: Center(
-                              child: Column(
-                                children: [
-                                  const Text(
-                                    'Nenhuma despesa encontrada para este evento.',
-                                    style: TextStyle(color: AppTheme.inkMuted),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  FilledButton.icon(
-                                    onPressed: _addExpense,
-                                    icon: const Icon(Icons.add, size: 18),
-                                    label: const Text(
-                                        'Adicionar Primeira Despesa'),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )
-                        else
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: DataTable(
-                              horizontalMargin: 0,
-                              columnSpacing: 20,
-                              columns: const [
-                                DataColumn(label: Text('SITUAÇÃO')),
-                                DataColumn(label: Text('DESPESA')),
-                                DataColumn(label: Text('CATEGORIA')),
-                                DataColumn(label: Text('DATA')),
-                                DataColumn(label: Text('VALOR'), numeric: true),
-                                DataColumn(label: Text('AÇÕES')),
-                              ],
-                              rows: filtered.map((item) {
-                                return DataRow(
-                                  cells: [
-                                    DataCell(
-                                      Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Checkbox(
-                                            value: item.isPaid,
-                                            onChanged: (_) =>
-                                                widget.store.toggleExpensePaid(
-                                              eventId: event.id,
-                                              expenseId: item.id,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 4),
-                                          StatusBadge.forPaid(item.isPaid),
-                                        ],
-                                      ),
-                                    ),
-                                    DataCell(
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            item.title,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              color: AppTheme.inkPrimary,
-                                              decoration: item.isPaid
-                                                  ? TextDecoration.lineThrough
-                                                  : null,
-                                            ),
-                                          ),
-                                          if (item.vendor.isNotEmpty)
-                                            Text(
-                                              item.vendor,
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                color: AppTheme.inkMuted,
-                                              ),
-                                            ),
-                                        ],
-                                      ),
-                                    ),
-                                    DataCell(
-                                      Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(
-                                            item.category.icon,
-                                            size: 16,
-                                            color: item.category.color,
-                                          ),
-                                          const SizedBox(width: 6),
-                                          Text(item.category.label),
-                                        ],
-                                      ),
-                                    ),
-                                    DataCell(Text(dateFmt.format(item.date))),
-                                    DataCell(
-                                      Text(
-                                        currency.format(item.amount),
-                                        style: AppTheme.tabularNumber.copyWith(
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
-                                    DataCell(
-                                      Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          IconButton(
-                                            tooltip: 'Editar Despesa',
-                                            icon: const Icon(
-                                              Icons.edit_outlined,
-                                              size: 18,
-                                            ),
-                                            onPressed: () => _editExpense(item),
-                                          ),
-                                          IconButton(
-                                            tooltip: 'Excluir Despesa',
-                                            icon: const Icon(
-                                              Icons.delete_outline,
-                                              size: 18,
-                                            ),
-                                            onPressed: () =>
-                                                widget.store.deleteExpense(
-                                              eventId: event.id,
-                                              expenseId: item.id,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              }).toList(),
-                            ),
-                          ),
+                        SegmentedFilterBar<PaymentFilter>(
+                          options: const {
+                            PaymentFilter.all: 'Todas',
+                            PaymentFilter.paid: 'Pagas',
+                            PaymentFilter.unpaid: 'Pendentes',
+                          },
+                          selected: _paymentFilter,
+                          onChanged: (v) => setState(() => _paymentFilter = v),
+                        ),
                       ],
                     ),
-                  ),
+                    const SizedBox(height: 16),
+                    if (filtered.isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 36),
+                        child: Center(
+                          child: Column(
+                            children: [
+                              const Text(
+                                'Nenhuma despesa encontrada para este evento.',
+                                style: TextStyle(color: AppTheme.inkMuted),
+                              ),
+                              const SizedBox(height: 12),
+                              FilledButton.icon(
+                                onPressed: _addExpense,
+                                icon: const Icon(Icons.add, size: 18),
+                                label: const Text('Adicionar Primeira Despesa'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    else
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: DataTable(
+                          horizontalMargin: 0,
+                          columnSpacing: 20,
+                          columns: const [
+                            DataColumn(label: Text('SITUAÇÃO')),
+                            DataColumn(label: Text('DESPESA')),
+                            DataColumn(label: Text('CATEGORIA')),
+                            DataColumn(label: Text('DATA')),
+                            DataColumn(label: Text('VALOR'), numeric: true),
+                            DataColumn(label: Text('AÇÕES')),
+                          ],
+                          rows: filtered.map((item) {
+                            return DataRow(
+                              cells: [
+                                DataCell(
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Checkbox(
+                                        value: item.isPaid,
+                                        onChanged: (_) =>
+                                            widget.store.toggleExpensePaid(
+                                          eventId: event.id,
+                                          expenseId: item.id,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 4),
+                                      StatusBadge.forPaid(item.isPaid),
+                                    ],
+                                  ),
+                                ),
+                                DataCell(
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        item.title,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          color: AppTheme.inkPrimary,
+                                          decoration: item.isPaid
+                                              ? TextDecoration.lineThrough
+                                              : null,
+                                        ),
+                                      ),
+                                      if (item.vendor.isNotEmpty)
+                                        Text(
+                                          item.vendor,
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            color: AppTheme.inkMuted,
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                                DataCell(
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        item.category.icon,
+                                        size: 16,
+                                        color: item.category.color,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Text(item.category.label),
+                                    ],
+                                  ),
+                                ),
+                                DataCell(Text(dateFmt.format(item.date))),
+                                DataCell(
+                                  Text(
+                                    currency.format(item.amount),
+                                    style: AppTheme.tabularNumber.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                                DataCell(
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      IconButton(
+                                        tooltip: 'Editar Despesa',
+                                        icon: const Icon(
+                                          Icons.edit_outlined,
+                                          size: 18,
+                                        ),
+                                        onPressed: () => _editExpense(item),
+                                      ),
+                                      IconButton(
+                                        tooltip: 'Excluir Despesa',
+                                        icon: const Icon(
+                                          Icons.delete_outline,
+                                          size: 18,
+                                        ),
+                                        onPressed: () =>
+                                            widget.store.deleteExpense(
+                                          eventId: event.id,
+                                          expenseId: item.id,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                  ],
                 ),
               ),
-              const SizedBox(width: 20),
-              Expanded(
-                flex: 2,
-                child: CategoryExpenseChartCard(
-                  categoryTotals: event.categoryTotals,
-                  totalSpent: event.totalSpent,
-                ),
-              ),
-            ],
-          ),
+            );
+            final kids = [main(mainCard), gap, side(chart)];
+            return stacked
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: kids)
+                : Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: kids);
+          }),
         ],
       ),
     );

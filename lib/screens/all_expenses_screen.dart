@@ -44,7 +44,11 @@ class _AllExpensesScreenState extends State<AllExpensesScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Row(
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   const Text(
                     'Todas as Despesas dos Eventos',
@@ -54,10 +58,10 @@ class _AllExpensesScreenState extends State<AllExpensesScreen> {
                       color: AppTheme.inkPrimary,
                     ),
                   ),
-                  const Spacer(),
                   SizedBox(
                     width: 220,
                     child: DropdownButtonFormField<ExpenseCategory?>(
+                      isExpanded: true,
                       initialValue: _categoryFilter,
                       isDense: true,
                       decoration: const InputDecoration(
@@ -103,64 +107,67 @@ class _AllExpensesScreenState extends State<AllExpensesScreen> {
                   ),
                 )
               else
-                DataTable(
-                  horizontalMargin: 0,
-                  columnSpacing: 20,
-                  columns: const [
-                    DataColumn(label: Text('SITUAÇÃO')),
-                    DataColumn(label: Text('DESPESA')),
-                    DataColumn(label: Text('EVENTO')),
-                    DataColumn(label: Text('CATEGORIA')),
-                    DataColumn(label: Text('DATA')),
-                    DataColumn(label: Text('VALOR'), numeric: true),
-                  ],
-                  rows: rows.map((entry) {
-                    return DataRow(
-                      cells: [
-                        DataCell(
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Checkbox(
-                                value: entry.item.isPaid,
-                                onChanged: (_) =>
-                                    widget.store.toggleExpensePaid(
-                                  eventId: entry.event.id,
-                                  expenseId: entry.item.id,
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                    horizontalMargin: 0,
+                    columnSpacing: 20,
+                    columns: const [
+                      DataColumn(label: Text('SITUAÇÃO')),
+                      DataColumn(label: Text('DESPESA')),
+                      DataColumn(label: Text('EVENTO')),
+                      DataColumn(label: Text('CATEGORIA')),
+                      DataColumn(label: Text('DATA')),
+                      DataColumn(label: Text('VALOR'), numeric: true),
+                    ],
+                    rows: rows.map((entry) {
+                      return DataRow(
+                        cells: [
+                          DataCell(
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Checkbox(
+                                  value: entry.item.isPaid,
+                                  onChanged: (_) =>
+                                      widget.store.toggleExpensePaid(
+                                    eventId: entry.event.id,
+                                    expenseId: entry.item.id,
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                StatusBadge.forPaid(entry.item.isPaid),
+                              ],
+                            ),
+                          ),
+                          DataCell(Text(entry.item.title)),
+                          DataCell(
+                            InkWell(
+                              onTap: () =>
+                                  widget.store.selectEvent(entry.event.id),
+                              child: Text(
+                                entry.event.name,
+                                style: const TextStyle(
+                                  color: AppTheme.accent,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
-                              const SizedBox(width: 4),
-                              StatusBadge.forPaid(entry.item.isPaid),
-                            ],
+                            ),
                           ),
-                        ),
-                        DataCell(Text(entry.item.title)),
-                        DataCell(
-                          InkWell(
-                            onTap: () =>
-                                widget.store.selectEvent(entry.event.id),
-                            child: Text(
-                              entry.event.name,
-                              style: const TextStyle(
-                                color: AppTheme.accent,
-                                fontWeight: FontWeight.w500,
+                          DataCell(Text(entry.item.category.label)),
+                          DataCell(Text(dateFmt.format(entry.item.date))),
+                          DataCell(
+                            Text(
+                              currency.format(entry.item.amount),
+                              style: AppTheme.tabularNumber.copyWith(
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           ),
-                        ),
-                        DataCell(Text(entry.item.category.label)),
-                        DataCell(Text(dateFmt.format(entry.item.date))),
-                        DataCell(
-                          Text(
-                            currency.format(entry.item.amount),
-                            style: AppTheme.tabularNumber.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  }).toList(),
+                        ],
+                      );
+                    }).toList(),
+                  ),
                 ),
             ],
           ),

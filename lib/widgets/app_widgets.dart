@@ -83,37 +83,40 @@ class SegmentedFilterBar<T> extends StatelessWidget {
         color: AppTheme.divider,
         borderRadius: BorderRadius.circular(AppTheme.radiusControl),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: options.entries.map((entry) {
-          final isActive = entry.key == selected;
-          return GestureDetector(
-            onTap: () => onChanged(entry.key),
-            child: MouseRegion(
-              cursor: SystemMouseCursors.click,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 120),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-                decoration: BoxDecoration(
-                  color: isActive ? AppTheme.surface : Colors.transparent,
-                  borderRadius: BorderRadius.circular(6),
-                  border: Border.all(
-                    color: isActive ? AppTheme.border : Colors.transparent,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: options.entries.map((entry) {
+            final isActive = entry.key == selected;
+            return GestureDetector(
+              onTap: () => onChanged(entry.key),
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 120),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                  decoration: BoxDecoration(
+                    color: isActive ? AppTheme.surface : Colors.transparent,
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(
+                      color: isActive ? AppTheme.border : Colors.transparent,
+                    ),
                   ),
-                ),
-                child: Text(
-                  entry.value,
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
-                    color: isActive ? AppTheme.inkPrimary : AppTheme.inkMuted,
+                  child: Text(
+                    entry.value,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
+                      color: isActive ? AppTheme.inkPrimary : AppTheme.inkMuted,
+                    ),
                   ),
                 ),
               ),
-            ),
-          );
-        }).toList(),
+            );
+          }).toList(),
+        ),
       ),
     );
   }

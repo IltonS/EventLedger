@@ -130,19 +130,24 @@ class _EventLedgerHomeScreenState extends State<EventLedgerHomeScreen> {
           );
         }
 
+        final compact = MediaQuery.sizeOf(context).width < 768;
+
         return Scaffold(
+          bottomNavigationBar: compact ? _buildBottomNav() : null,
           body: Row(
             children: [
-              DesktopSidebar(
-                store: _store,
-                onCreateEvent: () => _handleCreateEvent(context),
-              ),
+              if (!compact)
+                DesktopSidebar(
+                  store: _store,
+                  onCreateEvent: () => _handleCreateEvent(context),
+                ),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     _DesktopTopBar(
                       store: _store,
+                      compact: compact,
                       onCreateEvent: () => _handleCreateEvent(context),
                       onImport: () => _handleImport(context),
                       onExport: () => _handleExport(context),
@@ -155,6 +160,76 @@ class _EventLedgerHomeScreenState extends State<EventLedgerHomeScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildBottomNav() {
+    final view = _store.activeView;
+    final firstEvent = _store.events.isEmpty ? null : _store.events.first.id;
+    final eventId = _store.selectedEventId ?? firstEvent;
+    final index = switch (view) {
+      WorkspaceView.dashboard => 0,
+      WorkspaceView.allExpenses => 1,
+      WorkspaceView.eventDetail => 2,
+      WorkspaceView.categories => 3,
+      WorkspaceView.archivedEvents => 4,
+    };
+    return NavigationBarTheme(
+      data: NavigationBarThemeData(
+        backgroundColor: AppTheme.surface,
+        surfaceTintColor: Colors.transparent,
+        indicatorColor: AppTheme.paidBadgeBg,
+        height: 64,
+        labelTextStyle: WidgetStateProperty.resolveWith((states) => TextStyle(
+              fontSize: 11,
+              fontWeight: states.contains(WidgetState.selected)
+                  ? FontWeight.w700
+                  : FontWeight.w500,
+              color: states.contains(WidgetState.selected)
+                  ? AppTheme.paidBadgeFg
+                  : AppTheme.inkMuted,
+            )),
+        iconTheme: WidgetStateProperty.resolveWith((states) => IconThemeData(
+              size: 22,
+              color: states.contains(WidgetState.selected)
+                  ? AppTheme.accent
+                  : AppTheme.iconNeutral,
+            )),
+      ),
+      child: DecoratedBox(
+        decoration: const BoxDecoration(
+          border: Border(top: BorderSide(color: AppTheme.border)),
+        ),
+        child: NavigationBar(
+          selectedIndex: index,
+          onDestinationSelected: (i) {
+            switch (i) {
+              case 0:
+                _store.selectDashboard();
+              case 1:
+                _store.selectAllExpenses();
+              case 2:
+                if (eventId != null) _store.selectEvent(eventId);
+              case 3:
+                _store.selectCategories();
+              case 4:
+                _store.selectArchivedEvents();
+            }
+          },
+          destinations: const [
+            NavigationDestination(
+                icon: Icon(Icons.dashboard_outlined), label: 'Painel'),
+            NavigationDestination(
+                icon: Icon(Icons.receipt_long_outlined), label: 'Despesas'),
+            NavigationDestination(
+                icon: Icon(Icons.event_available_outlined), label: 'Evento'),
+            NavigationDestination(
+                icon: Icon(Icons.category_outlined), label: 'Categorias'),
+            NavigationDestination(
+                icon: Icon(Icons.archive_outlined), label: 'Arquivados'),
+          ],
+        ),
+      ),
     );
   }
 
@@ -187,11 +262,13 @@ class _EventLedgerHomeScreenState extends State<EventLedgerHomeScreen> {
 class _DesktopTopBar extends StatelessWidget {
   const _DesktopTopBar({
     required this.store,
+    required this.compact,
     required this.onCreateEvent,
     required this.onImport,
     required this.onExport,
   });
 
+  final bool compact;
   final LedgerStore store;
   final VoidCallback onCreateEvent;
   final VoidCallback onImport;
@@ -216,39 +293,61 @@ class _DesktopTopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 64,
-      padding: const EdgeInsets.symmetric(horizontal: 32),
+      padding: EdgeInsets.symmetric(horizontal: compact ? 16 : 32),
       decoration: const BoxDecoration(
         color: AppTheme.surface,
         border: Border(bottom: BorderSide(color: AppTheme.border)),
       ),
       child: Row(
         children: [
-          Text(
-            _breadcrumb,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: AppTheme.inkSecondary,
+          Flexible(
+            child: Text(
+              _breadcrumb,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.inkSecondary,
+              ),
             ),
           ),
           const Spacer(),
-          OutlinedButton.icon(
-            onPressed: onImport,
-            icon: const Icon(Icons.file_upload_outlined, size: 18),
-            label: const Text('Importar'),
-          ),
-          const SizedBox(width: 8),
-          OutlinedButton.icon(
-            onPressed: onExport,
-            icon: const Icon(Icons.file_download_outlined, size: 18),
-            label: const Text('Exportar'),
-          ),
-          const SizedBox(width: 12),
-          FilledButton.icon(
-            onPressed: onCreateEvent,
-            icon: const Icon(Icons.add, size: 18),
-            label: const Text('Novo Evento'),
-          ),
+          if (compact) ...[
+            IconButton(
+              tooltip: 'Importar',
+              onPressed: onImport,
+              icon: const Icon(Icons.file_upload_outlined, size: 20),
+            ),
+            IconButton(
+              tooltip: 'Exportar',
+              onPressed: onExport,
+              icon: const Icon(Icons.file_download_outlined, size: 20),
+            ),
+            const SizedBox(width: 4),
+            IconButton.filled(
+              tooltip: 'Novo Evento',
+              onPressed: onCreateEvent,
+              icon: const Icon(Icons.add, size: 20),
+            ),
+          ] else ...[
+            OutlinedButton.icon(
+              onPressed: onImport,
+              icon: const Icon(Icons.file_upload_outlined, size: 18),
+              label: const Text('Importar'),
+            ),
+            const SizedBox(width: 8),
+            OutlinedButton.icon(
+              onPressed: onExport,
+              icon: const Icon(Icons.file_download_outlined, size: 18),
+              label: const Text('Exportar'),
+            ),
+            const SizedBox(width: 12),
+            FilledButton.icon(
+              onPressed: onCreateEvent,
+              icon: const Icon(Icons.add, size: 18),
+              label: const Text('Novo Evento'),
+            ),
+          ],
         ],
       ),
     );

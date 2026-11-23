@@ -93,8 +93,11 @@ class CategoriesScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Top Header
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Wrap(
+            spacing: 16,
+            runSpacing: 12,
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,30 +130,24 @@ class CategoriesScreen extends StatelessWidget {
           const SizedBox(height: 24),
 
           // KPI Summary Cards
-          Row(
-            children: [
-              Expanded(
-                child: _KpiCard(
+          LayoutBuilder(
+            builder: (context, c) {
+              final cards = <Widget>[
+                _KpiCard(
                   title: 'Total de Categorias',
                   value: '${store.categories.length}',
                   subtitle: '$usedCategoriesCount em uso',
                   icon: Icons.category_outlined,
                   color: AppTheme.accent,
                 ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _KpiCard(
+                _KpiCard(
                   title: 'Total em Despesas',
                   value: currency.format(totalSpentAll),
                   subtitle: '${store.totalExpenseCount} despesas registradas',
                   icon: Icons.receipt_long_outlined,
                   color: AppTheme.paidGreen,
                 ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _KpiCard(
+                _KpiCard(
                   title: 'Maior Categoria de Gasto',
                   value: topCategory != null ? topCategory.name : '—',
                   subtitle: topCategory != null
@@ -159,8 +156,26 @@ class CategoriesScreen extends StatelessWidget {
                   icon: topCategory?.icon ?? Icons.bar_chart_outlined,
                   color: topCategory?.color ?? AppTheme.inkSecondary,
                 ),
-              ),
-            ],
+              ];
+              if (c.maxWidth < 760) {
+                return Column(
+                  children: [
+                    for (final card in cards) ...[
+                      SizedBox(width: double.infinity, child: card),
+                      const SizedBox(height: 12),
+                    ],
+                  ],
+                );
+              }
+              return Row(
+                children: [
+                  for (var i = 0; i < cards.length; i++) ...[
+                    if (i > 0) const SizedBox(width: 16),
+                    Expanded(child: cards[i]),
+                  ],
+                ],
+              );
+            },
           ),
           const SizedBox(height: 24),
 
@@ -171,8 +186,10 @@ class CategoriesScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 4,
+                    alignment: WrapAlignment.spaceBetween,
                     children: [
                       const Text(
                         'Listagem de Categorias',
@@ -203,154 +220,157 @@ class CategoriesScreen extends StatelessWidget {
                       ),
                     )
                   else
-                    DataTable(
-                      horizontalMargin: 0,
-                      columnSpacing: 24,
-                      columns: const [
-                        DataColumn(
-                          label: Text(
-                            'CATEGORIA',
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: AppTheme.inkMuted,
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: DataTable(
+                        horizontalMargin: 0,
+                        columnSpacing: 24,
+                        columns: const [
+                          DataColumn(
+                            label: Text(
+                              'CATEGORIA',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                color: AppTheme.inkMuted,
+                              ),
                             ),
                           ),
-                        ),
-                        DataColumn(
-                          label: Text(
-                            'DESPESAS',
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: AppTheme.inkMuted,
+                          DataColumn(
+                            label: Text(
+                              'DESPESAS',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                color: AppTheme.inkMuted,
+                              ),
                             ),
                           ),
-                        ),
-                        DataColumn(
-                          numeric: true,
-                          label: Text(
-                            'TOTAL GASTO',
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: AppTheme.inkMuted,
+                          DataColumn(
+                            numeric: true,
+                            label: Text(
+                              'TOTAL GASTO',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                color: AppTheme.inkMuted,
+                              ),
                             ),
                           ),
-                        ),
-                        DataColumn(
-                          numeric: true,
-                          label: Text(
-                            '% DO TOTAL',
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: AppTheme.inkMuted,
+                          DataColumn(
+                            numeric: true,
+                            label: Text(
+                              '% DO TOTAL',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                color: AppTheme.inkMuted,
+                              ),
                             ),
                           ),
-                        ),
-                        DataColumn(
-                          label: Text(
-                            'AÇÕES',
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: AppTheme.inkMuted,
+                          DataColumn(
+                            label: Text(
+                              'AÇÕES',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                color: AppTheme.inkMuted,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                      rows: store.categories.map((cat) {
-                        final expenseCount =
-                            store.getExpenseCountForCategory(cat.id);
-                        final spent = store.getTotalSpentForCategory(cat.id);
-                        final share = totalSpentAll > 0
-                            ? (spent / totalSpentAll).clamp(0.0, 1.0)
-                            : 0.0;
+                        ],
+                        rows: store.categories.map((cat) {
+                          final expenseCount =
+                              store.getExpenseCountForCategory(cat.id);
+                          final spent = store.getTotalSpentForCategory(cat.id);
+                          final share = totalSpentAll > 0
+                              ? (spent / totalSpentAll).clamp(0.0, 1.0)
+                              : 0.0;
 
-                        return DataRow(
-                          cells: [
-                            DataCell(
-                              Row(
-                                children: [
-                                  Container(
-                                    width: 32,
-                                    height: 32,
-                                    decoration: BoxDecoration(
-                                      color: cat.color.withOpacity(0.12),
-                                      borderRadius: BorderRadius.circular(6),
+                          return DataRow(
+                            cells: [
+                              DataCell(
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: 32,
+                                      height: 32,
+                                      decoration: BoxDecoration(
+                                        color: cat.color.withOpacity(0.12),
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      child: Icon(
+                                        cat.icon,
+                                        size: 18,
+                                        color: cat.color,
+                                      ),
                                     ),
-                                    child: Icon(
-                                      cat.icon,
-                                      size: 18,
-                                      color: cat.color,
+                                    const SizedBox(width: 12),
+                                    Text(
+                                      cat.name,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        color: AppTheme.inkPrimary,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Text(
-                                    cat.name,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      color: AppTheme.inkPrimary,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            DataCell(
-                              Text(
-                                '$expenseCount ${expenseCount == 1 ? 'item' : 'itens'}',
-                                style: const TextStyle(
-                                  color: AppTheme.inkSecondary,
+                                  ],
                                 ),
                               ),
-                            ),
-                            DataCell(
-                              Text(
-                                currency.format(spent),
-                                style: AppTheme.tabularNumber.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  color: AppTheme.inkPrimary,
+                              DataCell(
+                                Text(
+                                  '$expenseCount ${expenseCount == 1 ? 'item' : 'itens'}',
+                                  style: const TextStyle(
+                                    color: AppTheme.inkSecondary,
+                                  ),
                                 ),
                               ),
-                            ),
-                            DataCell(
-                              Text(
-                                '${(share * 100).toStringAsFixed(1)}%',
-                                style: AppTheme.tabularNumber.copyWith(
-                                  color: AppTheme.inkSecondary,
+                              DataCell(
+                                Text(
+                                  currency.format(spent),
+                                  style: AppTheme.tabularNumber.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: AppTheme.inkPrimary,
+                                  ),
                                 ),
                               ),
-                            ),
-                            DataCell(
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    tooltip: 'Editar Categoria',
-                                    icon: const Icon(
-                                      Icons.edit_outlined,
-                                      size: 18,
-                                    ),
-                                    onPressed: () =>
-                                        _handleEditCategory(context, cat),
+                              DataCell(
+                                Text(
+                                  '${(share * 100).toStringAsFixed(1)}%',
+                                  style: AppTheme.tabularNumber.copyWith(
+                                    color: AppTheme.inkSecondary,
                                   ),
-                                  IconButton(
-                                    tooltip: 'Excluir Categoria',
-                                    icon: const Icon(
-                                      Icons.delete_outline,
-                                      size: 18,
-                                      color: AppTheme.overBudgetCrimson,
-                                    ),
-                                    onPressed: () =>
-                                        _handleDeleteCategory(context, cat),
-                                  ),
-                                ],
+                                ),
                               ),
-                            ),
-                          ],
-                        );
-                      }).toList(),
+                              DataCell(
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      tooltip: 'Editar Categoria',
+                                      icon: const Icon(
+                                        Icons.edit_outlined,
+                                        size: 18,
+                                      ),
+                                      onPressed: () =>
+                                          _handleEditCategory(context, cat),
+                                    ),
+                                    IconButton(
+                                      tooltip: 'Excluir Categoria',
+                                      icon: const Icon(
+                                        Icons.delete_outline,
+                                        size: 18,
+                                        color: AppTheme.overBudgetCrimson,
+                                      ),
+                                      onPressed: () =>
+                                          _handleDeleteCategory(context, cat),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          );
+                        }).toList(),
+                      ),
                     ),
                 ],
               ),
