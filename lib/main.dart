@@ -130,31 +130,181 @@ class _EventLedgerHomeScreenState extends State<EventLedgerHomeScreen> {
           );
         }
 
-        return Scaffold(
-          body: Row(
-            children: [
-              DesktopSidebar(
-                store: _store,
-                onCreateEvent: () => _handleCreateEvent(context),
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _DesktopTopBar(
-                      store: _store,
-                      onCreateEvent: () => _handleCreateEvent(context),
-                      onImport: () => _handleImport(context),
-                      onExport: () => _handleExport(context),
-                    ),
-                    Expanded(child: _buildActiveScreen(context)),
-                  ],
-                ),
-              ),
-            ],
-          ),
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final isMobile = constraints.maxWidth < 768;
+            final isTablet =
+                constraints.maxWidth >= 768 && constraints.maxWidth < 1100;
+
+            if (isMobile) {
+              return _buildMobileScaffold(context);
+            }
+
+            return _buildDesktopOrTabletScaffold(context, isTablet: isTablet);
+          },
         );
       },
+    );
+  }
+
+  Widget _buildDesktopOrTabletScaffold(BuildContext context,
+      {required bool isTablet}) {
+    return Scaffold(
+      body: Row(
+        children: [
+          DesktopSidebar(
+            store: _store,
+            isCompact: isTablet,
+            onCreateEvent: () => _handleCreateEvent(context),
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _DesktopTopBar(
+                  store: _store,
+                  isTablet: isTablet,
+                  onCreateEvent: () => _handleCreateEvent(context),
+                  onImport: () => _handleImport(context),
+                  onExport: () => _handleExport(context),
+                ),
+                Expanded(child: _buildActiveScreen(context)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMobileScaffold(BuildContext context) {
+    final isEventDetail = _store.activeView == WorkspaceView.eventDetail;
+
+    int currentNavIndex = 0;
+    switch (_store.activeView) {
+      case WorkspaceView.dashboard:
+        currentNavIndex = 0;
+        break;
+      case WorkspaceView.allExpenses:
+        currentNavIndex = 1;
+        break;
+      case WorkspaceView.categories:
+        currentNavIndex = 2;
+        break;
+      case WorkspaceView.archivedEvents:
+        currentNavIndex = 3;
+        break;
+      case WorkspaceView.eventDetail:
+        currentNavIndex = 0;
+        break;
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: AppTheme.surfaceContainerLowest,
+        elevation: 0,
+        scrolledUnderElevation: 1,
+        titleSpacing: isEventDetail ? 0 : 16,
+        leading: isEventDetail
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back, color: AppTheme.onSurface),
+                onPressed: _store.selectDashboard,
+              )
+            : null,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (!isEventDetail) ...[
+              Container(
+                width: 30,
+                height: 30,
+                decoration: BoxDecoration(
+                  color: AppTheme.primary,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.account_balance_wallet_rounded,
+                  color: Colors.white,
+                  size: 16,
+                ),
+              ),
+              const SizedBox(width: 8),
+            ],
+            Text(
+              isEventDetail
+                  ? (_store.selectedEvent?.name ?? 'Detalhes do Evento')
+                  : 'EventLedger',
+              style: const TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w700,
+                color: AppTheme.onSurface,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          IconButton(
+            tooltip: 'Importar',
+            icon: const Icon(Icons.file_upload_outlined, size: 20),
+            onPressed: () => _handleImport(context),
+          ),
+          IconButton(
+            tooltip: 'Exportar',
+            icon: const Icon(Icons.file_download_outlined, size: 20),
+            onPressed: () => _handleExport(context),
+          ),
+          IconButton(
+            tooltip: 'Novo Evento',
+            icon:
+                const Icon(Icons.add_circle, color: AppTheme.primary, size: 26),
+            onPressed: () => _handleCreateEvent(context),
+          ),
+        ],
+      ),
+      body: _buildActiveScreen(context),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: currentNavIndex,
+        backgroundColor: AppTheme.surfaceContainerLow,
+        indicatorColor: AppTheme.primaryFixed,
+        onDestinationSelected: (idx) {
+          switch (idx) {
+            case 0:
+              _store.selectDashboard();
+              break;
+            case 1:
+              _store.selectAllExpenses();
+              break;
+            case 2:
+              _store.selectCategories();
+              break;
+            case 3:
+              _store.selectArchivedEvents();
+              break;
+          }
+        },
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.dashboard_outlined),
+            selectedIcon: Icon(Icons.dashboard_rounded),
+            label: 'Painel',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.receipt_long_outlined),
+            selectedIcon: Icon(Icons.receipt_long_rounded),
+            label: 'Despesas',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.category_outlined),
+            selectedIcon: Icon(Icons.category_rounded),
+            label: 'Categorias',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.archive_outlined),
+            selectedIcon: Icon(Icons.archive_rounded),
+            label: 'Arquivados',
+          ),
+        ],
+      ),
     );
   }
 
@@ -190,12 +340,14 @@ class _DesktopTopBar extends StatelessWidget {
     required this.onCreateEvent,
     required this.onImport,
     required this.onExport,
+    this.isTablet = false,
   });
 
   final LedgerStore store;
   final VoidCallback onCreateEvent;
   final VoidCallback onImport;
   final VoidCallback onExport;
+  final bool isTablet;
 
   String get _breadcrumbCategory {
     switch (store.activeView) {
@@ -228,7 +380,7 @@ class _DesktopTopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 64,
-      padding: const EdgeInsets.symmetric(horizontal: 28),
+      padding: EdgeInsets.symmetric(horizontal: isTablet ? 16 : 28),
       decoration: const BoxDecoration(
         color: AppTheme.surfaceContainerLowest,
         border: Border(
@@ -269,22 +421,35 @@ class _DesktopTopBar extends StatelessWidget {
             ],
           ),
           const Spacer(),
-          OutlinedButton.icon(
-            onPressed: onImport,
-            icon: const Icon(Icons.file_upload_outlined, size: 17),
-            label: const Text('Importar'),
-          ),
+          if (!isTablet) ...[
+            OutlinedButton.icon(
+              onPressed: onImport,
+              icon: const Icon(Icons.file_upload_outlined, size: 17),
+              label: const Text('Importar'),
+            ),
+            const SizedBox(width: 8),
+            OutlinedButton.icon(
+              onPressed: onExport,
+              icon: const Icon(Icons.file_download_outlined, size: 17),
+              label: const Text('Exportar'),
+            ),
+          ] else ...[
+            IconButton(
+              tooltip: 'Importar',
+              icon: const Icon(Icons.file_upload_outlined, size: 19),
+              onPressed: onImport,
+            ),
+            IconButton(
+              tooltip: 'Exportar',
+              icon: const Icon(Icons.file_download_outlined, size: 19),
+              onPressed: onExport,
+            ),
+          ],
           const SizedBox(width: 8),
-          OutlinedButton.icon(
-            onPressed: onExport,
-            icon: const Icon(Icons.file_download_outlined, size: 17),
-            label: const Text('Exportar'),
-          ),
-          const SizedBox(width: 12),
           FilledButton.icon(
             onPressed: onCreateEvent,
             icon: const Icon(Icons.add, size: 18),
-            label: const Text('Novo Evento'),
+            label: Text(isTablet ? 'Novo' : 'Novo Evento'),
           ),
         ],
       ),

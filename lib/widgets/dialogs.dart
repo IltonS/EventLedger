@@ -92,6 +92,40 @@ Future<EventFormResult?> showEventFormDialog(
   BuildContext context, {
   PersonalEvent? existing,
 }) {
+  final isMobile = MediaQuery.sizeOf(context).width < 600;
+  if (isMobile) {
+    return showModalBottomSheet<EventFormResult>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppTheme.surfaceContainerLowest,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.viewInsetsOf(context).bottom,
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 12),
+              Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppTheme.outlineVariant,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              _EventFormDialog(existing: existing, isBottomSheet: true),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   return showDialog<EventFormResult>(
     context: context,
     builder: (context) => _EventFormDialog(existing: existing),
@@ -103,6 +137,44 @@ Future<ExpenseFormResult?> showExpenseFormDialog(
   ExpenseItem? existing,
   required List<ExpenseCategory> categories,
 }) {
+  final isMobile = MediaQuery.sizeOf(context).width < 600;
+  if (isMobile) {
+    return showModalBottomSheet<ExpenseFormResult>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppTheme.surfaceContainerLowest,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.viewInsetsOf(context).bottom,
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 12),
+              Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppTheme.outlineVariant,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              _ExpenseFormDialog(
+                existing: existing,
+                categories: categories,
+                isBottomSheet: true,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   return showDialog<ExpenseFormResult>(
     context: context,
     builder: (context) => _ExpenseFormDialog(
@@ -116,6 +188,43 @@ Future<CategoryFormResult?> showCategoryFormDialog(
   BuildContext context, {
   ExpenseCategory? existing,
 }) {
+  final isMobile = MediaQuery.sizeOf(context).width < 600;
+  if (isMobile) {
+    return showModalBottomSheet<CategoryFormResult>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppTheme.surfaceContainerLowest,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.viewInsetsOf(context).bottom,
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 12),
+              Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppTheme.outlineVariant,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              _CategoryFormDialog(
+                existing: existing,
+                isBottomSheet: true,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   return showDialog<CategoryFormResult>(
     context: context,
     builder: (context) => _CategoryFormDialog(existing: existing),
@@ -293,9 +402,10 @@ double? _parseCurrencyInput(String raw) {
 }
 
 class _EventFormDialog extends StatefulWidget {
-  const _EventFormDialog({this.existing});
+  const _EventFormDialog({this.existing, this.isBottomSheet = false});
 
   final PersonalEvent? existing;
+  final bool isBottomSheet;
 
   @override
   State<_EventFormDialog> createState() => _EventFormDialogState();
@@ -469,10 +579,12 @@ class _ExpenseFormDialog extends StatefulWidget {
   const _ExpenseFormDialog({
     this.existing,
     required this.categories,
+    this.isBottomSheet = false,
   });
 
   final ExpenseItem? existing;
   final List<ExpenseCategory> categories;
+  final bool isBottomSheet;
 
   @override
   State<_ExpenseFormDialog> createState() => _ExpenseFormDialogState();
@@ -705,9 +817,10 @@ class _ExpenseFormDialogState extends State<_ExpenseFormDialog> {
 }
 
 class _CategoryFormDialog extends StatefulWidget {
-  const _CategoryFormDialog({this.existing});
+  const _CategoryFormDialog({this.existing, this.isBottomSheet = false});
 
   final ExpenseCategory? existing;
+  final bool isBottomSheet;
 
   @override
   State<_CategoryFormDialog> createState() => _CategoryFormDialogState();

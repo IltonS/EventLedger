@@ -4,18 +4,105 @@ import 'package:intl/intl.dart';
 import '../state/ledger_store.dart';
 import '../theme/app_theme.dart';
 
+/// Navigation sidebar supporting standard expanded desktop (272px)
+/// and compact M3 Navigation Rail for tablets (80px).
 class DesktopSidebar extends StatelessWidget {
   const DesktopSidebar({
     super.key,
     required this.store,
     required this.onCreateEvent,
+    this.isCompact = false,
   });
 
   final LedgerStore store;
   final VoidCallback onCreateEvent;
+  final bool isCompact;
 
   @override
   Widget build(BuildContext context) {
+    if (isCompact) {
+      return _buildCompactRail(context);
+    }
+    return _buildExpandedSidebar(context);
+  }
+
+  Widget _buildCompactRail(BuildContext context) {
+    return Container(
+      width: 80,
+      decoration: const BoxDecoration(
+        color: AppTheme.surfaceContainerLow,
+        border: Border(
+          right: BorderSide(color: Color(0x226F7A70)),
+        ),
+      ),
+      child: Column(
+        children: [
+          const SizedBox(height: 18),
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: AppTheme.primary,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: const Icon(
+              Icons.account_balance_wallet_rounded,
+              color: Colors.white,
+              size: 22,
+            ),
+          ),
+          const SizedBox(height: 14),
+          IconButton(
+            tooltip: 'Novo Evento',
+            onPressed: onCreateEvent,
+            icon: const Icon(Icons.add, size: 22),
+            style: IconButton.styleFrom(
+              backgroundColor: AppTheme.secondaryContainer,
+              foregroundColor: AppTheme.onSecondaryFixed,
+              minimumSize: const Size(44, 44),
+            ),
+          ),
+          const SizedBox(height: 16),
+          const Divider(height: 1),
+          const SizedBox(height: 12),
+          _CompactRailItem(
+            icon: Icons.dashboard_rounded,
+            label: 'Painel',
+            selected: store.activeView == WorkspaceView.dashboard,
+            onTap: store.selectDashboard,
+          ),
+          const SizedBox(height: 12),
+          _CompactRailItem(
+            icon: Icons.receipt_long_rounded,
+            label: 'Despesas',
+            badgeCount: store.totalExpenseCount,
+            selected: store.activeView == WorkspaceView.allExpenses,
+            onTap: store.selectAllExpenses,
+          ),
+          const SizedBox(height: 12),
+          _CompactRailItem(
+            icon: Icons.category_rounded,
+            label: 'Categorias',
+            badgeCount: store.categories.length,
+            selected: store.activeView == WorkspaceView.categories,
+            onTap: store.selectCategories,
+          ),
+          const SizedBox(height: 12),
+          _CompactRailItem(
+            icon: Icons.archive_rounded,
+            label: 'Arquivados',
+            badgeCount: store.archivedEvents.isNotEmpty
+                ? store.archivedEvents.length
+                : null,
+            selected: store.activeView == WorkspaceView.archivedEvents,
+            onTap: store.selectArchivedEvents,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildExpandedSidebar(BuildContext context) {
     final currency = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$');
 
     return Container(
@@ -242,6 +329,89 @@ class DesktopSidebar extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _CompactRailItem extends StatelessWidget {
+  const _CompactRailItem({
+    required this.icon,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+    this.badgeCount,
+  });
+
+  final IconData icon;
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+  final int? badgeCount;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  width: 52,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color:
+                        selected ? AppTheme.primaryFixed : Colors.transparent,
+                    borderRadius: BorderRadius.circular(9999),
+                  ),
+                  child: Icon(
+                    icon,
+                    size: 20,
+                    color: selected
+                        ? AppTheme.onPrimaryFixed
+                        : AppTheme.onSurfaceVariant,
+                  ),
+                ),
+                if (badgeCount != null)
+                  Positioned(
+                    top: -2,
+                    right: 4,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 4, vertical: 1),
+                      decoration: BoxDecoration(
+                        color: AppTheme.surfaceContainerHigh,
+                        borderRadius: BorderRadius.circular(9999),
+                      ),
+                      child: Text(
+                        '$badgeCount',
+                        style: const TextStyle(
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.secondary,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 3),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 10.5,
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                color: selected ? AppTheme.onSurface : AppTheme.secondary,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
