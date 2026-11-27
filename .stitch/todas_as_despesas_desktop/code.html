@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"inverse-on-surface":"#ebf3e9","secondary-container":"#cfe5d2","surface-container-highest":"#dde5db","tertiary-container":"#426b77","on-background":"#161d17","on-secondary-fixed":"#0d1f14","on-tertiary-container":"#bfeaf8","inverse-surface":"#2b322c","surface-dim":"#d4dcd3","surface-container-lowest":"#ffffff","primary-fixed-dim":"#88d8a1","error-container":"#ffdad6","surface-container-high":"#e2eae1","on-error":"#ffffff","on-primary":"#ffffff","primary-container":"#217346","on-secondary-container":"#536758","on-error-container":"#93000a","on-tertiary":"#ffffff","on-secondary":"#ffffff","tertiary-fixed-dim":"#a3cddb","tertiary":"#29535e","inverse-primary":"#88d8a1","secondary-fixed":"#d2e8d5","on-tertiary-fixed":"#001f27","on-tertiary-fixed-variant":"#224c58","outline":"#6f7a70","surface-tint":"#176c40","on-surface-variant":"#3f4941","tertiary-fixed":"#bfe9f8","surface-variant":"#dde5db","primary":"#005931","surface-container":"#e8f0e6","on-primary-fixed-variant":"#00522d","surface-container-low":"#eef6ec","error":"#ba1a1a","on-primary-container":"#a4f5bd","outline-variant":"#bfc9be","on-primary-fixed":"#00210f","primary-fixed":"#a3f4bc","surface-bright":"#f4fcf2","secondary":"#4f6354","secondary-fixed-dim":"#b6ccba","on-surface":"#161d17","on-secondary-fixed-variant":"#384b3d","background":"#f4fcf2","surface":"#f4fcf2"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{"space-xs":"0.25rem",margin:"1.5rem","margin-mobile":"1rem",gutter:"1.25rem","space-sm":"0.5rem","gutter-lg":"1.5rem","space-lg":"1.5rem","space-xl":"2rem","gutter-sm":"0.75rem","space-md":"1rem"},fontFamily:{"body-lg":["Inter"],"label-md":["Inter"],"title-lg":["Inter"],"body-sm":["Inter"],"title-md":["Inter"],"display-md":["Inter"],"headline-md":["Inter"],"label-lg":["Inter"],"body-md":["Inter"],"headline-lg":["Inter"],"headline-lg-mobile":["Inter"],"label-sm":["Inter"]},fontSize:{"body-lg":["16px",{lineHeight:"24px",fontWeight:"400"}],"label-md":["12px",{lineHeight:"16px",letterSpacing:"0.02em",fontWeight:"500"}],"title-lg":["20px",{lineHeight:"28px",fontWeight:"600"}],"body-sm":["12px",{lineHeight:"16px",fontWeight:"400"}],"title-md":["16px",{lineHeight:"24px",fontWeight:"600"}],"display-md":["44px",{lineHeight:"52px",letterSpacing:"-0.02em",fontWeight:"700"}],"headline-md":["24px",{lineHeight:"32px",letterSpacing:"-0.01em",fontWeight:"600"}],"label-lg":["14px",{lineHeight:"20px",letterSpacing:"0.01em",fontWeight:"600"}],"body-md":["14px",{lineHeight:"20px",fontWeight:"400"}],"headline-lg":["32px",{lineHeight:"40px",letterSpacing:"-0.015em",fontWeight:"600"}],"headline-lg-mobile":["26px",{lineHeight:"34px",letterSpacing:"-0.01em",fontWeight:"600"}],"label-sm":["11px",{lineHeight:"14px",letterSpacing:"0.03em",fontWeight:"500"}]}}}}</script></head><body class="bg-surface font-body-md text-on-surface"><aside class="fixed left-0 top-0 h-screen w-72 bg-surface-container-low z-50 flex flex-col justify-between p-space-md shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex flex-col gap-space-lg"><div class="flex items-center gap-space-sm px-space-sm py-space-xs"><div class="w-9 h-9 rounded-xl bg-primary-container flex items-center justify-center text-on-primary-container shadow-sm"><span class="material-symbols-outlined text-[20px]">account_balance_wallet</span></div><div class="flex flex-col"><span class="font-title-lg text-title-lg text-on-surface tracking-tight">EventLedger</span><span class="font-label-sm text-label-sm text-secondary">Gestão Orçamentária</span></div></div><nav class="flex flex-col gap-1" data-active-classes="bg-primary-container text-on-primary-container font-label-lg rounded-full"><a class="flex items-center justify-between px-space-md h-12 rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="painel-de-despesas" href="#"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-[20px]">grid_view</span><span class="font-label-lg text-label-lg">Painel de Despesas</span></div></a><a aria-current="page" class="flex items-center justify-between px-space-md h-12 transition-all bg-primary-container text-on-primary-container font-label-lg rounded-full" data-path="todas-as-despesas" href="#"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-[20px]">receipt_long</span><span class="font-label-lg text-label-lg">Todas as Despesas</span></div><span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm">2</span></a><a class="flex items-center justify-between px-space-md h-12 rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="categorias" href="#"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-[20px]">category</span><span class="font-label-lg text-label-lg">Categorias</span></div><span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm">8</span></a><a class="flex items-center justify-between px-space-md h-12 rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="eventos-arquivados" href="#"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-[20px]">archive</span><span class="font-label-lg text-label-lg">Eventos Arquivados</span></div><span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm">1</span></a></nav><div class="flex flex-col gap-1 pt-space-xs"><div class="px-space-md py-space-xs"><span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary">Eventos Pessoais</span></div><nav class="flex flex-col gap-1" data-active-classes="bg-primary-container text-on-primary-container font-label-lg rounded-full"><a class="flex items-center gap-3 px-space-md h-11 rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="aniversario-rapha-2026" href="#"><span class="material-symbols-outlined text-[18px] text-tertiary">cake</span><span class="font-label-lg text-label-lg truncate">Aniversário Rapha 2026</span></a></nav></div></div><div class="pt-space-md"><button class="w-full h-12 flex items-center justify-center gap-2 rounded-full bg-primary-container text-on-primary font-label-lg text-label-lg shadow-sm hover:bg-primary transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">add</span><span>+ Novo Evento</span></button></div></aside><div class="pl-72 min-h-screen flex flex-col"><header class="fixed top-0 left-72 right-0 z-40 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 w-full px-space-lg flex items-center justify-between"><div class="flex items-center gap-2 font-body-sm text-body-sm text-on-surface-variant"><span class="text-secondary">Espaço de Trabalho</span><span class="text-outline-variant">/</span><span class="text-on-surface font-medium">Painel de Despesas</span></div><div class="flex items-center gap-space-sm"><button class="h-9 px-space-md flex items-center gap-2 rounded-full bg-surface-container-lowest text-on-surface font-label-md text-label-md hover:bg-surface-container-high transition-colors shadow-sm" type="button"><span class="material-symbols-outlined text-[18px]">file_upload</span><span>Importar</span></button><button class="h-9 px-space-md flex items-center gap-2 rounded-full bg-surface-container-lowest text-on-surface font-label-md text-label-md hover:bg-surface-container-high transition-colors shadow-sm" type="button"><span class="material-symbols-outlined text-[18px]">download</span><span>Exportar</span></button><button class="h-9 px-space-md flex items-center gap-1.5 rounded-full bg-primary-container text-on-primary font-label-md text-label-md hover:bg-primary transition-colors shadow-sm" type="button"><span class="material-symbols-outlined text-[18px]">add</span><span>+ Novo Evento</span></button><div class="h-6 w-px bg-surface-container-highest mx-space-xs"></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 flex-1 bg-surface px-space-lg pb-space-xl"><div class="flex flex-col w-full gap-space-lg">
+<!-- Interactive Summary Header Strip -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-space-md">
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between text-secondary">
+<span class="font-label-md text-label-md">Total Previsto</span>
+<span class="material-symbols-outlined text-[18px]">payments</span>
+</div>
+<div class="mt-2 flex items-baseline gap-2">
+<span class="font-headline-md text-headline-md text-on-surface">R$ 214,60</span>
+<span class="font-label-sm text-label-sm text-secondary">2 despesas</span>
+</div>
+<div class="w-full bg-surface-container h-1.5 rounded-full mt-3 overflow-hidden">
+<div class="bg-primary-container h-full rounded-full" style="width: 100%;"></div>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between text-secondary">
+<span class="font-label-md text-label-md">Total Quitado</span>
+<span class="material-symbols-outlined text-[18px] text-primary">check_circle</span>
+</div>
+<div class="mt-2 flex items-baseline gap-2">
+<span class="font-headline-md text-headline-md text-primary">R$ 89,70</span>
+<span class="font-label-sm text-label-sm text-primary">41,8%</span>
+</div>
+<div class="w-full bg-surface-container h-1.5 rounded-full mt-3 overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 41.8%;"></div>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between text-secondary">
+<span class="font-label-md text-label-md">Saldo a Pagar</span>
+<span class="material-symbols-outlined text-[18px] text-tertiary">pending</span>
+</div>
+<div class="mt-2 flex items-baseline gap-2">
+<span class="font-headline-md text-headline-md text-tertiary">R$ 124,90</span>
+<span class="font-label-sm text-label-sm text-secondary">58,2%</span>
+</div>
+<div class="w-full bg-surface-container h-1.5 rounded-full mt-3 overflow-hidden">
+<div class="bg-tertiary-container h-full rounded-full" style="width: 58.2%;"></div>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between text-secondary">
+<span class="font-label-md text-label-md">Evento Vinculado</span>
+<span class="material-symbols-outlined text-[18px] text-secondary">cake</span>
+</div>
+<div class="mt-2 flex flex-col">
+<span class="font-title-md text-title-md text-on-surface truncate">Aniversário Rapha 2026</span>
+<span class="font-label-sm text-label-sm text-secondary">Previsão: 20 Nov 2026</span>
+</div>
+<div class="flex items-center gap-1.5 mt-2 text-primary font-label-sm text-label-sm">
+<span class="w-2 h-2 rounded-full bg-primary inline-block"></span>
+<span>Ativo • Orçamento sob controle</span>
+</div>
+</div>
+</div>
+<!-- Main Ledger Container Card -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
+<!-- Header with Filter Controls as requested in reference -->
+<div class="p-space-lg flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-secondary-container flex items-center justify-center text-on-secondary-fixed">
+<span class="material-symbols-outlined text-[22px]">receipt_long</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md text-on-surface">Todas as Despesas dos Eventos</h1>
+<p class="font-body-sm text-body-sm text-secondary">Gerenciamento financeiro unificado de todos os itens cadastrados</p>
+</div>
+</div>
+<!-- Action & Filter Bar matching reference layout exactly -->
+<div class="flex flex-wrap items-center gap-space-sm">
+<!-- M3 Dropdown: Categoria -->
+<div class="relative inline-block text-left" id="category-dropdown-wrapper">
+<div class="relative bg-surface-container-low hover:bg-surface-container transition-colors rounded-xl px-3 py-2 cursor-pointer flex items-center gap-2" id="category-dropdown-btn">
+<span class="material-symbols-outlined text-[18px] text-secondary">category</span>
+<div class="flex flex-col text-left">
+<span class="font-label-sm text-[10px] leading-3 uppercase tracking-wider text-secondary">Categoria</span>
+<span class="font-label-lg text-label-lg text-on-surface" id="selected-category-text">Todas as Categorias</span>
+</div>
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant ml-2 transition-transform duration-200" id="category-arrow">expand_more</span>
+</div>
+<!-- Dropdown Menu -->
+<div class="hidden absolute right-0 mt-2 w-56 rounded-xl bg-surface-container-lowest shadow-lg py-1 z-30 ring-1 ring-black/5" id="category-menu">
+<button class="w-full text-left px-4 py-2.5 font-label-md text-label-md text-on-surface hover:bg-surface-container flex items-center justify-between category-filter-item active bg-surface-container-high" data-category="all" type="button">
+<span>Todas as Categorias</span>
+<span class="material-symbols-outlined text-[16px] text-primary">check</span>
+</button>
+<button class="w-full text-left px-4 py-2.5 font-label-md text-label-md text-on-surface hover:bg-surface-container flex items-center justify-between category-filter-item" data-category="Decoração" type="button">
+<span>Decoração</span>
+<span class="font-label-sm text-label-sm text-secondary">1</span>
+</button>
+<button class="w-full text-left px-4 py-2.5 font-label-md text-label-md text-on-surface hover:bg-surface-container flex items-center justify-between category-filter-item" data-category="Lembrancinhas" type="button">
+<span>Lembrancinhas</span>
+<span class="font-label-sm text-label-sm text-secondary">1</span>
+</button>
+</div>
+</div>
+<!-- M3 Segmented Button: Todas, Pagas, Pendentes -->
+<div class="inline-flex p-1 rounded-xl bg-surface-container text-on-surface-variant" role="tablist">
+<button class="filter-tab flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-label-md text-label-md transition-all bg-surface-container-lowest text-primary shadow-sm font-semibold" data-status="all" id="filter-all" type="button">
+<span class="material-symbols-outlined text-[16px] text-primary" style="font-variation-settings: 'wght' 600;">check</span>
+<span>Todas</span>
+</button>
+<button class="filter-tab flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-label-md text-label-md text-secondary hover:text-on-surface transition-all" data-status="paid" id="filter-paid" type="button">
+<span>Pagas</span>
+</button>
+<button class="filter-tab flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-label-md text-label-md text-secondary hover:text-on-surface transition-all" data-status="pending" id="filter-pending" type="button">
+<span>Pendentes</span>
+</button>
+</div>
+<!-- Rapid Actions Quick Add button inside card -->
+<button class="h-10 px-3.5 rounded-xl bg-primary-container text-on-primary font-label-md text-label-md flex items-center gap-1.5 shadow-sm hover:bg-primary transition-all ml-1" id="btn-quick-add" type="button">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+<span class="hidden sm:inline">Adicionar</span>
+</button>
+</div>
+</div>
+<!-- Data Table Container -->
+<div class="overflow-x-auto w-full">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-secondary font-label-md text-label-md uppercase tracking-wider">
+<th class="py-3 px-space-lg w-20 text-center" scope="col">Pago</th>
+<th class="py-3 px-space-md" scope="col">Despesa</th>
+<th class="py-3 px-space-md" scope="col">Evento</th>
+<th class="py-3 px-space-md" scope="col">Categoria</th>
+<th class="py-3 px-space-md" scope="col">Data</th>
+<th class="py-3 px-space-lg text-right" scope="col">Valor</th>
+<th class="py-3 px-space-md w-16 text-center" scope="col">Ações</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container font-body-md text-body-md" id="expenses-table-body">
+<!-- Row 1: Kit Decoração (Pendente / Unchecked) -->
+<tr class="hover:bg-surface-container-low transition-colors duration-150 group" data-category="Decoração" data-id="1" data-status="pending">
+<td class="py-3.5 px-space-lg text-center">
+<label class="relative flex items-center justify-center cursor-pointer m-auto w-6 h-6">
+<input class="sr-only peer expense-checkbox" data-row-id="1" type="checkbox"/>
+<div class="w-5 h-5 rounded-md bg-surface-container-highest peer-checked:bg-primary-container peer-checked:text-on-primary-container flex items-center justify-center transition-all shadow-inner">
+<span class="material-symbols-outlined text-[16px] text-white opacity-0 peer-checked:opacity-100 font-bold transition-opacity">check</span>
+</div>
+</label>
+</td>
+<td class="py-3.5 px-space-md">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">brush</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface expense-title">Kit Decoração</span>
+<span class="font-label-sm text-label-sm text-secondary">Balões, toalhas e painel temático</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-space-md">
+<a class="font-label-lg text-label-lg text-primary hover:underline inline-flex items-center gap-1" href="#">
+<span>Aniversário Rapha 2026</span>
+<span class="material-symbols-outlined text-[14px]">arrow_outward</span>
+</a>
+</td>
+<td class="py-3.5 px-space-md">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant font-label-md text-label-md">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span>Decoração</span>
+</span>
+</td>
+<td class="py-3.5 px-space-md text-on-surface-variant whitespace-nowrap">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">calendar_today</span>
+<span>20 de nov. de 2026</span>
+</div>
+</td>
+<td class="py-3.5 px-space-lg text-right font-title-md text-title-md text-on-surface tabular-nums">
+              R$ 124,90
+            </td>
+<td class="py-3.5 px-space-md text-center">
+<div class="flex items-center justify-center gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
+<button class="w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-secondary hover:text-on-surface transition-colors" title="Editar" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="w-8 h-8 rounded-full hover:bg-error-container flex items-center justify-center text-secondary hover:text-on-error-container transition-colors" title="Excluir" type="button">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: Saco de lembranças (Pago / Checked) -->
+<tr class="hover:bg-surface-container-low transition-colors duration-150 group bg-surface-container-low/40" data-category="Lembrancinhas" data-id="2" data-status="paid">
+<td class="py-3.5 px-space-lg text-center">
+<label class="relative flex items-center justify-center cursor-pointer m-auto w-6 h-6">
+<input checked="" class="sr-only peer expense-checkbox" data-row-id="2" type="checkbox"/>
+<div class="w-5 h-5 rounded-md bg-surface-container-highest peer-checked:bg-primary-container peer-checked:text-on-primary-container flex items-center justify-center transition-all shadow-inner">
+<span class="material-symbols-outlined text-[16px] text-white opacity-0 peer-checked:opacity-100 font-bold transition-opacity">check</span>
+</div>
+</label>
+</td>
+<td class="py-3.5 px-space-md">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-secondary-container flex items-center justify-center text-on-secondary-fixed">
+<span class="material-symbols-outlined text-[18px]">redeem</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface line-through text-opacity-70 expense-title">Saco de lembranças</span>
+<span class="font-label-sm text-label-sm text-secondary">30 unidades com guloseimas</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-space-md">
+<a class="font-label-lg text-label-lg text-primary hover:underline inline-flex items-center gap-1" href="#">
+<span>Aniversário Rapha 2026</span>
+<span class="material-symbols-outlined text-[14px]">arrow_outward</span>
+</a>
+</td>
+<td class="py-3.5 px-space-md">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-fixed font-label-md text-label-md">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span>Lembrancinhas</span>
+</span>
+</td>
+<td class="py-3.5 px-space-md text-on-surface-variant whitespace-nowrap">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">calendar_today</span>
+<span>20 de nov. de 2026</span>
+</div>
+</td>
+<td class="py-3.5 px-space-lg text-right font-title-md text-title-md text-on-surface tabular-nums">
+              R$ 89,70
+            </td>
+<td class="py-3.5 px-space-md text-center">
+<div class="flex items-center justify-center gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
+<button class="w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-secondary hover:text-on-surface transition-colors" title="Editar" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="w-8 h-8 rounded-full hover:bg-error-container flex items-center justify-center text-secondary hover:text-on-error-container transition-colors" title="Excluir" type="button">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer / Micro-summary bar -->
+<div class="px-space-lg py-3 bg-surface-container-low flex flex-col sm:flex-row items-center justify-between text-secondary gap-2 font-label-md text-label-md">
+<div class="flex items-center gap-2">
+<span class="inline-block w-2 h-2 rounded-full bg-primary-container"></span>
+<span id="filtered-count-label">Exibindo 2 de 2 despesas registradas</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-1.5">
+<span class="text-on-surface-variant">Subtotal listado:</span>
+<span class="font-title-md text-title-md text-on-surface tabular-nums" id="summary-subtotal">R$ 214,60</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Complementary Context Panels: Category Distribution & Smart Projection -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-space-lg">
+<!-- Category Mini Distribution Card -->
+<div class="lg:col-span-1 bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">pie_chart</span>
+<h2 class="font-title-md text-title-md text-on-surface">Divisão por Categoria</h2>
+</div>
+<span class="font-label-sm text-label-sm text-secondary">2 ativas</span>
+</div>
+<div class="flex flex-col gap-space-sm pt-2">
+<!-- Decoração -->
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between font-label-md text-label-md">
+<span class="text-on-surface flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary"></span>
+              Decoração
+            </span>
+<span class="font-semibold text-on-surface tabular-nums">R$ 124,90 <span class="text-secondary font-normal">(58,2%)</span></span>
+</div>
+<div class="w-full bg-surface-container h-2 rounded-full overflow-hidden">
+<div class="bg-tertiary h-full rounded-full" style="width: 58.2%;"></div>
+</div>
+</div>
+<!-- Lembrancinhas -->
+<div class="flex flex-col gap-1 mt-2">
+<div class="flex items-center justify-between font-label-md text-label-md">
+<span class="text-on-surface flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container"></span>
+              Lembrancinhas
+            </span>
+<span class="font-semibold text-on-surface tabular-nums">R$ 89,70 <span class="text-secondary font-normal">(41,8%)</span></span>
+</div>
+<div class="w-full bg-surface-container h-2 rounded-full overflow-hidden">
+<div class="bg-primary-container h-full rounded-full" style="width: 41.8%;"></div>
+</div>
+</div>
+</div>
+<div class="pt-2 border-t border-surface-container mt-auto">
+<div class="p-3 bg-surface-container-low rounded-xl flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-[20px]">tips_and_updates</span>
+<p class="font-body-sm text-body-sm text-on-surface">58% do seu gasto está concentrado na categoria <strong>Decoração</strong>.</p>
+</div>
+</div>
+</div>
+<!-- Timeline & Execution Card -->
+<div class="lg:col-span-2 bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col justify-between gap-space-md">
+<div>
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">event_upcoming</span>
+<h2 class="font-title-md text-title-md text-on-surface">Linha do Tempo de Quitação</h2>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm">No Prazo</span>
+</div>
+<p class="font-body-sm text-body-sm text-secondary">
+          Todas as despesas atuais possuem vencimento previsto para o mesmo dia do evento. Mantenha os comprovantes anexados para fechamento de caixa.
+        </p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md pt-2">
+<div class="p-space-md rounded-xl bg-surface-container-low flex items-start gap-3">
+<div class="w-9 h-9 rounded-lg bg-surface-container-lowest flex items-center justify-center text-primary shadow-xs">
+<span class="material-symbols-outlined text-[20px]">schedule</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-secondary">Próximo Vencimento</span>
+<span class="font-title-md text-title-md text-on-surface">20 Nov 2026</span>
+<span class="font-body-sm text-body-sm text-tertiary">Kit Decoração pendente</span>
+</div>
+</div>
+<div class="p-space-md rounded-xl bg-surface-container-low flex items-start gap-3">
+<div class="w-9 h-9 rounded-lg bg-surface-container-lowest flex items-center justify-center text-primary shadow-xs">
+<span class="material-symbols-outlined text-[20px]">verified</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-secondary">Última Baixa Efetuada</span>
+<span class="font-title-md text-title-md text-on-surface">Saco de lembranças</span>
+<span class="font-body-sm text-body-sm text-primary font-medium">Pago via Pix • R$ 89,70</span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2">
+<span class="font-label-sm text-label-sm text-secondary">Exportação contábil disponível em CSV e PDF</span>
+<button class="h-9 px-4 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-colors flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">print</span>
+<span>Imprimir Relatório</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Modal Template for Add Expense (Interactive) -->
+<div class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/40 backdrop-blur-xs transition-opacity" id="modal-add-expense">
+<div class="bg-surface-container-lowest rounded-2xl p-space-lg w-full max-w-md shadow-2xl flex flex-col gap-space-md transform scale-95 transition-transform" id="modal-content">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-primary-container text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">add_card</span>
+</div>
+<h3 class="font-title-lg text-title-lg text-on-surface">Nova Despesa</h3>
+</div>
+<button class="w-8 h-8 rounded-full hover:bg-surface-container text-secondary flex items-center justify-center transition-colors" id="modal-close-btn" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<form class="flex flex-col gap-space-md" id="form-new-expense">
+<div class="flex flex-col gap-1">
+<label class="font-label-md text-label-md text-on-surface-variant">Nome da Despesa</label>
+<input class="h-11 px-3.5 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container focus:outline-none ring-1 ring-outline-variant/60 focus:ring-2 focus:ring-primary" placeholder="ex: Bolo Temático" required="" type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-space-sm">
+<div class="flex flex-col gap-1">
+<label class="font-label-md text-label-md text-on-surface-variant">Valor (R$)</label>
+<input class="h-11 px-3.5 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container focus:outline-none ring-1 ring-outline-variant/60 focus:ring-2 focus:ring-primary" placeholder="0,00" required="" type="text"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-md text-label-md text-on-surface-variant">Categoria</label>
+<select class="h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container focus:outline-none ring-1 ring-outline-variant/60 focus:ring-2 focus:ring-primary">
+<option>Decoração</option>
+<option>Lembrancinhas</option>
+<option>Alimentação</option>
+<option>Locação</option>
+</select>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-md text-label-md text-on-surface-variant">Evento Vinculado</label>
+<select class="h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container focus:outline-none ring-1 ring-outline-variant/60 focus:ring-2 focus:ring-primary">
+<option>Aniversário Rapha 2026</option>
+</select>
+</div>
+<div class="flex items-center gap-2 pt-1">
+<input class="w-4 h-4 rounded text-primary-container focus:ring-primary" id="expense-paid-toggle" type="checkbox"/>
+<label class="font-label-md text-label-md text-on-surface cursor-pointer" for="expense-paid-toggle">Marcar imediatamente como Pago</label>
+</div>
+<div class="flex items-center justify-end gap-2 pt-2">
+<button class="h-10 px-4 rounded-full font-label-md text-label-md text-secondary hover:bg-surface-container transition-colors" id="modal-cancel-btn" type="button">
+            Cancelar
+          </button>
+<button class="h-10 px-5 rounded-full bg-primary-container text-on-primary font-label-md text-label-md shadow-sm hover:bg-primary transition-colors" type="submit">
+            Salvar Despesa
+          </button>
+</div>
+</form>
+</div>
+</div>
+</div>
+<script>
+  (function () {
+    // Dropdown toggle
+    const dropdownBtn = document.getElementById('category-dropdown-btn');
+    const dropdownMenu = document.getElementById('category-menu');
+    const dropdownArrow = document.getElementById('category-arrow');
+    const selectedCategoryText = document.getElementById('selected-category-text');
+    const categoryFilterItems = document.querySelectorAll('.category-filter-item');
+
+    let currentCategory = 'all';
+    let currentStatus = 'all';
+
+    function toggleDropdown() {
+      const isHidden = dropdownMenu.classList.contains('hidden');
+      if (isHidden) {
+        dropdownMenu.classList.remove('hidden');
+        dropdownArrow.classList.add('rotate-180');
+      } else {
+        dropdownMenu.classList.add('hidden');
+        dropdownArrow.classList.remove('rotate-180');
+      }
+    }
+
+    if (dropdownBtn) {
+      dropdownBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        toggleDropdown();
+      });
+    }
+
+    document.addEventListener('click', function (e) {
+      if (dropdownMenu && !dropdownMenu.classList.contains('hidden')) {
+        dropdownMenu.classList.add('hidden');
+        if (dropdownArrow) dropdownArrow.classList.remove('rotate-180');
+      }
+    });
+
+    categoryFilterItems.forEach(item => {
+      item.addEventListener('click', function (e) {
+        e.stopPropagation();
+        const cat = this.getAttribute('data-category');
+        currentCategory = cat;
+        if (selectedCategoryText) {
+          selectedCategoryText.textContent = cat === 'all' ? 'Todas as Categorias' : cat;
+        }
+
+        categoryFilterItems.forEach(btn => {
+          btn.classList.remove('bg-surface-container-high');
+          const checkIcon = btn.querySelector('.material-symbols-outlined');
+          if (checkIcon) checkIcon.remove();
+        });
+
+        this.classList.add('bg-surface-container-high');
+        const icon = document.createElement('span');
+        icon.className = 'material-symbols-outlined text-[16px] text-primary';
+        icon.textContent = 'check';
+        this.appendChild(icon);
+
+        dropdownMenu.classList.add('hidden');
+        if (dropdownArrow) dropdownArrow.classList.remove('rotate-180');
+
+        applyFilters();
+      });
+    });
+
+    // Status Segmented Controls (Todas, Pagas, Pendentes)
+    const filterTabs = document.querySelectorAll('.filter-tab');
+    filterTabs.forEach(tab => {
+      tab.addEventListener('click', function () {
+        filterTabs.forEach(t => {
+          t.classList.remove('bg-surface-container-lowest', 'text-primary', 'shadow-sm', 'font-semibold');
+          t.classList.add('text-secondary');
+          const check = t.querySelector('.material-symbols-outlined');
+          if (check) check.remove();
+        });
+
+        this.classList.add('bg-surface-container-lowest', 'text-primary', 'shadow-sm', 'font-semibold');
+        this.classList.remove('text-secondary');
+
+        const checkIcon = document.createElement('span');
+        checkIcon.className = 'material-symbols-outlined text-[16px] text-primary';
+        checkIcon.style.fontVariationSettings = "'wght' 600";
+        checkIcon.textContent = 'check';
+        this.prepend(checkIcon);
+
+        currentStatus = this.getAttribute('data-status');
+        applyFilters();
+      });
+    });
+
+    // Filter Logic
+    function applyFilters() {
+      const rows = document.querySelectorAll('#expenses-table-body tr');
+      let visibleCount = 0;
+      let visibleTotal = 0;
+
+      rows.forEach(row => {
+        const rowStatus = row.getAttribute('data-status');
+        const rowCat = row.getAttribute('data-category');
+
+        const matchesStatus = currentStatus === 'all' || rowStatus === currentStatus;
+        const matchesCategory = currentCategory === 'all' || rowCat === currentCategory;
+
+        if (matchesStatus && matchesCategory) {
+          row.classList.remove('hidden');
+          visibleCount++;
+          if (row.getAttribute('data-id') === '1') visibleTotal += 124.90;
+          if (row.getAttribute('data-id') === '2') visibleTotal += 89.70;
+        } else {
+          row.classList.add('hidden');
+        }
+      });
+
+      const countLabel = document.getElementById('filtered-count-label');
+      if (countLabel) {
+        countLabel.textContent = `Exibindo ${visibleCount} de ${rows.length} despesas registradas`;
+      }
+
+      const summarySubtotal = document.getElementById('summary-subtotal');
+      if (summarySubtotal) {
+        summarySubtotal.textContent = `R$ ${visibleTotal.toFixed(2).replace('.', ',')}`;
+      }
+    }
+
+    // Checkbox Strike-through toggle
+    const checkboxes = document.querySelectorAll('.expense-checkbox');
+    checkboxes.forEach(chk => {
+      chk.addEventListener('change', function () {
+        const row = this.closest('tr');
+        const titleSpan = row.querySelector('.expense-title');
+        if (this.checked) {
+          row.setAttribute('data-status', 'paid');
+          row.classList.add('bg-surface-container-low/40');
+          if (titleSpan) titleSpan.classList.add('line-through', 'text-opacity-70');
+        } else {
+          row.setAttribute('data-status', 'pending');
+          row.classList.remove('bg-surface-container-low/40');
+          if (titleSpan) titleSpan.classList.remove('line-through', 'text-opacity-70');
+        }
+        applyFilters();
+      });
+    });
+
+    // Quick Add Modal Trigger
+    const btnQuickAdd = document.getElementById('btn-quick-add');
+    const modal = document.getElementById('modal-add-expense');
+    const modalContent = document.getElementById('modal-content');
+    const modalCloseBtn = document.getElementById('modal-close-btn');
+    const modalCancelBtn = document.getElementById('modal-cancel-btn');
+    const formNewExpense = document.getElementById('form-new-expense');
+
+    function openModal() {
+      if (!modal) return;
+      modal.classList.remove('hidden');
+      setTimeout(() => {
+        modalContent.classList.remove('scale-95');
+        modalContent.classList.add('scale-100');
+      }, 10);
+    }
+
+    function closeModal() {
+      if (!modal) return;
+      modalContent.classList.remove('scale-100');
+      modalContent.classList.add('scale-95');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+      }, 150);
+    }
+
+    if (btnQuickAdd) btnQuickAdd.addEventListener('click', openModal);
+    if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeModal);
+    if (modalCancelBtn) modalCancelBtn.addEventListener('click', closeModal);
+
+    if (modal) {
+      modal.addEventListener('click', function (e) {
+        if (e.target === modal) closeModal();
+      });
+    }
+
+    if (formNewExpense) {
+      formNewExpense.addEventListener('submit', function (e) {
+        e.preventDefault();
+        closeModal();
+      });
+    }
+  })();
+</script></main></div></body></html>

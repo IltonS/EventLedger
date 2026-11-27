@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-container-highest": "#dde5db", "on-primary": "#ffffff", "on-error-container": "#93000a", "surface-container-high": "#e2eae1", "secondary-container": "#cfe5d2", "secondary-fixed-dim": "#b6ccba", "surface-variant": "#dde5db", "tertiary-fixed-dim": "#a3cddb", "error-container": "#ffdad6", "secondary": "#4f6354", "surface": "#f4fcf2", "on-tertiary-container": "#bfeaf8", "surface-container": "#e8f0e6", "outline": "#6f7a70", "inverse-primary": "#88d8a1", "outline-variant": "#bfc9be", "primary-fixed-dim": "#88d8a1", "on-tertiary-fixed-variant": "#224c58", "on-secondary-fixed": "#0d1f14", "surface-tint": "#176c40", "surface-container-low": "#eef6ec", "surface-dim": "#d4dcd3", "surface-container-lowest": "#ffffff", "on-surface": "#161d17", "secondary-fixed": "#d2e8d5", "on-background": "#161d17", "on-error": "#ffffff", "tertiary": "#29535e", "on-primary-fixed": "#00210f", "on-secondary": "#ffffff", "on-surface-variant": "#3f4941", "primary-fixed": "#a3f4bc", "inverse-on-surface": "#ebf3e9", "on-primary-container": "#a4f5bd", "tertiary-container": "#426b77", "on-tertiary-fixed": "#001f27", "on-secondary-container": "#536758", "surface-bright": "#f4fcf2", "primary": "#005931", "on-secondary-fixed-variant": "#384b3d", "background": "#f4fcf2", "tertiary-fixed": "#bfe9f8", "error": "#ba1a1a", "on-tertiary": "#ffffff", "inverse-surface": "#2b322c", "primary-container": "#217346", "on-primary-fixed-variant": "#00522d" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-md": "1rem", "space-sm": "0.5rem", "gutter": "1.25rem", "margin": "1.5rem", "space-xl": "2rem", "space-lg": "1.5rem", "space-xs": "0.25rem", "margin-mobile": "1rem", "gutter-sm": "0.75rem", "gutter-lg": "1.5rem" }, "fontFamily": { "label-md": ["Inter"], "headline-lg": ["Inter"], "label-lg": ["Inter"], "headline-md": ["Inter"], "headline-lg-mobile": ["Inter"], "body-sm": ["Inter"], "title-md": ["Inter"], "body-md": ["Inter"], "body-lg": ["Inter"], "label-sm": ["Inter"], "title-lg": ["Inter"], "display-md": ["Inter"] }, "fontSize": { "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}], "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.015em", "fontWeight": "600"}], "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}], "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}], "headline-lg-mobile": ["26px", {"lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "600"}], "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}], "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "600"}], "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}], "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}], "label-sm": ["11px", {"lineHeight": "14px", "letterSpacing": "0.03em", "fontWeight": "500"}], "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}], "display-md": ["44px", {"lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "700"}] } } } }</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-margin-mobile flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0 flex-1"><div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary-container text-[20px]">account_balance_wallet</span></div><div class="flex flex-col min-w-0"><div class="flex items-center gap-space-xs"><span class="font-title-md text-title-md text-on-surface truncate">EventLedger</span><span class="px-space-xs py-0.5 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm shrink-0">M3</span></div><span class="font-body-sm text-body-sm text-on-surface-variant truncate">Espaço de Trabalho / Categorias</span></div></div><div class="flex items-center gap-space-xs shrink-0"><button aria-label="Importar ou Exportar" class="w-11 h-11 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-[22px]">sync_alt</span></button><button aria-label="Mais opções" class="w-11 h-11 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-[22px]">more_vert</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0 ml-space-xs"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex-1 w-full pt-16 pb-32 px-margin-mobile bg-surface"><div class="flex flex-col w-full gap-space-lg">
+<!-- Header Context & Quick Actions -->
+<div class="flex flex-col gap-space-sm pt-space-xs">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex flex-col">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface font-semibold tracking-tight">Categorias de Despesas</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">Gerencie as categorias para classificar os gastos de todos os eventos</p>
+</div>
+</div>
+<div class="flex items-center gap-space-sm pt-1">
+<button class="flex-1 h-12 px-space-md rounded-full bg-primary-container text-on-primary font-label-lg text-label-lg shadow-sm active:scale-[0.98] transition-all flex items-center justify-center gap-2" id="btnNovaCategoria">
+<span class="material-symbols-outlined text-[20px]">add</span>
+<span>Nova Categoria</span>
+</button>
+<button aria-label="Filtrar categorias" class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[20px]">filter_list</span>
+</button>
+</div>
+</div>
+<!-- KPI Cards Deck (Material 3 Surface Layering) -->
+<div class="grid grid-cols-1 gap-space-sm">
+<!-- KPI 1: Total Categorias -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-[0_1px_3px_rgba(33,115,70,0.06)] flex items-center gap-space-md">
+<div class="w-12 h-12 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[24px]">category</span>
+</div>
+<div class="flex flex-col min-w-0 flex-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Total de Categorias</span>
+<div class="flex items-baseline gap-2 mt-0.5">
+<span class="font-headline-md text-headline-md text-on-surface font-semibold">8</span>
+<span class="font-label-md text-label-md text-primary font-medium bg-primary-fixed/40 px-2 py-0.5 rounded-full">2 em uso</span>
+</div>
+</div>
+</div>
+<!-- KPI 2: Total em Despesas -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-[0_1px_3px_rgba(33,115,70,0.06)] flex items-center gap-space-md">
+<div class="w-12 h-12 rounded-full bg-primary-fixed text-on-primary-fixed-variant flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[24px]">payments</span>
+</div>
+<div class="flex flex-col min-w-0 flex-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Total em Despesas</span>
+<div class="flex items-baseline gap-2 mt-0.5">
+<span class="font-headline-md text-headline-md text-primary font-semibold">R$ 214,60</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">2 despesas registradas</span>
+</div>
+</div>
+<!-- KPI 3: Maior Categoria -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-[0_1px_3px_rgba(33,115,70,0.06)] flex items-center gap-space-md">
+<div class="w-12 h-12 rounded-full bg-tertiary-fixed text-on-tertiary-fixed-variant flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[24px]">celebration</span>
+</div>
+<div class="flex flex-col min-w-0 flex-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Maior Categoria de Gasto</span>
+<div class="flex items-baseline justify-between gap-1 mt-0.5">
+<span class="font-title-lg text-title-lg text-on-surface truncate">Decoração</span>
+<span class="font-label-lg text-label-lg text-on-surface font-semibold shrink-0">R$ 124,90</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full mt-2 overflow-hidden">
+<div class="bg-primary-container h-full rounded-full" style="width: 58.2%;"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Category List Section -->
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between px-space-xs">
+<div class="flex items-center gap-2">
+<h2 class="font-title-md text-title-md text-on-surface">Listagem de Categorias</h2>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant bg-surface-container-high px-2.5 py-1 rounded-full">
+        8 cadastradas
+      </span>
+</div>
+<!-- M3 Interactive List Cards -->
+<div class="flex flex-col gap-2">
+<!-- Item 1: Decoração -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-[0_1px_2px_rgba(0,0,0,0.04)] flex flex-col gap-space-sm active:bg-surface-container-low transition-colors">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-full bg-tertiary-fixed text-on-tertiary-fixed-variant flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">celebration</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-title-md text-on-surface truncate">Decoração</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">1 item associado</span>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0">
+<button aria-label="Editar Decoração" class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button aria-label="Excluir Decoração" class="w-9 h-9 rounded-full flex items-center justify-center text-error hover:bg-error-container/40 transition-colors">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Total Gasto</span>
+<span class="font-title-md text-title-md text-primary font-semibold">R$ 124,90</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-label-sm text-label-sm text-on-surface-variant">% do Total</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">58.2%</span>
+</div>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary-container h-full rounded-full" style="width: 58.2%;"></div>
+</div>
+</div>
+<!-- Item 2: Entretenimento -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-[0_1px_2px_rgba(0,0,0,0.04)] flex flex-col gap-space-sm opacity-85 active:bg-surface-container-low transition-colors">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-full bg-surface-container-high text-secondary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">music_note</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-title-md text-on-surface truncate">Entretenimento</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">0 itens</span>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0">
+<button aria-label="Editar Entretenimento" class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button aria-label="Excluir Entretenimento" class="w-9 h-9 rounded-full flex items-center justify-center text-error hover:bg-error-container/40 transition-colors">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Total Gasto</span>
+<span class="font-body-md text-body-md text-on-surface-variant font-medium">R$ 0,00</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-label-sm text-label-sm text-on-surface-variant">% do Total</span>
+<span class="font-label-md text-label-md text-on-surface-variant">0.0%</span>
+</div>
+</div>
+</div>
+<!-- Item 3: Lembrancinhas -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-[0_1px_2px_rgba(0,0,0,0.04)] flex flex-col gap-space-sm active:bg-surface-container-low transition-colors">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">featured_seasonal_and_gifts</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-title-md text-on-surface truncate">Lembrancinhas</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">1 item associado</span>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0">
+<button aria-label="Editar Lembrancinhas" class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button aria-label="Excluir Lembrancinhas" class="w-9 h-9 rounded-full flex items-center justify-center text-error hover:bg-error-container/40 transition-colors">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Total Gasto</span>
+<span class="font-title-md text-title-md text-primary font-semibold">R$ 89,70</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-label-sm text-label-sm text-on-surface-variant">% do Total</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">41.8%</span>
+</div>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary-container h-full rounded-full" style="width: 41.8%;"></div>
+</div>
+</div>
+<!-- Item 4: Fotografia -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-[0_1px_2px_rgba(0,0,0,0.04)] flex flex-col gap-space-sm opacity-85 active:bg-surface-container-low transition-colors">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-full bg-surface-container-high text-secondary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">photo_camera</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-title-md text-on-surface truncate">Fotografia</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">0 itens</span>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0">
+<button aria-label="Editar Fotografia" class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button aria-label="Excluir Fotografia" class="w-9 h-9 rounded-full flex items-center justify-center text-error hover:bg-error-container/40 transition-colors">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Total Gasto</span>
+<span class="font-body-md text-body-md text-on-surface-variant font-medium">R$ 0,00</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-label-sm text-label-sm text-on-surface-variant">% do Total</span>
+<span class="font-label-md text-label-md text-on-surface-variant">0.0%</span>
+</div>
+</div>
+</div>
+<!-- Item 5: Convites -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-[0_1px_2px_rgba(0,0,0,0.04)] flex flex-col gap-space-sm opacity-85 active:bg-surface-container-low transition-colors">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-full bg-surface-container-high text-secondary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">mail</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-title-md text-on-surface truncate">Convites</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">0 itens</span>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0">
+<button aria-label="Editar Convites" class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button aria-label="Excluir Convites" class="w-9 h-9 rounded-full flex items-center justify-center text-error hover:bg-error-container/40 transition-colors">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Total Gasto</span>
+<span class="font-body-md text-body-md text-on-surface-variant font-medium">R$ 0,00</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-label-sm text-label-sm text-on-surface-variant">% do Total</span>
+<span class="font-label-md text-label-md text-on-surface-variant">0.0%</span>
+</div>
+</div>
+</div>
+<!-- Item 6: Outros -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-[0_1px_2px_rgba(0,0,0,0.04)] flex flex-col gap-space-sm opacity-85 active:bg-surface-container-low transition-colors">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-full bg-surface-container-high text-secondary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">more_horiz</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-title-md text-on-surface truncate">Outros</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">0 itens</span>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0">
+<button aria-label="Editar Outros" class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button aria-label="Excluir Outros" class="w-9 h-9 rounded-full flex items-center justify-center text-error hover:bg-error-container/40 transition-colors">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Total Gasto</span>
+<span class="font-body-md text-body-md text-on-surface-variant font-medium">R$ 0,00</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-label-sm text-label-sm text-on-surface-variant">% do Total</span>
+<span class="font-label-md text-label-md text-on-surface-variant">0.0%</span>
+</div>
+</div>
+</div>
+<!-- Item 7: Espaço / Local -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-[0_1px_2px_rgba(0,0,0,0.04)] flex flex-col gap-space-sm opacity-85 active:bg-surface-container-low transition-colors">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-full bg-surface-container-high text-secondary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">location_city</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-title-md text-on-surface truncate">Espaço / Local</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">0 itens</span>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0">
+<button aria-label="Editar Espaço / Local" class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button aria-label="Excluir Espaço / Local" class="w-9 h-9 rounded-full flex items-center justify-center text-error hover:bg-error-container/40 transition-colors">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Total Gasto</span>
+<span class="font-body-md text-body-md text-on-surface-variant font-medium">R$ 0,00</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-label-sm text-label-sm text-on-surface-variant">% do Total</span>
+<span class="font-label-md text-label-md text-on-surface-variant">0.0%</span>
+</div>
+</div>
+</div>
+<!-- Item 8: Buffet e Bebidas -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-[0_1px_2px_rgba(0,0,0,0.04)] flex flex-col gap-space-sm opacity-85 active:bg-surface-container-low transition-colors">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-full bg-surface-container-high text-secondary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">restaurant</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-title-md text-on-surface truncate">Buffet e Bebidas</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">0 itens</span>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0">
+<button aria-label="Editar Buffet e Bebidas" class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button aria-label="Excluir Buffet e Bebidas" class="w-9 h-9 rounded-full flex items-center justify-center text-error hover:bg-error-container/40 transition-colors">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Total Gasto</span>
+<span class="font-body-md text-body-md text-on-surface-variant font-medium">R$ 0,00</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-label-sm text-label-sm text-on-surface-variant">% do Total</span>
+<span class="font-label-md text-label-md text-on-surface-variant">0.0%</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Modal: Nova Categoria (M3 Dialog - Hidden by default) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-space-md bg-inverse-surface/40 backdrop-blur-sm hidden" id="modalNovaCategoria">
+<div class="w-full max-w-sm rounded-[24px] bg-surface-container-lowest p-space-lg shadow-2xl flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<h3 class="font-title-lg text-title-lg text-on-surface">Nova Categoria</h3>
+<button aria-label="Fechar" class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors" id="btnFecharModal">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Insira o nome da categoria para organizar seus lançamentos de despesas.</p>
+<div class="flex flex-col gap-1">
+<label class="font-label-md text-label-md text-on-surface-variant" for="inputNomeCategoria">Nome da Categoria</label>
+<div class="h-12 px-space-md rounded-xl bg-surface-container-low flex items-center gap-space-sm focus-within:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[20px] text-primary">label</span>
+<input class="w-full bg-transparent font-body-md text-body-md text-on-surface placeholder:text-outline outline-none" id="inputNomeCategoria" placeholder="Ex: Lembrancinhas, Som..." type="text"/>
+</div>
+</div>
+<div class="flex items-center justify-end gap-space-sm pt-2">
+<button class="h-10 px-space-md rounded-full text-primary font-label-lg text-label-lg hover:bg-surface-container-low transition-colors" id="btnCancelarModal">
+          Cancelar
+        </button>
+<button class="h-10 px-space-lg rounded-full bg-primary-container text-on-primary font-label-lg text-label-lg shadow-sm hover:bg-primary transition-all" id="btnSalvarModal">
+          Salvar
+        </button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Micro-interaction handlers for Modal
+  const btnNova = document.getElementById('btnNovaCategoria');
+  const modal = document.getElementById('modalNovaCategoria');
+  const btnFechar = document.getElementById('btnFecharModal');
+  const btnCancelar = document.getElementById('btnCancelarModal');
+  const btnSalvar = document.getElementById('btnSalvarModal');
+
+  function openModal() {
+    modal.classList.remove('hidden');
+    document.getElementById('inputNomeCategoria').focus();
+  }
+
+  function closeModal() {
+    modal.classList.add('hidden');
+  }
+
+  btnNova?.addEventListener('click', openModal);
+  btnFechar?.addEventListener('click', closeModal);
+  btnCancelar?.addEventListener('click', closeModal);
+  btnSalvar?.addEventListener('click', closeModal);
+</script></main><aside class="fixed right-margin-mobile bottom-24 z-40 pb-safe"><button class="h-14 px-margin rounded-full bg-primary-container text-on-primary shadow-[0_4px_16px_rgba(33,115,70,0.28)] hover:bg-primary transition-all flex items-center gap-space-sm min-w-[56px] justify-center"><span class="material-symbols-outlined text-[24px]">add</span><span class="font-label-lg text-label-lg text-on-primary font-semibold">Novo Registro</span></button></aside><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-low/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.04)]" data-active-classes="[&amp;&gt;div]:bg-primary-container [&amp;&gt;div]:text-on-primary-container text-on-surface font-semibold"><div class="h-20 px-space-xs flex items-center justify-around"><a class="group flex flex-col items-center justify-center gap-1 w-16 min-h-[48px] text-on-surface-variant hover:text-on-surface transition-colors" data-path="painel" href="#"><div class="w-12 h-8 rounded-full flex items-center justify-center transition-colors group-hover:bg-surface-container-highest"><span class="material-symbols-outlined text-[22px]">dashboard</span></div><span class="font-label-sm text-label-sm tracking-tight">Painel</span></a><a class="group flex flex-col items-center justify-center gap-1 w-16 min-h-[48px] text-on-surface-variant hover:text-on-surface transition-colors" data-path="despesas" href="#"><div class="w-12 h-8 rounded-full flex items-center justify-center transition-colors group-hover:bg-surface-container-highest"><span class="material-symbols-outlined text-[22px]">receipt_long</span></div><span class="font-label-sm text-label-sm tracking-tight">Despesas</span></a><a aria-current="page" class="group flex flex-col items-center justify-center gap-1 w-16 min-h-[48px] transition-colors [&amp;&gt;div]:bg-primary-container [&amp;&gt;div]:text-on-primary-container text-on-surface font-semibold" data-path="categorias" href="#"><div class="w-12 h-8 rounded-full flex items-center justify-center transition-colors group-hover:bg-surface-container-highest"><span class="material-symbols-outlined text-[22px]">category</span></div><span class="font-label-sm text-label-sm tracking-tight">Categorias</span></a><a class="group flex flex-col items-center justify-center gap-1 w-16 min-h-[48px] text-on-surface-variant hover:text-on-surface transition-colors" data-path="arquivados" href="#"><div class="w-12 h-8 rounded-full flex items-center justify-center transition-colors group-hover:bg-surface-container-highest"><span class="material-symbols-outlined text-[22px]">archive</span></div><span class="font-label-sm text-label-sm tracking-tight">Arquivados</span></a></div></nav></body></html>

@@ -134,7 +134,32 @@ Future<ExpenseCategory?> showDeleteCategoryDialog(
     context: context,
     builder: (context) => StatefulBuilder(
       builder: (context, setDialogState) => AlertDialog(
-        title: const Text('Excluir Categoria'),
+        title: Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: AppTheme.errorContainer,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(
+                Icons.delete_outline,
+                color: AppTheme.overBudgetCrimson,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+            const Text(
+              'Excluir Categoria',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: AppTheme.onSurface,
+              ),
+            ),
+          ],
+        ),
         content: SizedBox(
           width: 440,
           child: Column(
@@ -143,15 +168,18 @@ Future<ExpenseCategory?> showDeleteCategoryDialog(
             children: [
               Text(
                 'Tem certeza de que deseja excluir a categoria "${category.name}"?',
-                style: const TextStyle(fontSize: 14),
+                style: const TextStyle(
+                  fontSize: 13.5,
+                  color: AppTheme.onSurface,
+                ),
               ),
               if (expenseCount > 0) ...[
                 const SizedBox(height: 16),
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppTheme.unpaidAmber.withOpacity(0.08),
-                    borderRadius: BorderRadius.circular(8),
+                    color: AppTheme.unpaidAmberSurface,
+                    borderRadius: BorderRadius.circular(10),
                     border: Border.all(
                       color: AppTheme.unpaidAmber.withOpacity(0.3),
                     ),
@@ -168,8 +196,9 @@ Future<ExpenseCategory?> showDeleteCategoryDialog(
                         child: Text(
                           'Esta categoria está associada a $expenseCount despesa(s). Selecione para qual categoria deseja movê-las:',
                           style: const TextStyle(
-                            fontSize: 13,
-                            color: AppTheme.inkPrimary,
+                            fontSize: 12.5,
+                            color: AppTheme.unpaidAmberText,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ),
@@ -202,9 +231,32 @@ Future<ExpenseCategory?> showDeleteCategoryDialog(
                 ),
               ] else ...[
                 const SizedBox(height: 12),
-                const Text(
-                  'Nenhuma despesa está utilizando esta categoria no momento.',
-                  style: TextStyle(fontSize: 13, color: AppTheme.inkMuted),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: AppTheme.surfaceContainerLow,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Row(
+                    children: [
+                      Icon(
+                        Icons.check_circle_outline,
+                        color: AppTheme.primary,
+                        size: 16,
+                      ),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Nenhuma despesa está utilizando esta categoria no momento.',
+                          style: TextStyle(
+                            fontSize: 12.5,
+                            color: AppTheme.secondary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ],
@@ -218,6 +270,7 @@ Future<ExpenseCategory?> showDeleteCategoryDialog(
           FilledButton(
             style: FilledButton.styleFrom(
               backgroundColor: AppTheme.overBudgetCrimson,
+              foregroundColor: Colors.white,
             ),
             onPressed: () => Navigator.of(context).pop(selectedReplacement),
             child: const Text('Excluir Categoria'),
@@ -595,24 +648,26 @@ class _ExpenseFormDialogState extends State<_ExpenseFormDialog> {
               const SizedBox(height: 14),
               Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                 decoration: BoxDecoration(
-                  color: AppTheme.canvas,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: AppTheme.border),
+                  color: AppTheme.surfaceContainerLow,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                      color: AppTheme.outlineVariant.withOpacity(0.5)),
                 ),
                 child: SwitchListTile(
                   contentPadding: EdgeInsets.zero,
+                  activeColor: AppTheme.primary,
                   title: const Text(
                     'Marcar como Pago',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                   ),
                   subtitle: Text(
                     _isPaid
                         ? 'Incluída no total já pago'
                         : 'Contabilizada no saldo pendente a pagar',
-                    style:
-                        const TextStyle(fontSize: 12, color: AppTheme.inkMuted),
+                    style: const TextStyle(
+                        fontSize: 12, color: AppTheme.secondary),
                   ),
                   value: _isPaid,
                   onChanged: (value) => setState(() => _isPaid = value),
@@ -737,19 +792,20 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
               children: [
                 // Live preview badge
                 Container(
-                  padding: const EdgeInsets.all(14),
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: AppTheme.canvas,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: AppTheme.border),
+                    color: AppTheme.surfaceContainerLow,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                        color: AppTheme.outlineVariant.withOpacity(0.5)),
                   ),
                   child: Row(
                     children: [
                       Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: _selectedColor.withOpacity(0.12),
-                          borderRadius: BorderRadius.circular(8),
+                          color: _selectedColor.withOpacity(0.14),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: Icon(
                           _selectedIcon,
@@ -766,7 +822,8 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
                               'Pré-visualização da Categoria',
                               style: TextStyle(
                                 fontSize: 11,
-                                color: AppTheme.inkMuted,
+                                fontWeight: FontWeight.w600,
+                                color: AppTheme.secondary,
                               ),
                             ),
                             const SizedBox(height: 2),
@@ -776,8 +833,8 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
                                   : _nameController.text.trim(),
                               style: const TextStyle(
                                 fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: AppTheme.inkPrimary,
+                                fontWeight: FontWeight.w700,
+                                color: AppTheme.onSurface,
                               ),
                             ),
                           ],

@@ -197,50 +197,87 @@ class _DesktopTopBar extends StatelessWidget {
   final VoidCallback onImport;
   final VoidCallback onExport;
 
-  String get _breadcrumb {
+  String get _breadcrumbCategory {
     switch (store.activeView) {
       case WorkspaceView.dashboard:
-        return 'Espaço de Trabalho / Painel de Despesas';
       case WorkspaceView.allExpenses:
-        return 'Espaço de Trabalho / Todas as Despesas';
       case WorkspaceView.categories:
-        return 'Espaço de Trabalho / Gestão de Categorias';
       case WorkspaceView.archivedEvents:
-        return 'Espaço de Trabalho / Eventos Arquivados';
+        return 'Espaço de Trabalho';
       case WorkspaceView.eventDetail:
-        return 'Eventos Pessoais / ${store.selectedEvent?.name ?? 'Evento'}';
+        return 'Eventos Pessoais';
+    }
+  }
+
+  String get _breadcrumbTitle {
+    switch (store.activeView) {
+      case WorkspaceView.dashboard:
+        return 'Painel de Despesas';
+      case WorkspaceView.allExpenses:
+        return 'Todas as Despesas';
+      case WorkspaceView.categories:
+        return 'Gestão de Categorias';
+      case WorkspaceView.archivedEvents:
+        return 'Eventos Arquivados';
+      case WorkspaceView.eventDetail:
+        return store.selectedEvent?.name ?? 'Evento';
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 60,
+      height: 64,
       padding: const EdgeInsets.symmetric(horizontal: 28),
       decoration: const BoxDecoration(
-        color: AppTheme.surface,
-        border: Border(bottom: BorderSide(color: AppTheme.border)),
+        color: AppTheme.surfaceContainerLowest,
+        border: Border(
+          bottom: BorderSide(color: Color(0x226F7A70)),
+        ),
       ),
       child: Row(
         children: [
-          Text(
-            _breadcrumb,
-            style: const TextStyle(
-              fontSize: 13.5,
-              fontWeight: FontWeight.w500,
-              color: AppTheme.inkSecondary,
-            ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                _breadcrumbCategory,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w400,
+                  color: AppTheme.secondary,
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                child: Text(
+                  '/',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: AppTheme.outlineVariant,
+                  ),
+                ),
+              ),
+              Text(
+                _breadcrumbTitle,
+                style: const TextStyle(
+                  fontSize: 13.5,
+                  fontWeight: FontWeight.w600,
+                  color: AppTheme.onSurface,
+                ),
+              ),
+            ],
           ),
           const Spacer(),
           OutlinedButton.icon(
             onPressed: onImport,
-            icon: const Icon(Icons.file_upload_outlined, size: 18),
+            icon: const Icon(Icons.file_upload_outlined, size: 17),
             label: const Text('Importar'),
           ),
           const SizedBox(width: 8),
           OutlinedButton.icon(
             onPressed: onExport,
-            icon: const Icon(Icons.file_download_outlined, size: 18),
+            icon: const Icon(Icons.file_download_outlined, size: 17),
             label: const Text('Exportar'),
           ),
           const SizedBox(width: 12),

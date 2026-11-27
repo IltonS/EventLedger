@@ -250,7 +250,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
             ),
           Card(
             child: Padding(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(22),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -266,7 +266,8 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                               style: const TextStyle(
                                 fontSize: 22,
                                 fontWeight: FontWeight.w700,
-                                color: AppTheme.inkPrimary,
+                                color: AppTheme.onSurface,
+                                letterSpacing: -0.3,
                               ),
                             ),
                             const SizedBox(height: 6),
@@ -278,7 +279,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                               ].join(' · '),
                               style: const TextStyle(
                                 fontSize: 13,
-                                color: AppTheme.inkMuted,
+                                color: AppTheme.secondary,
                               ),
                             ),
                           ],
@@ -325,7 +326,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                           ),
                         ),
                       ],
-                      const SizedBox(width: 10),
+                      const SizedBox(width: 12),
                       FilledButton.icon(
                         onPressed: _addExpense,
                         icon: const Icon(Icons.add, size: 18),
@@ -351,7 +352,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                         color:
                             event.hasBudget && event.totalSpent > event.budget
                                 ? AppTheme.overBudgetCrimson
-                                : AppTheme.inkPrimary,
+                                : AppTheme.onSurface,
                       ),
                       const SizedBox(width: 36),
                       _MetricPair(
@@ -365,7 +366,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                         value: currency.format(event.unpaidAmount),
                         color: event.unpaidAmount > 0
                             ? AppTheme.unpaidAmber
-                            : AppTheme.inkMuted,
+                            : AppTheme.secondary,
                       ),
                       if (event.hasBudget) ...[
                         const Spacer(),
@@ -382,22 +383,23 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                   fontSize: 12.5,
                                   fontWeight: FontWeight.w600,
                                   color: event.budgetRemaining >= 0
-                                      ? AppTheme.inkSecondary
+                                      ? AppTheme.secondary
                                       : AppTheme.overBudgetCrimson,
                                 ),
                               ),
                               const SizedBox(height: 6),
                               ClipRRect(
-                                borderRadius: BorderRadius.circular(4),
+                                borderRadius: BorderRadius.circular(9999),
                                 child: LinearProgressIndicator(
                                   value:
                                       event.budgetUtilization.clamp(0.0, 1.0),
-                                  minHeight: 7,
-                                  backgroundColor: AppTheme.canvas,
+                                  minHeight: 6,
+                                  backgroundColor:
+                                      AppTheme.surfaceContainerHighest,
                                   valueColor: AlwaysStoppedAnimation<Color>(
                                     event.totalSpent > event.budget
                                         ? AppTheme.overBudgetCrimson
-                                        : AppTheme.accent,
+                                        : AppTheme.primary,
                                   ),
                                 ),
                               ),
@@ -419,7 +421,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                 flex: 3,
                 child: Card(
                   child: Padding(
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(22),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -451,7 +453,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                   width: 200,
                                   child:
                                       DropdownButtonFormField<ExpenseCategory?>(
-                                    initialValue: _categoryFilter,
+                                    value: _categoryFilter,
                                     isDense: true,
                                     decoration: const InputDecoration(
                                       labelText: 'Categoria',
@@ -466,7 +468,14 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                         (cat) =>
                                             DropdownMenuItem<ExpenseCategory?>(
                                           value: cat,
-                                          child: Text(cat.name),
+                                          child: Row(
+                                            children: [
+                                              Icon(cat.icon,
+                                                  size: 14, color: cat.color),
+                                              const SizedBox(width: 6),
+                                              Text(cat.name),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -498,18 +507,32 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 18),
                         if (filtered.isEmpty)
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 36),
                             child: Center(
                               child: Column(
                                 children: [
-                                  const Text(
-                                    'Nenhuma despesa encontrada para este evento.',
-                                    style: TextStyle(color: AppTheme.inkMuted),
+                                  Container(
+                                    width: 48,
+                                    height: 48,
+                                    decoration: const BoxDecoration(
+                                      color: AppTheme.surfaceContainerHigh,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.receipt_long_outlined,
+                                      size: 24,
+                                      color: AppTheme.secondary,
+                                    ),
                                   ),
                                   const SizedBox(height: 12),
+                                  const Text(
+                                    'Nenhuma despesa encontrada para este evento.',
+                                    style: TextStyle(color: AppTheme.secondary),
+                                  ),
+                                  const SizedBox(height: 14),
                                   FilledButton.icon(
                                     onPressed: _addExpense,
                                     icon: const Icon(Icons.add, size: 18),
@@ -523,133 +546,189 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                         else
                           SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
-                            child: DataTable(
-                              horizontalMargin: 0,
-                              columnSpacing: 20,
-                              headingTextStyle: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: AppTheme.inkMuted,
+                            child: Theme(
+                              data: Theme.of(context).copyWith(
+                                dividerTheme: DividerThemeData(
+                                  color:
+                                      AppTheme.outlineVariant.withOpacity(0.25),
+                                ),
                               ),
-                              columns: const [
-                                DataColumn(label: Text('Situação')),
-                                DataColumn(label: Text('Despesa')),
-                                DataColumn(label: Text('Categoria')),
-                                DataColumn(label: Text('Data')),
-                                DataColumn(label: Text('Valor'), numeric: true),
-                                DataColumn(label: Text('Ações')),
-                              ],
-                              rows: filtered.map((item) {
-                                return DataRow(
-                                  cells: [
-                                    DataCell(
-                                      Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Checkbox(
-                                            value: item.isPaid,
-                                            activeColor: AppTheme.paidGreen,
-                                            onChanged: (_) =>
-                                                widget.store.toggleExpensePaid(
-                                              eventId: event.id,
-                                              expenseId: item.id,
-                                            ),
-                                          ),
-                                          Text(
-                                            item.isPaid ? 'Pago' : 'Pendente',
-                                            style: TextStyle(
-                                              fontSize: 12.5,
-                                              fontWeight: FontWeight.w600,
-                                              color: item.isPaid
-                                                  ? AppTheme.paidGreen
-                                                  : AppTheme.unpaidAmber,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    DataCell(
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            item.title,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              color: AppTheme.inkPrimary,
-                                              decoration: item.isPaid
-                                                  ? TextDecoration.lineThrough
-                                                  : null,
-                                            ),
-                                          ),
-                                          if (item.vendor.isNotEmpty)
-                                            Text(
-                                              item.vendor,
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                color: AppTheme.inkMuted,
+                              child: DataTable(
+                                horizontalMargin: 0,
+                                columnSpacing: 22,
+                                headingRowColor: WidgetStateProperty.all(
+                                  AppTheme.surfaceContainerLow,
+                                ),
+                                headingTextStyle: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 0.5,
+                                  color: AppTheme.secondary,
+                                ),
+                                columns: const [
+                                  DataColumn(label: Text('SITUAÇÃO')),
+                                  DataColumn(label: Text('DESPESA')),
+                                  DataColumn(label: Text('CATEGORIA')),
+                                  DataColumn(label: Text('DATA')),
+                                  DataColumn(
+                                      label: Text('VALOR'), numeric: true),
+                                  DataColumn(label: Text('AÇÕES')),
+                                ],
+                                rows: filtered.map((item) {
+                                  return DataRow(
+                                    cells: [
+                                      DataCell(
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Checkbox(
+                                              value: item.isPaid,
+                                              onChanged: (_) => widget.store
+                                                  .toggleExpensePaid(
+                                                eventId: event.id,
+                                                expenseId: item.id,
                                               ),
                                             ),
-                                        ],
-                                      ),
-                                    ),
-                                    DataCell(
-                                      Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(
-                                            item.category.icon,
-                                            size: 16,
-                                            color: item.category.color,
-                                          ),
-                                          const SizedBox(width: 6),
-                                          Text(item.category.label),
-                                        ],
-                                      ),
-                                    ),
-                                    DataCell(Text(dateFmt.format(item.date))),
-                                    DataCell(
-                                      Text(
-                                        currency.format(item.amount),
-                                        style: AppTheme.tabularNumber.copyWith(
-                                          fontWeight: FontWeight.w600,
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                horizontal: 8,
+                                                vertical: 3,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: item.isPaid
+                                                    ? AppTheme.paidGreenSurface
+                                                    : AppTheme
+                                                        .unpaidAmberSurface,
+                                                borderRadius:
+                                                    BorderRadius.circular(9999),
+                                              ),
+                                              child: Text(
+                                                item.isPaid
+                                                    ? 'Pago'
+                                                    : 'Pendente',
+                                                style: TextStyle(
+                                                  fontSize: 11.5,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: item.isPaid
+                                                      ? AppTheme.paidGreenText
+                                                      : AppTheme
+                                                          .unpaidAmberText,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    ),
-                                    DataCell(
-                                      Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          IconButton(
-                                            tooltip: 'Editar Despesa',
-                                            icon: const Icon(
-                                              Icons.edit_outlined,
-                                              size: 18,
+                                      DataCell(
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              item.title,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 13,
+                                                color: AppTheme.onSurface,
+                                                decoration: item.isPaid
+                                                    ? TextDecoration.lineThrough
+                                                    : null,
+                                              ),
                                             ),
-                                            onPressed: () => _editExpense(item),
-                                          ),
-                                          IconButton(
-                                            tooltip: 'Excluir Despesa',
-                                            icon: const Icon(
-                                              Icons.delete_outline,
-                                              size: 18,
-                                            ),
-                                            color: AppTheme.overBudgetCrimson,
-                                            onPressed: () =>
-                                                widget.store.deleteExpense(
-                                              eventId: event.id,
-                                              expenseId: item.id,
-                                            ),
-                                          ),
-                                        ],
+                                            if (item.vendor.isNotEmpty)
+                                              Text(
+                                                item.vendor,
+                                                style: const TextStyle(
+                                                  fontSize: 11.5,
+                                                  color: AppTheme.secondary,
+                                                ),
+                                              ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                );
-                              }).toList(),
+                                      DataCell(
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Container(
+                                              width: 24,
+                                              height: 24,
+                                              decoration: BoxDecoration(
+                                                color: item.category.color
+                                                    .withOpacity(0.14),
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                              ),
+                                              child: Icon(
+                                                item.category.icon,
+                                                size: 14,
+                                                color: item.category.color,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Text(
+                                              item.category.label,
+                                              style:
+                                                  const TextStyle(fontSize: 13),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      DataCell(Text(
+                                        dateFmt.format(item.date),
+                                        style: const TextStyle(
+                                          fontSize: 12.5,
+                                          color: AppTheme.onSurfaceVariant,
+                                        ),
+                                      )),
+                                      DataCell(
+                                        Text(
+                                          currency.format(item.amount),
+                                          style:
+                                              AppTheme.tabularNumber.copyWith(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 13,
+                                            color: AppTheme.onSurface,
+                                          ),
+                                        ),
+                                      ),
+                                      DataCell(
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            IconButton(
+                                              tooltip: 'Editar Despesa',
+                                              icon: const Icon(
+                                                Icons.edit_outlined,
+                                                size: 18,
+                                                color: AppTheme.secondary,
+                                              ),
+                                              onPressed: () =>
+                                                  _editExpense(item),
+                                            ),
+                                            IconButton(
+                                              tooltip: 'Excluir Despesa',
+                                              icon: const Icon(
+                                                Icons.delete_outline,
+                                                size: 18,
+                                              ),
+                                              color: AppTheme.overBudgetCrimson,
+                                              onPressed: () =>
+                                                  widget.store.deleteExpense(
+                                                eventId: event.id,
+                                                expenseId: item.id,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }).toList(),
+                              ),
                             ),
                           ),
                       ],

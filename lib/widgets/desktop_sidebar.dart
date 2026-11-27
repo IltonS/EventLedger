@@ -19,45 +19,85 @@ class DesktopSidebar extends StatelessWidget {
     final currency = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$');
 
     return Container(
-      width: 264,
+      width: 272,
       decoration: const BoxDecoration(
-        color: AppTheme.surface,
-        border: Border(right: BorderSide(color: AppTheme.border)),
+        color: AppTheme.surfaceContainerLow,
+        border: Border(
+          right: BorderSide(color: Color(0x226F7A70)),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Padding(
-            padding: EdgeInsets.fromLTRB(20, 20, 20, 16),
+          // Brand Plaque with Forest Green Icon badge
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 24, 20, 18),
             child: Row(
               children: [
-                Text(
-                  'EventLedger',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.inkPrimary,
-                    letterSpacing: -0.3,
+                Container(
+                  width: 38,
+                  height: 38,
+                  decoration: BoxDecoration(
+                    color: AppTheme.primary,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme.primary.withOpacity(0.25),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
+                  child: const Icon(
+                    Icons.account_balance_wallet_rounded,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'EventLedger',
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
+                        color: AppTheme.onSurface,
+                        letterSpacing: -0.3,
+                      ),
+                    ),
+                    Text(
+                      'Gestão Orçamentária',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                        color: AppTheme.secondary,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
           const Divider(height: 1),
+
+          // Main Navigation Items (M3 Tonal Pill Selection)
           Padding(
-            padding: const EdgeInsets.fromLTRB(12, 16, 12, 8),
+            padding: const EdgeInsets.fromLTRB(12, 16, 12, 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _NavTile(
-                  icon: Icons.dashboard_outlined,
+                  icon: Icons.dashboard_rounded,
                   label: 'Painel de Despesas',
                   selected: store.activeView == WorkspaceView.dashboard,
                   onTap: store.selectDashboard,
                 ),
                 const SizedBox(height: 4),
                 _NavTile(
-                  icon: Icons.receipt_long_outlined,
+                  icon: Icons.receipt_long_rounded,
                   label: 'Todas as Despesas',
                   trailingText: '${store.totalExpenseCount}',
                   selected: store.activeView == WorkspaceView.allExpenses,
@@ -65,7 +105,7 @@ class DesktopSidebar extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 _NavTile(
-                  icon: Icons.category_outlined,
+                  icon: Icons.category_rounded,
                   label: 'Categorias',
                   trailingText: '${store.categories.length}',
                   selected: store.activeView == WorkspaceView.categories,
@@ -73,7 +113,7 @@ class DesktopSidebar extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 _NavTile(
-                  icon: Icons.archive_outlined,
+                  icon: Icons.archive_rounded,
                   label: 'Eventos Arquivados',
                   trailingText: store.archivedEvents.isNotEmpty
                       ? '${store.archivedEvents.length}'
@@ -84,17 +124,20 @@ class DesktopSidebar extends StatelessWidget {
               ],
             ),
           ),
+
+          // Section Title: Eventos Pessoais
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 16, 12, 8),
+            padding: const EdgeInsets.fromLTRB(20, 14, 12, 6),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  'Eventos Pessoais',
+                  'EVENTOS PESSOAIS',
                   style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: AppTheme.inkMuted,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.6,
+                    color: AppTheme.secondary,
                   ),
                 ),
                 IconButton(
@@ -102,25 +145,29 @@ class DesktopSidebar extends StatelessWidget {
                   onPressed: onCreateEvent,
                   icon: const Icon(Icons.add, size: 18),
                   style: IconButton.styleFrom(
-                    foregroundColor: AppTheme.accent,
-                    padding: const EdgeInsets.all(6),
-                    minimumSize: const Size(28, 28),
+                    foregroundColor: AppTheme.primary,
+                    backgroundColor: AppTheme.surfaceContainerHigh,
+                    padding: const EdgeInsets.all(4),
+                    minimumSize: const Size(26, 26),
                   ),
                 ),
               ],
             ),
           ),
+
+          // Event list with M3 container styling
           Expanded(
             child: store.events.isEmpty
                 ? const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                     child: Text(
-                      'Nenhum evento cadastrado. Crie um evento para começar.',
-                      style: TextStyle(fontSize: 13, color: AppTheme.inkMuted),
+                      'Nenhum evento ativo. Crie um evento para começar.',
+                      style:
+                          TextStyle(fontSize: 12.5, color: AppTheme.secondary),
                     ),
                   )
                 : ListView.separated(
-                    padding: const EdgeInsets.fromLTRB(12, 0, 12, 16),
+                    padding: const EdgeInsets.fromLTRB(12, 4, 12, 16),
                     itemCount: store.events.length,
                     separatorBuilder: (_, __) => const SizedBox(height: 4),
                     itemBuilder: (context, index) {
@@ -130,15 +177,15 @@ class DesktopSidebar extends StatelessWidget {
                               store.selectedEventId == event.id;
                       return Material(
                         color: isSelected
-                            ? AppTheme.accent.withValues(alpha: 0.08)
+                            ? AppTheme.secondaryContainer
                             : Colors.transparent,
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(12),
                         child: InkWell(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(12),
                           onTap: () => store.selectEvent(event.id),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
+                              horizontal: 14,
                               vertical: 10,
                             ),
                             child: Column(
@@ -149,21 +196,23 @@ class DesktopSidebar extends StatelessWidget {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                    fontSize: 13.5,
+                                    fontSize: 13,
                                     fontWeight: isSelected
-                                        ? FontWeight.w600
+                                        ? FontWeight.w700
                                         : FontWeight.w500,
                                     color: isSelected
-                                        ? AppTheme.accent
-                                        : AppTheme.inkPrimary,
+                                        ? AppTheme.onSecondaryFixed
+                                        : AppTheme.onSurface,
                                   ),
                                 ),
-                                const SizedBox(height: 3),
+                                const SizedBox(height: 2),
                                 Text(
                                   '${currency.format(event.totalSpent)} · ${event.expenses.length} ${event.expenses.length == 1 ? 'item' : 'itens'}',
                                   style: AppTheme.tabularNumber.copyWith(
-                                    fontSize: 12,
-                                    color: AppTheme.inkMuted,
+                                    fontSize: 11.5,
+                                    color: isSelected
+                                        ? AppTheme.onSecondaryContainer
+                                        : AppTheme.secondary,
                                   ),
                                 ),
                               ],
@@ -174,13 +223,22 @@ class DesktopSidebar extends StatelessWidget {
                     },
                   ),
           ),
-          const Divider(height: 1),
+
+          // Pinned bottom action
           Padding(
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.all(16),
             child: FilledButton.icon(
               onPressed: onCreateEvent,
               icon: const Icon(Icons.add, size: 18),
               label: const Text('Novo Evento'),
+              style: FilledButton.styleFrom(
+                minimumSize: const Size.fromHeight(46),
+                backgroundColor: AppTheme.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(9999),
+                ),
+              ),
             ),
           ),
         ],
@@ -207,39 +265,53 @@ class _NavTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: selected
-          ? AppTheme.accent.withValues(alpha: 0.08)
-          : Colors.transparent,
-      borderRadius: BorderRadius.circular(8),
+      color: selected ? AppTheme.primaryFixed : Colors.transparent,
+      borderRadius: BorderRadius.circular(9999),
       child: InkWell(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(9999),
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           child: Row(
             children: [
               Icon(
                 icon,
-                size: 18,
-                color: selected ? AppTheme.accent : AppTheme.inkSecondary,
+                size: 20,
+                color: selected
+                    ? AppTheme.onPrimaryFixed
+                    : AppTheme.onSurfaceVariant,
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   label,
                   style: TextStyle(
                     fontSize: 13.5,
-                    fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-                    color: selected ? AppTheme.accent : AppTheme.inkPrimary,
+                    fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                    color:
+                        selected ? AppTheme.onPrimaryFixed : AppTheme.onSurface,
                   ),
                 ),
               ),
               if (trailingText != null)
-                Text(
-                  trailingText!,
-                  style: AppTheme.tabularNumber.copyWith(
-                    fontSize: 12,
-                    color: AppTheme.inkMuted,
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: selected
+                        ? AppTheme.primary.withOpacity(0.15)
+                        : AppTheme.surfaceContainerHigh,
+                    borderRadius: BorderRadius.circular(9999),
+                  ),
+                  child: Text(
+                    trailingText!,
+                    style: AppTheme.tabularNumber.copyWith(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: selected
+                          ? AppTheme.onPrimaryFixed
+                          : AppTheme.secondary,
+                    ),
                   ),
                 ),
             ],

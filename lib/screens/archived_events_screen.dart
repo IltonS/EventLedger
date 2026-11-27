@@ -122,17 +122,17 @@ class _ArchivedEventsScreenState extends State<ArchivedEventsScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppTheme.accent.withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(10),
+              color: AppTheme.surfaceContainerLow,
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: AppTheme.accent.withValues(alpha: 0.2),
+                color: AppTheme.outlineVariant.withOpacity(0.5),
               ),
             ),
             child: const Row(
               children: [
                 Icon(
                   Icons.info_outline,
-                  color: AppTheme.accent,
+                  color: AppTheme.primary,
                   size: 20,
                 ),
                 SizedBox(width: 12),
@@ -141,7 +141,7 @@ class _ArchivedEventsScreenState extends State<ArchivedEventsScreen> {
                     'Eventos arquivados são mantidos para histórico e consulta, mas não entram nos cálculos de KPIs, totais ou orçamentos do painel principal.',
                     style: TextStyle(
                       fontSize: 13,
-                      color: AppTheme.inkSecondary,
+                      color: AppTheme.secondary,
                     ),
                   ),
                 ),

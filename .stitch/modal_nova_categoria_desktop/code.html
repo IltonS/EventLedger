@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EventLedger - Nova Categoria de Despesa</title>
+<!-- Tailwind CSS v3 with Forms & Container Queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Inter & Material Symbols Rounded -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<!-- Tailwind Configuration with Forest Ledger M3 tokens -->
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            forest: {
+              DEFAULT: '#217346',
+              50: '#eefbf2',
+              100: '#d7f6e0',
+              200: '#b1edc5',
+              300: '#7ddda2',
+              400: '#45c47a',
+              500: '#217346',
+              600: '#1b8a4f',
+              700: '#176d3f',
+              800: '#165734',
+              900: '#14482c',
+              container: '#b1edc5',
+              onContainer: '#04210e'
+            },
+            surface: {
+              DEFAULT: '#f4fcf2',
+              dim: '#d4dcd3',
+              bright: '#f4fcf2',
+              containerLowest: '#ffffff',
+              containerLow: '#eef6ec',
+              container: '#e7f0e5',
+              containerHigh: '#e1eae0',
+              containerHighest: '#dbe4da'
+            }
+          }
+        }
+      }
+    }
+  </script>
+<!-- BEGIN: Custom Styles -->
+<style data-purpose="icon-font-settings">
+    .material-symbols-rounded {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      line-height: 1;
+      display: inline-block;
+      user-select: none;
+    }
+    .material-symbols-rounded.outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+<style data-purpose="scrollbar-and-general">
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #c6d3c5;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #abb9aa;
+    }
+  </style>
+<!-- END: Custom Styles -->
+</head>
+<body class="bg-[#f0f5ee] font-sans text-neutral-800 antialiased h-screen overflow-hidden flex flex-col relative select-none">
+<!-- BEGIN: BackgroundApplication -->
+<div class="flex-1 flex overflow-hidden filter blur-[2px] opacity-75 pointer-events-none select-none transition duration-300" data-purpose="background-app-container">
+<!-- Sidebar Navigation -->
+<aside class="w-64 bg-[#f8fcf7] border-r border-[#dbe6da] flex flex-col justify-between py-5 px-4 h-full shrink-0" data-purpose="sidebar">
+<div class="flex flex-col gap-6">
+<!-- Logo -->
+<div class="flex items-center gap-3 px-2">
+<div class="w-10 h-10 rounded-xl bg-[#217346] text-white flex items-center justify-center shadow-sm">
+<span class="material-symbols-rounded text-2xl">account_balance_wallet</span>
+</div>
+<div>
+<h1 class="font-bold text-lg leading-tight text-neutral-900 tracking-tight">EventLedger</h1>
+<p class="text-xs text-neutral-500 font-medium">Gestão Orçamentária</p>
+</div>
+</div>
+<!-- Navigation Menu -->
+<nav aria-label="Menu Principal" class="flex flex-col gap-1.5">
+<a class="flex items-center gap-3 px-3.5 py-2.5 rounded-full text-neutral-600 font-medium text-sm hover:bg-[#eaf3e8] transition-colors" href="#">
+<span class="material-symbols-rounded outlined text-xl text-neutral-500">grid_view</span>
+            Painel de Despesas
+          </a>
+<a class="flex items-center justify-between px-3.5 py-2.5 rounded-full text-neutral-600 font-medium text-sm hover:bg-[#eaf3e8] transition-colors" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-rounded outlined text-xl text-neutral-500">receipt_long</span>
+              Todas as Despesas
+            </div>
+<span class="text-xs px-2 py-0.5 rounded-full bg-[#e3ede1] text-neutral-700 font-semibold">2</span>
+</a>
+<!-- Active Tab -->
+<a class="flex items-center justify-between px-3.5 py-2.5 rounded-full bg-[#217346] text-white font-medium text-sm shadow-sm" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-rounded text-xl text-white">category</span>
+              Categorias
+            </div>
+<span class="text-xs px-2 py-0.5 rounded-full bg-white/20 text-white font-bold">8</span>
+</a>
+<a class="flex items-center justify-between px-3.5 py-2.5 rounded-full text-neutral-600 font-medium text-sm hover:bg-[#eaf3e8] transition-colors" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-rounded outlined text-xl text-neutral-500">archive</span>
+              Eventos Arquivados
+            </div>
+<span class="text-xs px-2 py-0.5 rounded-full bg-[#e3ede1] text-neutral-700 font-semibold">1</span>
+</a>
+</nav>
+<!-- Secondary Section -->
+<div class="pt-2">
+<div class="flex items-center justify-between px-2 mb-2">
+<span class="text-xs font-semibold uppercase tracking-wider text-neutral-400">Eventos Pessoais</span>
+<button class="text-neutral-500 hover:text-neutral-800 text-sm p-0.5 rounded">
+<span class="material-symbols-rounded text-sm">add</span>
+</button>
+</div>
+<div class="p-2.5 rounded-xl bg-white border border-[#e1eae0] flex items-center gap-3">
+<span class="material-symbols-rounded text-neutral-500 text-lg">cake</span>
+<div class="overflow-hidden">
+<p class="text-xs font-semibold text-neutral-800 truncate">Aniversário Rapha 2026</p>
+<p class="text-[11px] text-neutral-500">R$ 214,60 • 2 itens</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Action Button in Sidebar -->
+<button class="w-full py-2.5 px-4 bg-[#217346] text-white rounded-full font-medium text-sm flex items-center justify-center gap-2 shadow-sm">
+<span class="material-symbols-rounded text-lg">add</span>
+        Novo Evento
+      </button>
+</aside>
+<!-- Main Workspace Content -->
+<main class="flex-1 flex flex-col overflow-y-auto bg-[#f4fcf2]" data-purpose="main-content">
+<!-- Top App Bar -->
+<header class="h-16 px-8 flex items-center justify-between border-b border-[#e1eae0] bg-[#f8fcf7]/80 backdrop-blur-sm sticky top-0 z-10">
+<!-- Breadcrumb -->
+<div class="flex items-center gap-2 text-sm text-neutral-600">
+<span class="hover:text-neutral-900 transition-colors">Espaço de Trabalho</span>
+<span class="text-neutral-400">/</span>
+<span class="font-medium text-neutral-900">Gestão de Categorias</span>
+</div>
+<!-- Top Actions -->
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-neutral-300 text-neutral-700 text-sm font-medium hover:bg-neutral-100">
+<span class="material-symbols-rounded outlined text-base">upload</span>
+            Importar
+          </button>
+<button class="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-neutral-300 text-neutral-700 text-sm font-medium hover:bg-neutral-100">
+<span class="material-symbols-rounded outlined text-base">download</span>
+            Exportar
+          </button>
+<button class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#217346] text-white text-sm font-medium shadow-sm">
+<span class="material-symbols-rounded text-base">add</span>
+            Novo Evento
+          </button>
+<div class="w-8 h-8 rounded-full bg-[#217346] text-white flex items-center justify-center font-medium text-xs ml-1">
+<span class="material-symbols-rounded text-lg">person</span>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="p-8 max-w-7xl w-full mx-auto space-y-6">
+<!-- Page Title & Actions -->
+<div class="flex items-center justify-between">
+<div>
+<div class="flex items-center gap-3">
+<h2 class="text-2xl font-bold text-neutral-900 tracking-tight">Categorias de Despesas</h2>
+<span class="bg-[#d7f6e0] text-[#165734] font-semibold text-xs px-2.5 py-0.5 rounded-full">Ativo</span>
+</div>
+<p class="text-neutral-500 text-sm mt-0.5">Gerencie as categorias para classificar os gastos de todos os eventos</p>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-[#217346] text-white rounded-full font-medium text-sm shadow-sm hover:bg-[#1b8a4f] transition-colors">
+<span class="material-symbols-rounded text-base">add</span>
+            Nova Categoria
+          </button>
+</div>
+<!-- Metric KPI Cards -->
+<div class="grid grid-cols-3 gap-5">
+<!-- Card 1 -->
+<div class="bg-white p-5 rounded-2xl border border-[#e1eae0] shadow-sm flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-[#dff0dc] text-[#217346] flex items-center justify-center shrink-0">
+<span class="material-symbols-rounded text-2xl">category</span>
+</div>
+<div>
+<p class="text-xs font-semibold text-neutral-500 uppercase tracking-wide">Total de Categorias</p>
+<div class="flex items-baseline gap-2 mt-0.5">
+<span class="text-2xl font-bold text-neutral-900">8</span>
+<span class="text-xs font-medium text-neutral-500">2 em uso</span>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-white p-5 rounded-2xl border border-[#e1eae0] shadow-sm flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-[#dff0dc] text-[#217346] flex items-center justify-center shrink-0">
+<span class="material-symbols-rounded text-2xl">receipt_long</span>
+</div>
+<div>
+<p class="text-xs font-semibold text-neutral-500 uppercase tracking-wide">Total em Despesas</p>
+<div class="flex items-baseline gap-2 mt-0.5">
+<span class="text-2xl font-bold text-neutral-900">R$ 214,60</span>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-white p-5 rounded-2xl border border-[#e1eae0] shadow-sm flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center shrink-0">
+<span class="material-symbols-rounded text-2xl">celebration</span>
+</div>
+<div>
+<p class="text-xs font-semibold text-neutral-500 uppercase tracking-wide">Maior Categoria de Gasto</p>
+<div class="flex items-baseline gap-2 mt-0.5">
+<span class="text-xl font-bold text-neutral-900">Decoração</span>
+<span class="text-xs font-medium text-neutral-500">R$ 124,90</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Table Listing Card Container -->
+<div class="bg-white rounded-2xl border border-[#e1eae0] shadow-sm overflow-hidden">
+<div class="p-4 border-b border-neutral-100 flex items-center justify-between">
+<h3 class="font-bold text-neutral-900 text-base">Listagem de Categorias</h3>
+<span class="text-xs bg-neutral-100 text-neutral-600 px-2.5 py-1 rounded-full font-medium">8 categorias cadastradas</span>
+</div>
+<!-- Table Rows Simulated -->
+<div class="divide-y divide-neutral-100 text-sm">
+<div class="grid grid-cols-12 px-6 py-3.5 items-center">
+<div class="col-span-5 flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-pink-100 text-pink-700 flex items-center justify-center">
+<span class="material-symbols-rounded text-lg">celebration</span>
+</div>
+<div>
+<p class="font-semibold text-neutral-900 leading-tight">Decoração</p>
+<p class="text-xs text-neutral-500">Flores, iluminação e ambientação</p>
+</div>
+</div>
+<div class="col-span-2 text-neutral-600 font-medium">1 item</div>
+<div class="col-span-2 font-semibold text-neutral-900">R$ 124,90</div>
+<div class="col-span-2 text-neutral-600 font-medium">58.2%</div>
+<div class="col-span-1 flex justify-end gap-2 text-neutral-400">
+<span class="material-symbols-rounded outlined text-base">edit</span>
+<span class="material-symbols-rounded outlined text-base">delete</span>
+</div>
+</div>
+<div class="grid grid-cols-12 px-6 py-3.5 items-center">
+<div class="col-span-5 flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-teal-100 text-teal-700 flex items-center justify-center">
+<span class="material-symbols-rounded text-lg">music_note</span>
+</div>
+<div>
+<p class="font-semibold text-neutral-900 leading-tight">Entretenimento</p>
+<p class="text-xs text-neutral-500">DJ, banda e atrações</p>
+</div>
+</div>
+<div class="col-span-2 text-neutral-500">0 itens</div>
+<div class="col-span-2 font-semibold text-neutral-900">R$ 0,00</div>
+<div class="col-span-2 text-neutral-600 font-medium">0.0%</div>
+<div class="col-span-1 flex justify-end gap-2 text-neutral-400">
+<span class="material-symbols-rounded outlined text-base">edit</span>
+<span class="material-symbols-rounded outlined text-base">delete</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- END: BackgroundApplication -->
+<!-- BEGIN: ModalDialogOverlay -->
+<div class="fixed inset-0 bg-neutral-950/45 backdrop-blur-[2px] z-50 flex items-center justify-center p-4" data-purpose="dialog-backdrop">
+<!-- BEGIN: M3CategoryCreationModal -->
+<div aria-labelledby="modal-title" aria-modal="true" class="w-full max-w-[540px] bg-white rounded-[28px] shadow-2xl border border-neutral-100 flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200" data-purpose="m3-modal-dialog" role="dialog">
+<!-- Dialog Header -->
+<div class="px-7 pt-7 pb-4">
+<h2 class="text-[22px] font-semibold text-neutral-900 leading-snug tracking-tight" id="modal-title">
+          Nova Categoria de Despesa
+        </h2>
+</div>
+<!-- Dialog Scrollable Body -->
+<div class="px-7 pb-4 space-y-5 overflow-y-auto max-h-[calc(88vh-130px)]">
+<!-- 1. M3 Live Preview Container Card -->
+<div class="bg-[#f0f6ee] border border-[#dce9d9] rounded-2xl p-4 flex items-center gap-4 transition-all" data-purpose="category-preview-card">
+<!-- Active Preview Badge with selected Color & Icon -->
+<div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-200/60 shadow-sm transition-all duration-200" id="preview-icon-wrapper">
+<span class="material-symbols-rounded text-2xl" id="preview-icon">description</span>
+</div>
+<div class="overflow-hidden">
+<span class="text-[11px] font-semibold uppercase tracking-wider text-neutral-500 block leading-tight">
+              Pré-visualização da Categoria
+            </span>
+<span class="text-base font-semibold text-neutral-900 block truncate mt-0.5" id="preview-text">
+              Nome da Categoria
+            </span>
+</div>
+</div>
+<!-- 2. M3 Category Name Input Field -->
+<div class="relative" data-purpose="form-input-group">
+<label class="sr-only" for="category-name-input">Nome da Categoria</label>
+<div class="relative rounded-t-xl bg-[#f0f3ef] hover:bg-[#e9eee8] focus-within:bg-[#e4eae2] border-b-2 border-[#217346] transition-colors">
+<input autocomplete="off" class="w-full px-4 pt-3 pb-3 bg-transparent border-none text-neutral-900 placeholder:text-neutral-500 focus:ring-0 text-base font-medium outline-none" id="category-name-input" name="categoryName" placeholder="Nome da Categoria" type="text"/>
+</div>
+</div>
+<!-- 3. Theme Color Selector -->
+<div class="space-y-2.5" data-purpose="theme-color-selector">
+<label class="text-xs font-bold text-neutral-700 tracking-wide block">
+            Cor Temática
+          </label>
+<!-- Palette Container -->
+<div aria-label="Selecione uma cor temática" class="flex items-center gap-2.5 flex-wrap" role="radiogroup">
+<!-- Color Option 1 (Selected Blue) -->
+<button aria-label="Azul clássico" class="color-btn relative w-7 h-7 rounded-full bg-[#1a65eb] flex items-center justify-center ring-2 ring-offset-2 ring-[#1a65eb] transition transform active:scale-95 shadow-sm" data-bg="bg-blue-50" data-border="border-blue-200/60" data-color="#2563eb" data-text="text-blue-600" type="button">
+<span class="material-symbols-rounded text-white text-base font-bold">check</span>
+</button>
+<!-- Color Option 2: Orange -->
+<button aria-label="Laranja" class="color-btn w-7 h-7 rounded-full bg-[#e86e00] hover:scale-110 transition transform active:scale-95 shadow-sm" data-bg="bg-amber-50" data-border="border-amber-200/60" data-color="#ea580c" data-text="text-amber-600" type="button"></button>
+<!-- Color Option 3: Purple -->
+<button aria-label="Roxo" class="color-btn w-7 h-7 rounded-full bg-[#7a3bed] hover:scale-110 transition transform active:scale-95 shadow-sm" data-bg="bg-purple-50" data-border="border-purple-200/60" data-color="#7c3aed" data-text="text-purple-600" type="button"></button>
+<!-- Color Option 4: Teal -->
+<button aria-label="Verde Esmeralda" class="color-btn w-7 h-7 rounded-full bg-[#009b77] hover:scale-110 transition transform active:scale-95 shadow-sm" data-bg="bg-emerald-50" data-border="border-emerald-200/60" data-color="#059669" data-text="text-emerald-600" type="button"></button>
+<!-- Color Option 5: Pink -->
+<button aria-label="Rosa" class="color-btn w-7 h-7 rounded-full bg-[#e02d7e] hover:scale-110 transition transform active:scale-95 shadow-sm" data-bg="bg-pink-50" data-border="border-pink-200/60" data-color="#db2777" data-text="text-pink-600" type="button"></button>
+<!-- Color Option 6: Indigo -->
+<button aria-label="Índigo" class="color-btn w-7 h-7 rounded-full bg-[#524bf2] hover:scale-110 transition transform active:scale-95 shadow-sm" data-bg="bg-indigo-50" data-border="border-indigo-200/60" data-color="#4f46e5" data-text="text-indigo-600" type="button"></button>
+<!-- Color Option 7: Cyan/Sky -->
+<button aria-label="Ciano" class="color-btn w-7 h-7 rounded-full bg-[#008ec9] hover:scale-110 transition transform active:scale-95 shadow-sm" data-bg="bg-sky-50" data-border="border-sky-200/60" data-color="#0284c7" data-text="text-sky-600" type="button"></button>
+<!-- Color Option 8: Slate Gray -->
+<button aria-label="Ardósia" class="color-btn w-7 h-7 rounded-full bg-[#3d5162] hover:scale-110 transition transform active:scale-95 shadow-sm" data-bg="bg-slate-100" data-border="border-slate-300" data-color="#475569" data-text="text-slate-700" type="button"></button>
+<!-- Color Option 9: Green Forest -->
+<button aria-label="Verde Claro" class="color-btn w-7 h-7 rounded-full bg-[#10a149] hover:scale-110 transition transform active:scale-95 shadow-sm" data-bg="bg-green-50" data-border="border-green-200" data-color="#16a34a" data-text="text-green-700" type="button"></button>
+<!-- Color Option 10: Coral Red -->
+<button aria-label="Vermelho Coral" class="color-btn w-7 h-7 rounded-full bg-[#f14d3b] hover:scale-110 transition transform active:scale-95 shadow-sm" data-bg="bg-red-50" data-border="border-red-200/60" data-color="#dc2626" data-text="text-red-600" type="button"></button>
+<!-- Color Option 11: Crimson -->
+<button aria-label="Carmesim" class="color-btn w-7 h-7 rounded-full bg-[#c3004d] hover:scale-110 transition transform active:scale-95 shadow-sm" data-bg="bg-rose-50" data-border="border-rose-200/60" data-color="#be123c" data-text="text-rose-600" type="button"></button>
+<!-- Color Option 12: Light Sea Blue -->
+<button aria-label="Azul Oceano" class="color-btn w-7 h-7 rounded-full bg-[#00a1c6] hover:scale-110 transition transform active:scale-95 shadow-sm" data-bg="bg-cyan-50" data-border="border-cyan-200" data-color="#0891b2" data-text="text-cyan-700" type="button"></button>
+</div>
+</div>
+<!-- 4. Theme Representative Icon Grid -->
+<div class="space-y-2.5" data-purpose="icon-grid-selector">
+<label class="text-xs font-bold text-neutral-700 tracking-wide block">
+            Ícone Representativo
+          </label>
+<!-- Icon Matrix -->
+<div aria-label="Selecione um ícone" class="grid grid-cols-10 gap-2 p-1 max-h-48 overflow-y-auto" role="radiogroup">
+<!-- Row 1 -->
+<button class="icon-btn w-9 h-9 rounded-xl flex items-center justify-center text-neutral-600 hover:bg-[#eef4ec] hover:text-neutral-900 border border-transparent hover:border-neutral-200 transition-all" data-icon="domain" type="button">
+<span class="material-symbols-rounded outlined text-xl pointer-events-none">domain</span>
+</button>
+<button class="icon-btn w-9 h-9 rounded-xl flex items-center justify-center text-neutral-600 hover:bg-[#eef4ec] hover:text-neutral-900 border border-transparent hover:border-neutral-200 transition-all" data-icon="restaurant" type="button">
+<span class="material-symbols-rounded outlined text-xl pointer-events-none">restaurant</span>
+</button>
+<button class="icon-btn w-9 h-9 rounded-xl flex items-center justify-center text-neutral-600 hover:bg-[#eef4ec] hover:text-neutral-900 border border-transparent hover:border-neutral-200 transition-all" data-icon="celebration" type="button">
+<span class="material-symbols-rounded outlined text-xl pointer-events-none">celebration</span>
+</button>
+<button class="icon-btn w-9 h-9 rounded-xl flex items-center justify-center text-neutral-600 hover:bg-[#eef4ec] hover:text-neutral-900 border border-transparent hover:border-neutral-200 transition-all" data-icon="music_note" type="button">
+<span class="material-symbols-rounded outlined text-xl pointer-events-none">music_note</span>
+</button>
+<button class="icon-btn w-9 h-9 rounded-xl flex items-center justify-center text-neutral-600 hover:bg-[#eef4ec] hover:text-neutral-900 border border-transparent hover:border-neutral-200 transition-all" data-icon="redeem" type="button">
+<span class="material-symbols-rounded outlined text-xl pointer-events-none">redeem</span>
+</button>
+<button class="icon-btn w-9 h-9 rounded-xl flex items-center justify-center text-neutral-600 hover:bg-[#eef4ec] hover:text-neutral-900 border border-transparent hover:border-neutral-200 transition-all" data-icon="photo_camera" type="button">
+<span class="material-symbols-rounded outlined text-xl pointer-events-none">photo_camera</span>
+</button>
+<button class="icon-btn w-9 h-9 rounded-xl flex items-center justify-center text-neutral-600 hover:bg-[#eef4ec] hover:text-neutral-900 border border-transparent hover:border-neutral-200 transition-all" data-icon="mail" type="button">
+<span class="material-symbols-rounded outlined text-xl pointer-events-none">mail</span>
+</button>
+<!-- Currently Selected Icon -->
+<button class="icon-btn active-icon w-9 h-9 rounded-xl flex items-center justify-center bg-blue-100 text-blue-700 border-2 border-blue-600 shadow-sm transition-all" data-icon="description" type="button">
+<span class="material-symbols-rounded text-xl pointer-events-none">description</span>
+</button>
+<button class="icon-btn w-9 h-9 rounded-xl flex items-center justify-center text-neutral-600 hover:bg-[#eef4ec] hover:text-neutral-900 border border-transparent hover:border-neutral-200 transition-all" data-icon="shopping_bag" type="button">
+<span class="material-symbols-rounded outlined text-xl pointer-events-none">shopping_bag</span>
+</button>
+<button class="icon-btn w-9 h-9 rounded-xl flex items-center justify-center text-neutral-600 hover:bg-[#eef4ec] hover:text-neutral-900 border border-transparent hover:border-neutral-200 transition-all" data-icon="sell" type="button">
+<span class="material-symbols-rounded outlined text-xl pointer-events-none">sell</span>
+</button>
+<!-- Row 2 -->
+<button class="icon-btn w-9 h-9 rounded-xl flex items-center justify-center text-neutral-600 hover:bg-[#eef4ec] hover:text-neutral-900 border border-transparent hover:border-neutral-200 transition-all" data-icon="cake" type="button">
+<span class="material-symbols-rounded outlined text-xl pointer-events-none">cake</span>
+</button>
+<button class="icon-btn w-9 h-9 rounded-xl flex items-center justify-center text-neutral-600 hover:bg-[#eef4ec] hover:text-neutral-900 border border-transparent hover:border-neutral-200 transition-all" data-icon="flight" type="button">
+<span class="material-symbols-rounded outlined text-xl pointer-events-none">flight</span>
+</button>
+<button class="icon-btn w-9 h-9 rounded-xl flex items-center justify-center text-neutral-600 hover:bg-[#eef4ec] hover:text-neutral-900 border border-transparent hover:border-neutral-200 transition-all" data-icon="bed" type="button">
+<span class="material-symbols-rounded outlined text-xl pointer-events-none">bed</span>
+</button>
+<button class="icon-btn w-9 h-9 rounded-xl flex items-center justify-center text-neutral-600 hover:bg-[#eef4ec] hover:text-neutral-900 border border-transparent hover:border-neutral-200 transition-all" data-icon="directions_car" type="button">
+<span class="material-symbols-rounded outlined text-xl pointer-events-none">directions_car</span>
+</button>
+<button class="icon-btn w-9 h-9 rounded-xl flex items-center justify-center text-neutral-600 hover:bg-[#eef4ec] hover:text-neutral-900 border border-transparent hover:border-neutral-200 transition-all" data-icon="palette" type="button">
+<span class="material-symbols-rounded outlined text-xl pointer-events-none">palette</span>
+</button>
+<button class="icon-btn w-9 h-9 rounded-xl flex items-center justify-center text-neutral-600 hover:bg-[#eef4ec] hover:text-neutral-900 border border-transparent hover:border-neutral-200 transition-all" data-icon="diamond" type="button">
+<span class="material-symbols-rounded outlined text-xl pointer-events-none">diamond</span>
+</button>
+<button class="icon-btn w-9 h-9 rounded-xl flex items-center justify-center text-neutral-600 hover:bg-[#eef4ec] hover:text-neutral-900 border border-transparent hover:border-neutral-200 transition-all" data-icon="edit" type="button">
+<span class="material-symbols-rounded outlined text-xl pointer-events-none">edit</span>
+</button>
+<button class="icon-btn w-9 h-9 rounded-xl flex items-center justify-center text-neutral-600 hover:bg-[#eef4ec] hover:text-neutral-900 border border-transparent hover:border-neutral-200 transition-all" data-icon="local_cafe" type="button">
+<span class="material-symbols-rounded outlined text-xl pointer-events-none">local_cafe</span>
+</button>
+<button class="icon-btn w-9 h-9 rounded-xl flex items-center justify-center text-neutral-600 hover:bg-[#eef4ec] hover:text-neutral-900 border border-transparent hover:border-neutral-200 transition-all" data-icon="pets" type="button">
+<span class="material-symbols-rounded outlined text-xl pointer-events-none">pets</span>
+</button>
+<button class="icon-btn w-9 h-9 rounded-xl flex items-center justify-center text-neutral-600 hover:bg-[#eef4ec] hover:text-neutral-900 border border-transparent hover:border-neutral-200 transition-all" data-icon="directions_bus" type="button">
+<span class="material-symbols-rounded outlined text-xl pointer-events-none">directions_bus</span>
+</button>
+<!-- Row 3 -->
+<button class="icon-btn w-9 h-9 rounded-xl flex items-center justify-center text-neutral-600 hover:bg-[#eef4ec] hover:text-neutral-900 border border-transparent hover:border-neutral-200 transition-all" data-icon="videocam" type="button">
+<span class="material-symbols-rounded outlined text-xl pointer-events-none">videocam</span>
+</button>
+<button class="icon-btn w-9 h-9 rounded-xl flex items-center justify-center text-neutral-600 hover:bg-[#eef4ec] hover:text-neutral-900 border border-transparent hover:border-neutral-200 transition-all" data-icon="local_florist" type="button">
+<span class="material-symbols-rounded outlined text-xl pointer-events-none">local_florist</span>
+</button>
+<button class="icon-btn w-9 h-9 rounded-xl flex items-center justify-center text-neutral-600 hover:bg-[#eef4ec] hover:text-neutral-900 border border-transparent hover:border-neutral-200 transition-all" data-icon="theaters" type="button">
+<span class="material-symbols-rounded outlined text-xl pointer-events-none">theaters</span>
+</button>
+<button class="icon-btn w-9 h-9 rounded-xl flex items-center justify-center text-neutral-600 hover:bg-[#eef4ec] hover:text-neutral-900 border border-transparent hover:border-neutral-200 transition-all" data-icon="star" type="button">
+<span class="material-symbols-rounded outlined text-xl pointer-events-none">star</span>
+</button>
+</div>
+</div>
+</div>
+<!-- 5. M3 Modal Actions Footer -->
+<footer class="px-7 py-4 bg-[#f8fcf7] border-t border-[#e2ece0] flex items-center justify-end gap-3" data-purpose="dialog-actions-footer">
+<!-- Cancel Action (Text Button) -->
+<button class="px-5 py-2.5 rounded-full text-sm font-semibold text-neutral-700 hover:bg-neutral-200/60 active:bg-neutral-300/60 transition-colors" id="btn-cancel" type="button">
+          Cancelar
+        </button>
+<!-- Submit Action (Filled Button M3 #217346) -->
+<button class="px-6 py-2.5 rounded-full text-sm font-semibold text-white bg-[#217346] hover:bg-[#1b8a4f] active:bg-[#165734] shadow-sm hover:shadow transition-all" id="btn-create" type="button">
+          Criar Categoria
+        </button>
+</footer>
+</div>
+<!-- END: M3CategoryCreationModal -->
+</div>
+<!-- END: ModalDialogOverlay -->
+<!-- BEGIN: Interactive Logic for Preview & Selection -->
+<script data-purpose="modal-interactions">
+    document.addEventListener('DOMContentLoaded', () => {
+      const nameInput = document.getElementById('category-name-input');
+      const previewText = document.getElementById('preview-text');
+      const previewIcon = document.getElementById('preview-icon');
+      const previewIconWrapper = document.getElementById('preview-icon-wrapper');
+      
+      const colorButtons = document.querySelectorAll('.color-btn');
+      const iconButtons = document.querySelectorAll('.icon-btn');
+
+      // Live update category name in preview
+      nameInput.addEventListener('input', (e) => {
+        const val = e.target.value.trim();
+        previewText.textContent = val.length > 0 ? val : 'Nome da Categoria';
+      });
+
+      // Handle color selection
+      colorButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          // Remove active ring & check icon from previous
+          colorButtons.forEach((b) => {
+            b.classList.remove('ring-2', 'ring-offset-2');
+            b.innerHTML = '';
+          });
+
+          // Set ring & check icon to current
+          btn.classList.add('ring-2', 'ring-offset-2');
+          btn.innerHTML = '<span class="material-symbols-rounded text-white text-base font-bold">check</span>';
+
+          // Apply color to preview container
+          const bgClass = btn.dataset.bg || 'bg-blue-50';
+          const textClass = btn.dataset.text || 'text-blue-600';
+          const borderClass = btn.dataset.border || 'border-blue-200/60';
+
+          // Reset preview icon wrapper classes
+          previewIconWrapper.className = `w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-sm border transition-all duration-200 ${bgClass} ${textClass} ${borderClass}`;
+        });
+      });
+
+      // Handle icon selection
+      iconButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          // Reset styles on all icon buttons
+          iconButtons.forEach((b) => {
+            b.classList.remove('bg-blue-100', 'text-blue-700', 'border-2', 'border-blue-600', 'shadow-sm', 'active-icon');
+            b.classList.add('text-neutral-600', 'border-transparent');
+            const iconSpan = b.querySelector('.material-symbols-rounded');
+            if (iconSpan) iconSpan.classList.add('outlined');
+          });
+
+          // Activate clicked button
+          btn.classList.remove('text-neutral-600', 'border-transparent');
+          btn.classList.add('bg-blue-100', 'text-blue-700', 'border-2', 'border-blue-600', 'shadow-sm', 'active-icon');
+          const clickedIconSpan = btn.querySelector('.material-symbols-rounded');
+          if (clickedIconSpan) clickedIconSpan.classList.remove('outlined');
+
+          // Update Preview icon
+          const selectedIcon = btn.dataset.icon;
+          if (selectedIcon) {
+            previewIcon.textContent = selectedIcon;
+          }
+        });
+      });
+    });
+  </script>
+<!-- END: Interactive Logic for Preview & Selection -->
+</body></html>
