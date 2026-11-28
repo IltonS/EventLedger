@@ -655,6 +655,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                       SizedBox(
                         width: 190,
                         child: DropdownButtonFormField<ExpenseCategory?>(
+                          isExpanded: true,
                           initialValue: _categoryFilter,
                           isDense: true,
                           decoration: const InputDecoration(
@@ -664,16 +665,25 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                           items: [
                             const DropdownMenuItem<ExpenseCategory?>(
                               value: null,
-                              child: Text('Todas as Categorias'),
+                              child: Text(
+                                'Todas as Categorias',
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                             ...widget.store.categories.map(
                               (cat) => DropdownMenuItem<ExpenseCategory?>(
                                 value: cat,
                                 child: Row(
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Icon(cat.icon, size: 14, color: cat.color),
                                     const SizedBox(width: 6),
-                                    Text(cat.name),
+                                    Flexible(
+                                      child: Text(
+                                        cat.name,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -720,6 +730,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                   ),
                   const SizedBox(height: 10),
                   DropdownButtonFormField<ExpenseCategory?>(
+                    isExpanded: true,
                     initialValue: _categoryFilter,
                     isDense: true,
                     decoration: const InputDecoration(
@@ -729,16 +740,25 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                     items: [
                       const DropdownMenuItem<ExpenseCategory?>(
                         value: null,
-                        child: Text('Todas as Categorias'),
+                        child: Text(
+                          'Todas as Categorias',
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                       ...widget.store.categories.map(
                         (cat) => DropdownMenuItem<ExpenseCategory?>(
                           value: cat,
                           child: Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(cat.icon, size: 14, color: cat.color),
                               const SizedBox(width: 6),
-                              Text(cat.name),
+                              Flexible(
+                                child: Text(
+                                  cat.name,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
                             ],
                           ),
                         ),

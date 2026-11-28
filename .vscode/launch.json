@@ -2,20 +2,20 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "EventLedger (Linux)",
+      "name": "Debug (Linux64)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
       "deviceId": "linux"
     },
     {
-      "name": "EventLedger (Default Device)",
+      "name": "Debug (Default)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart"
     },
     {
-      "name": "EventLedger (Release)",
+      "name": "Release (Linux64)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",

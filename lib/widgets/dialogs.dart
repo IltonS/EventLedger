@@ -316,6 +316,7 @@ Future<ExpenseCategory?> showDeleteCategoryDialog(
                 ),
                 const SizedBox(height: 14),
                 DropdownButtonFormField<ExpenseCategory>(
+                  isExpanded: true,
                   initialValue: selectedReplacement,
                   decoration: const InputDecoration(
                     labelText: 'Transferir despesas para',
@@ -324,10 +325,16 @@ Future<ExpenseCategory?> showDeleteCategoryDialog(
                     return DropdownMenuItem(
                       value: c,
                       child: Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(c.icon, size: 16, color: c.color),
                           const SizedBox(width: 8),
-                          Text(c.name),
+                          Flexible(
+                            child: Text(
+                              c.name,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
                         ],
                       ),
                     );
@@ -684,6 +691,7 @@ class _ExpenseFormDialogState extends State<_ExpenseFormDialog> {
                 children: [
                   Expanded(
                     child: DropdownButtonFormField<ExpenseCategory>(
+                      isExpanded: true,
                       initialValue: _category,
                       decoration: const InputDecoration(labelText: 'Categoria'),
                       items: widget.categories
@@ -691,10 +699,16 @@ class _ExpenseFormDialogState extends State<_ExpenseFormDialog> {
                             (cat) => DropdownMenuItem(
                               value: cat,
                               child: Row(
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Icon(cat.icon, size: 16, color: cat.color),
                                   const SizedBox(width: 8),
-                                  Text(cat.name),
+                                  Flexible(
+                                    child: Text(
+                                      cat.name,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
