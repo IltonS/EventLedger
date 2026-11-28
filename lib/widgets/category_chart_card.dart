@@ -105,7 +105,7 @@ class CategoryExpenseChartCard extends StatelessWidget {
                                 width: 28,
                                 height: 28,
                                 decoration: BoxDecoration(
-                                  color: entry.key.color.withOpacity(0.14),
+                                  color: entry.key.color.withValues(alpha: 0.14),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Icon(

@@ -33,7 +33,7 @@ class ExpenseCategory {
         'id': id,
         'name': name,
         'iconCode': icon.codePoint,
-        'colorValue': color.value,
+        'colorValue': color.toARGB32(),
       };
 
   factory ExpenseCategory.fromJson(Map<String, dynamic> json) =>

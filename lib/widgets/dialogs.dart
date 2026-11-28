@@ -290,7 +290,7 @@ Future<ExpenseCategory?> showDeleteCategoryDialog(
                     color: AppTheme.unpaidAmberSurface,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: AppTheme.unpaidAmber.withOpacity(0.3),
+                      color: AppTheme.unpaidAmber.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Row(
@@ -684,7 +684,7 @@ class _ExpenseFormDialogState extends State<_ExpenseFormDialog> {
                 children: [
                   Expanded(
                     child: DropdownButtonFormField<ExpenseCategory>(
-                      value: _category,
+                      initialValue: _category,
                       decoration: const InputDecoration(labelText: 'Categoria'),
                       items: widget.categories
                           .map(
@@ -765,11 +765,11 @@ class _ExpenseFormDialogState extends State<_ExpenseFormDialog> {
                   color: AppTheme.surfaceContainerLow,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                      color: AppTheme.outlineVariant.withOpacity(0.5)),
+                      color: AppTheme.outlineVariant.withValues(alpha: 0.5)),
                 ),
                 child: SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  activeColor: AppTheme.primary,
+                  activeThumbColor: AppTheme.primary,
                   title: const Text(
                     'Marcar como Pago',
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
@@ -910,14 +910,14 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
                     color: AppTheme.surfaceContainerLow,
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
-                        color: AppTheme.outlineVariant.withOpacity(0.5)),
+                        color: AppTheme.outlineVariant.withValues(alpha: 0.5)),
                   ),
                   child: Row(
                     children: [
                       Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: _selectedColor.withOpacity(0.14),
+                          color: _selectedColor.withValues(alpha: 0.14),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Icon(
@@ -983,7 +983,8 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
                   spacing: 8,
                   runSpacing: 8,
                   children: _paletteColors.map((color) {
-                    final isSelected = _selectedColor.value == color.value;
+                    final isSelected =
+                        _selectedColor.toARGB32() == color.toARGB32();
                     return InkWell(
                       onTap: () => setState(() => _selectedColor = color),
                       borderRadius: BorderRadius.circular(20),
@@ -1002,7 +1003,7 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
                           boxShadow: isSelected
                               ? [
                                   BoxShadow(
-                                    color: color.withOpacity(0.4),
+                                    color: color.withValues(alpha: 0.4),
                                     blurRadius: 6,
                                     offset: const Offset(0, 2),
                                   )
@@ -1044,7 +1045,7 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
                         height: 40,
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? _selectedColor.withOpacity(0.15)
+                              ? _selectedColor.withValues(alpha: 0.15)
                               : AppTheme.canvas,
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(

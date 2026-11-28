@@ -129,7 +129,7 @@ class DesktopSidebar extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: AppTheme.primary.withOpacity(0.25),
+                        color: AppTheme.primary.withValues(alpha: 0.25),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -469,7 +469,7 @@ class _NavTile extends StatelessWidget {
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
                     color: selected
-                        ? AppTheme.primary.withOpacity(0.15)
+                        ? AppTheme.primary.withValues(alpha: 0.15)
                         : AppTheme.surfaceContainerHigh,
                     borderRadius: BorderRadius.circular(9999),
                   ),

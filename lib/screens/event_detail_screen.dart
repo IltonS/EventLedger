@@ -655,7 +655,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                       SizedBox(
                         width: 190,
                         child: DropdownButtonFormField<ExpenseCategory?>(
-                          value: _categoryFilter,
+                          initialValue: _categoryFilter,
                           isDense: true,
                           decoration: const InputDecoration(
                             labelText: 'Categoria',
@@ -720,7 +720,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                   ),
                   const SizedBox(height: 10),
                   DropdownButtonFormField<ExpenseCategory?>(
-                    value: _categoryFilter,
+                    initialValue: _categoryFilter,
                     isDense: true,
                     decoration: const InputDecoration(
                       labelText: 'Categoria',

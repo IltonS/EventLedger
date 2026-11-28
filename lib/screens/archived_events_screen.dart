@@ -125,7 +125,7 @@ class _ArchivedEventsScreenState extends State<ArchivedEventsScreen> {
               color: AppTheme.surfaceContainerLow,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: AppTheme.outlineVariant.withOpacity(0.5),
+                color: AppTheme.outlineVariant.withValues(alpha: 0.5),
               ),
             ),
             child: const Row(

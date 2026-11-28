@@ -111,16 +111,16 @@ class AppTheme {
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: outlineVariant.withOpacity(0.45)),
+          side: BorderSide(color: outlineVariant.withValues(alpha: 0.45)),
         ),
       ),
-      dividerColor: outlineVariant.withOpacity(0.35),
+      dividerColor: outlineVariant.withValues(alpha: 0.35),
       dialogTheme: DialogThemeData(
         backgroundColor: surfaceContainerLowest,
         elevation: 3,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
-          side: BorderSide(color: outlineVariant.withOpacity(0.4)),
+          side: BorderSide(color: outlineVariant.withValues(alpha: 0.4)),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
@@ -130,11 +130,11 @@ class AppTheme {
             const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: outlineVariant.withOpacity(0.6)),
+          borderSide: BorderSide(color: outlineVariant.withValues(alpha: 0.6)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: outlineVariant.withOpacity(0.6)),
+          borderSide: BorderSide(color: outlineVariant.withValues(alpha: 0.6)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
@@ -146,7 +146,7 @@ class AppTheme {
           fontWeight: FontWeight.w500,
         ),
         hintStyle: TextStyle(
-          color: secondary.withOpacity(0.7),
+          color: secondary.withValues(alpha: 0.7),
           fontSize: 13,
         ),
       ),
@@ -170,7 +170,7 @@ class AppTheme {
         style: OutlinedButton.styleFrom(
           foregroundColor: onSurface,
           backgroundColor: surfaceContainerLowest,
-          side: BorderSide(color: outlineVariant.withOpacity(0.8)),
+          side: BorderSide(color: outlineVariant.withValues(alpha: 0.8)),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(9999),
@@ -196,7 +196,7 @@ class AppTheme {
             return secondary;
           }),
           side: WidgetStateProperty.all(
-            BorderSide(color: outlineVariant.withOpacity(0.5)),
+            BorderSide(color: outlineVariant.withValues(alpha: 0.5)),
           ),
           shape: WidgetStateProperty.all(
             RoundedRectangleBorder(
@@ -221,7 +221,7 @@ class AppTheme {
           }
           return Colors.transparent;
         }),
-        side: BorderSide(color: outline.withOpacity(0.7), width: 1.5),
+        side: BorderSide(color: outline.withValues(alpha: 0.7), width: 1.5),
       ),
     );
   }
